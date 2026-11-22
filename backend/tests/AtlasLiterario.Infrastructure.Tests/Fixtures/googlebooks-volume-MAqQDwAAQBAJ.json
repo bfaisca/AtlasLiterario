@@ -1,0 +1,109 @@
+{
+  "kind": "books#volume",
+  "id": "MAqQDwAAQBAJ",
+  "etag": "kL+LF6y4Xp0",
+  "selfLink": "https://www.googleapis.com/books/v1/volumes/MAqQDwAAQBAJ",
+  "volumeInfo": {
+    "title": "Cem anos de solidão",
+    "authors": [
+      "Gabriel García Márquez"
+    ],
+    "publisher": "Editora Record",
+    "publishedDate": "2019-04-03",
+    "description": "\u003cp\u003eO livro mais importante de Gabriel Garcia Márquez.\u003c/p\u003e \u003cp\u003eNeste que é um dos maiores clássicos da literatura, o prestigiado autor narra a incrível e triste história dos Buendía – a estirpe de solitários para a qual não será dada \"uma segunda oportunidade sobre a terra\" e apresenta o maravilhoso universo da fictícia Macondo, onde se passa o romance. É lá que acompanhamos diversas gerações dessa família, assim como a ascensão e a queda do vilarejo. Para além dos artifícios técnicos e das influências literárias que transbordam do livro, ainda vemos em suas páginas o que por muitos é considerado uma autêntica enciclopédia do imaginário, num estilo que consagrou o colombiano como um dos maiores autores do século XX. \u003c/p\u003e",
+    "industryIdentifiers": [
+      {
+        "type": "ISBN_10",
+        "identifier": "8501116556"
+      },
+      {
+        "type": "ISBN_13",
+        "identifier": "9788501116550"
+      }
+    ],
+    "readingModes": {
+      "text": true,
+      "image": true
+    },
+    "pageCount": 448,
+    "printedPageCount": 417,
+    "printType": "BOOK",
+    "categories": [
+      "Fiction / Literary",
+      "Fiction / General"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": true,
+    "contentVersion": "0.8.10.0.preview.3",
+    "panelizationSummary": {
+      "containsEpubBubbles": false,
+      "containsImageBubbles": false
+    },
+    "imageLinks": {
+      "smallThumbnail": "http://books.google.com/books/publisher/content?id=MAqQDwAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&imgtk=AFLRE731X8fyFT6hgdtmIAwLQckOG5FX9fqJYCZJkgdp_I7zaX6XVqSwv6mlWGerWaKR2qyljHnQp4L84618iyGE0bMyLK825RbNXtyHPY9BgimMQKU5AGdr4GqMct63s3Q26FmvGPIg&source=gbs_api",
+      "thumbnail": "http://books.google.com/books/publisher/content?id=MAqQDwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&imgtk=AFLRE73PNx4RowQIEjqE0UkxshDolXjBlYJVgA_2oO687aoilJeR9kwabzBYKsyBqnrihaHSljD33K6d_6t-Z5uMgLTVwSNoWo3arZqzD5UfAyJCFXtLrG-5LmF65kIhDdKAwC8lhghU&source=gbs_api",
+      "small": "http://books.google.com/books/publisher/content?id=MAqQDwAAQBAJ&printsec=frontcover&img=1&zoom=2&edge=curl&imgtk=AFLRE73kDOat64Y_DtXU0o6jZBNRwuRK4lZ29kd4vHH2B6AXYfVKmnWqxe9TtdWYUbn-pcaB_JNW5ZdDRxEBnYJ7IMEp3KU-Z8mAKlMeGrbYuWGLl9jwd-dTIVHtgrSlNk5Gd24kKKPG&source=gbs_api",
+      "medium": "http://books.google.com/books/publisher/content?id=MAqQDwAAQBAJ&printsec=frontcover&img=1&zoom=3&edge=curl&imgtk=AFLRE70iSl2gWAes-9nRWfzNtjBk0blB9ayc7HhqcBTvBHFB-4tVo-2tHPPKUBMWaiFK6GxARt2Hwoig40QvC1wIkniPks-1kCt3KGO4sAhYMoOdUbPmw5fepIW2G5ywgPOBcgm7PQWD&source=gbs_api",
+      "large": "http://books.google.com/books/publisher/content?id=MAqQDwAAQBAJ&printsec=frontcover&img=1&zoom=4&edge=curl&imgtk=AFLRE70_oGEYoh3nrj8KVEMepkf1rsKKRYHZK5qVCDP3unPVcFNycBMl_krRl83FFyLg7ayMFbNC9YVAmlVWuOzpt5HuIJylBQRzo62978BWnhXmiF80mfI5YqeTmAdUv4dZpA1KCqMb&source=gbs_api",
+      "extraLarge": "http://books.google.com/books/publisher/content?id=MAqQDwAAQBAJ&printsec=frontcover&img=1&zoom=6&edge=curl&imgtk=AFLRE73I4Ia7Lde27VNquzuvP1TOzc-VRMHsOltPdbOFQ6XseHLhfkXGLJXxQD3FdkWQjP1qipvE8f8DKY7nRFatOEVyV948qwugEQt7B6oPq2OI0A-c-7n4UvTDU94LpY9RkLjuT5yC&source=gbs_api"
+    },
+    "language": "pt-BR",
+    "previewLink": "http://books.google.com.br/books?id=MAqQDwAAQBAJ&hl=&source=gbs_api",
+    "infoLink": "https://play.google.com/store/books/details?id=MAqQDwAAQBAJ&source=gbs_api",
+    "canonicalVolumeLink": "https://play.google.com/store/books/details?id=MAqQDwAAQBAJ"
+  },
+  "layerInfo": {
+    "layers": [
+      {
+        "layerId": "geo",
+        "volumeAnnotationsVersion": "9"
+      }
+    ]
+  },
+  "saleInfo": {
+    "country": "BR",
+    "saleability": "FOR_SALE",
+    "isEbook": true,
+    "listPrice": {
+      "amount": 29.9,
+      "currencyCode": "BRL"
+    },
+    "retailPrice": {
+      "amount": 29.9,
+      "currencyCode": "BRL"
+    },
+    "buyLink": "https://play.google.com/store/books/details?id=MAqQDwAAQBAJ&rdid=book-MAqQDwAAQBAJ&rdot=1&source=gbs_api",
+    "offers": [
+      {
+        "finskyOfferType": 1,
+        "listPrice": {
+          "amountInMicros": 29900000,
+          "currencyCode": "BRL"
+        },
+        "retailPrice": {
+          "amountInMicros": 29900000,
+          "currencyCode": "BRL"
+        },
+        "giftable": true
+      }
+    ]
+  },
+  "accessInfo": {
+    "country": "BR",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+      "isAvailable": true,
+      "acsTokenLink": "http://books.google.com.br/books/download/Cem_anos_de_solid%C3%A3o-sample-epub.acsm?id=MAqQDwAAQBAJ&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "pdf": {
+      "isAvailable": true,
+      "acsTokenLink": "http://books.google.com.br/books/download/Cem_anos_de_solid%C3%A3o-sample-pdf.acsm?id=MAqQDwAAQBAJ&format=pdf&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=MAqQDwAAQBAJ&hl=&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+  }
+}

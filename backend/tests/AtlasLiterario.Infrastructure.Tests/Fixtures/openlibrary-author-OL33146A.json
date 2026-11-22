@@ -1,0 +1,139 @@
+{
+ "bio": "Franz Kafka (gelegentlich tschechisch František Kafka, 3. Juli 1883, Prag, Österreich-Ungarn-3. Juni 1924, Kierling, Österreich) war ein österreichisch-tschechoslowakischer Schriftsteller. Er gilt als einer der bedeutendsten Vertreter der Prager deutschen Literatur und der deutschsprachigen Literatur des 20. Jahrhunderts. Seine Werke – darunter die drei Romanfragmente *Der Process, Das Schloss* und *Der Verschollene* sowie zahlreiche Erzählungen – gehören zum Kanon der Weltliteratur. Kafkas Werke wurden zum größeren Teil erst nach seinem Tod und gegen seine letztwillige Verfügung von Max Brod veröffentlicht, einem engen Freund und Vertrauten, den Kafka zu seinem Nachlassverwalter bestimmt hatte. Kafkas Schilderungen unergründlich bedrohlicher, absurder Situationen haben zur Bildung des auch im außerliterarischen Kontext verwendeten Adjektivs „kafkaesk“ geführt.\r\n\r\n\r\n----------\r\n\r\n\r\nFranz Kafka (3 July 1883 – 3 June 1924) was a German-language Jewish Czech writer and novelist born in Prague, in the Austro-Hungarian Empire. Widely regarded as a major figure of 20th-century literature, his work fuses elements of realism and the fantastique, and typically features isolated protagonists facing bizarre or surreal predicaments and incomprehensible socio-bureaucratic powers. The term Kafkaesque has entered the lexicon to describe situations like those depicted in his writings. His best-known works include the novella *The Metamorphosis* (1915) and the novels *The Trial* (1924) and *The Castle* (1926). His work has widely influenced artists, philosophers, composers, filmmakers, literary historians, religious scholars, and cultural theorists.\r\n\r\n([Source][1].)\r\n\r\n[1]:https://en.wikipedia.org/wiki/Franz_Kafka",
+ "source_records": [
+  "amazon:841516341X",
+  "amazon:1542610788",
+  "amazon:1530000572",
+  "amazon:143324649X",
+  "amazon:3843075387",
+  "amazon:154869472X",
+  "amazon:1480527807",
+  "bwb:9780241573730",
+  "amazon:6053045535",
+  "amazon:9752441556",
+  "amazon:975434261X",
+  "amazon:9755842063",
+  "amazon:975584208X",
+  "amazon:975584239X",
+  "amazon:9759025671",
+  "bwb:9798532871267",
+  "promise:bwb_daily_pallets_2022-03-17",
+  "promise:bwb_daily_pallets_2021-07-26",
+  "promise:bwb_daily_pallets_2021-06-03",
+  "promise:bwb_daily_pallets_2023-01-03",
+  "promise:bwb_daily_pallets_2021-09-14",
+  "promise:bwb_daily_pallets_2021-04-01",
+  "promise:bwb_daily_pallets_2020-11-24",
+  "promise:bwb_daily_pallets_2022-09-16:W7-CUS-032",
+  "amazon:8363671150",
+  "amazon:8365588706",
+  "promise:bwb_daily_pallets_2023-05-24:KJ-863-213",
+  "ia:wozaidukoudengni0000fran",
+  "amazon:9871093683",
+  "amazon:1014239478",
+  "bwb:9798458500807",
+  "bwb:9798770644791",
+  "amazon:1544052774",
+  "amazon:6070742257",
+  "bwb:9781726729888",
+  "amazon:3717517384",
+  "amazon:9500308169",
+  "amazon:5389093070",
+  "bwb:9781724165930",
+  "amazon:5170892896",
+  "bwb:9798352415115",
+  "bwb:9781957756363",
+  "amazon:5306001459",
+  "amazon:8415605366",
+  "bwb:9781716546587",
+  "bwb:9781300978565",
+  "promise:bwb_daily_pallets_2024-01-25:KT-345-931",
+  "bwb:9781350526891",
+  "bwb:9781491078679",
+  "bwb:9781544052441",
+  "bwb:9781523999934",
+  "ia:amerikanewclassi0000fran",
+  "ia:bwb_KT-315-601",
+  "ia:castle0000fran_m1d1"
+ ],
+ "alternate_names": [
+  "František Kafka",
+  "אנשיל",
+  "FRANZ KAFKA",
+  "Franz 1883-1924 Kafka",
+  "Franz Franz Kafka",
+  "franz kafka",
+  "Franz, Kafka,",
+  "Franz Kafka Kafka",
+  "Franz KAFKA",
+  "Kafka Franz",
+  "Franz Kafka.",
+  "KAFKA FRANZ",
+  "Frank Kafka",
+  "Kafka F.",
+  "Frank KAFKA",
+  "Kafka Frants",
+  "kafka Kafka",
+  "Frnaz Kafka",
+  "Frants Kafka",
+  "FRANK KAFKA",
+  "Franz Kafka Franz Kafka",
+  "フランツ・カフカ"
+ ],
+ "death_date": "3 June 1924",
+ "name": "Franz Kafka",
+ "remote_ids": {
+  "goodreads": "5223",
+  "amazon": "B002DPABLS",
+  "project_gutenberg": "1735",
+  "wikidata": "Q905",
+  "storygraph": "ee83330d-9d32-4820-8b4a-3ab9346360d9",
+  "librivox": "100",
+  "viaf": "56611857",
+  "isni": "000000012280370X",
+  "librarything": "kafkafranz",
+  "gnd": "118559230",
+  "lc_naf": "n81063091",
+  "imdb": "nm0434525",
+  "musicbrainz": "43b658ff-e3e4-4928-9685-b1b7224d61d4",
+  "bookbrainz": "542245f2-a6ec-4ee8-913d-c4ec4c19252a",
+  "opac_sbn": "CFIV005851"
+ },
+ "personal_name": "Franz Kafka",
+ "key": "/authors/OL33146A",
+ "photos": [
+  15131844,
+  5540626,
+  3367716
+ ],
+ "birth_date": "3 July 1883",
+ "type": {
+  "key": "/type/author"
+ },
+ "links": [
+  {
+   "title": "Franz Kafka",
+   "url": "https://love-books-review.com/reviews-by-author/franz-kafka/",
+   "type": {
+    "key": "/type/link"
+   }
+  },
+  {
+   "title": "National Diet Library of Japan Web NDL Authorities record (00445030) 国立国会図書館典拠データ検索・提供サービス",
+   "url": "https://id.ndl.go.jp/auth/ndlna/00445030",
+   "type": {
+    "key": "/type/link"
+   }
+  }
+ ],
+ "latest_revision": 35,
+ "revision": 35,
+ "created": {
+  "type": "/type/datetime",
+  "value": "2008-04-01T03:28:50.625462"
+ },
+ "last_modified": {
+  "type": "/type/datetime",
+  "value": "2026-10-19T13:03:39.785003"
+ }
+}

@@ -1,0 +1,17 @@
+{
+ "head": {
+  "vars": [
+   "work"
+  ]
+ },
+ "results": {
+  "bindings": [
+   {
+    "work": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q178869"
+    }
+   }
+  ]
+ }
+}

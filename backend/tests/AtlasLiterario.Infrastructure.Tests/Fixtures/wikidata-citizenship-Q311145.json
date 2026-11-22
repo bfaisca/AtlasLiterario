@@ -1,0 +1,27 @@
+{
+ "head": {
+  "vars": [
+   "country",
+   "rank",
+   "iso"
+  ]
+ },
+ "results": {
+  "bindings": [
+   {
+    "country": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q155"
+    },
+    "rank": {
+     "type": "uri",
+     "value": "http://wikiba.se/ontology#NormalRank"
+    },
+    "iso": {
+     "type": "literal",
+     "value": "BRA"
+    }
+   }
+  ]
+ }
+}

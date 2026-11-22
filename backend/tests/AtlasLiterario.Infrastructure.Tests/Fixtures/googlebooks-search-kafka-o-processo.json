@@ -1,0 +1,887 @@
+{
+  "kind": "books#volumes",
+  "totalItems": 449,
+  "items": [
+    {
+      "kind": "books#volume",
+      "id": "xSv3DwAAQBAJ",
+      "etag": "Jqj1uimn20o",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/xSv3DwAAQBAJ",
+      "volumeInfo": {
+        "title": "O processo",
+        "authors": [
+          "Franz Kafka"
+        ],
+        "publisher": "Via Leitura",
+        "publishedDate": "2020-08-25",
+        "description": "Um dos principais romances de Franz Kafka, O processo foi publicado pela primeira vez em 1925, ano seguinte à morte do autor. A obra foi editada por Max Brod, que foi guardião dos manuscritos do escritor tcheco por intermédio de seu testamento. Neste livro, Kafka lança o leitor mais uma vez em uma realidade absurda, na qual um bancário se vê envolvido em um processo judicial inexplicável. Em seu aniversário de 30 anos, Josef K. é surpreendido por dois guardas logo que acorda. Após os homens tomarem o café que deveria ser dele, comunicam-no que está preso, embora não lhe deem motivo algum para isso. Sem saber quem o denunciou nem o motivo de sua prisão, ele luta contra autoridades que o ameaçam e o chantageiam, embora nunca apresentem o embasamento legal da investigação. O processo , ao lado de A metamorfose , é uma demonstração inequívoca da potência literária de Franz Kafka. Um romance que não soa datado mesmo um século depois de sua publicação original.",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_13",
+            "identifier": "9788567097855"
+          },
+          {
+            "type": "ISBN_10",
+            "identifier": "8567097851"
+          }
+        ],
+        "readingModes": {
+          "text": true,
+          "image": false
+        },
+        "pageCount": 233,
+        "printType": "BOOK",
+        "categories": [
+          "Fiction"
+        ],
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "1.3.3.0.preview.2",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=xSv3DwAAQBAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=xSv3DwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+        },
+        "language": "pt-BR",
+        "previewLink": "http://books.google.com.br/books?id=xSv3DwAAQBAJ&dq=o+processo+kafka&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+        "infoLink": "https://play.google.com/store/books/details?id=xSv3DwAAQBAJ&source=gbs_api",
+        "canonicalVolumeLink": "https://play.google.com/store/books/details?id=xSv3DwAAQBAJ"
+      },
+      "saleInfo": {
+        "country": "BR",
+        "saleability": "FOR_SALE",
+        "isEbook": true,
+        "listPrice": {
+          "amount": 19.9,
+          "currencyCode": "BRL"
+        },
+        "retailPrice": {
+          "amount": 19.9,
+          "currencyCode": "BRL"
+        },
+        "buyLink": "https://play.google.com/store/books/details?id=xSv3DwAAQBAJ&rdid=book-xSv3DwAAQBAJ&rdot=1&source=gbs_api",
+        "offers": [
+          {
+            "finskyOfferType": 1,
+            "listPrice": {
+              "amountInMicros": 19900000,
+              "currencyCode": "BRL"
+            },
+            "retailPrice": {
+              "amountInMicros": 19900000,
+              "currencyCode": "BRL"
+            },
+            "giftable": true
+          }
+        ]
+      },
+      "accessInfo": {
+        "country": "BR",
+        "viewability": "NO_PAGES",
+        "embeddable": false,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": true
+        },
+        "pdf": {
+          "isAvailable": false
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=xSv3DwAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+        "accessViewStatus": "NONE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "Um dos principais romances de Franz Kafka, O processo foi publicado pela primeira vez em 1925, ano seguinte à morte do autor."
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "39xcEQAAQBAJ",
+      "etag": "3caTREeX54Y",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/39xcEQAAQBAJ",
+      "volumeInfo": {
+        "title": "O Processo",
+        "authors": [
+          "Kafka"
+        ],
+        "publisher": "Sétimo Selo",
+        "publishedDate": "2025-05-05",
+        "description": "Certa manhã, o respeitado funcionário de um banco, Josef K., é surpreendido por dois homens que, sem explicar nada, anunciam que ele é acusado de algum crime desconhecido e deve, portanto, ser posto em reclusão. Apesar disso, pode continuar levando normalmente sua vida, mas consciente de que há um processo em andamento contra ele.Desde a manhã de seu trigésimo aniversário, K. se torna um suspeito aos olhos de todos e começa a ser tratado com certa desconfiança. Tragado pelo processo, busca trilhar esse labirinto burocrático atrás de respostas, deparando-se com uma justiça completamente absurda, na esperança de descobrir por que o acusam e como porventura se defender.Tradução: Wagner SchadeckTítulo original: Der ProzessIntrodução: Otto Maria CarpeauxIlustrações e capa: Nelson Provazi",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_13",
+            "identifier": "9786552270863"
+          },
+          {
+            "type": "ISBN_10",
+            "identifier": "6552270860"
+          }
+        ],
+        "readingModes": {
+          "text": true,
+          "image": true
+        },
+        "pageCount": 443,
+        "printType": "BOOK",
+        "categories": [
+          "Fiction"
+        ],
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "1.4.4.0.preview.3",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=39xcEQAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=39xcEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+        },
+        "language": "pt-BR",
+        "previewLink": "http://books.google.com.br/books?id=39xcEQAAQBAJ&printsec=frontcover&dq=o+processo+kafka&hl=&as_pt=BOOKS&cd=2&source=gbs_api",
+        "infoLink": "https://play.google.com/store/books/details?id=39xcEQAAQBAJ&source=gbs_api",
+        "canonicalVolumeLink": "https://play.google.com/store/books/details?id=39xcEQAAQBAJ"
+      },
+      "saleInfo": {
+        "country": "BR",
+        "saleability": "FOR_SALE",
+        "isEbook": true,
+        "listPrice": {
+          "amount": 69.9,
+          "currencyCode": "BRL"
+        },
+        "retailPrice": {
+          "amount": 69.9,
+          "currencyCode": "BRL"
+        },
+        "buyLink": "https://play.google.com/store/books/details?id=39xcEQAAQBAJ&rdid=book-39xcEQAAQBAJ&rdot=1&source=gbs_api",
+        "offers": [
+          {
+            "finskyOfferType": 1,
+            "listPrice": {
+              "amountInMicros": 69900000,
+              "currencyCode": "BRL"
+            },
+            "retailPrice": {
+              "amountInMicros": 69900000,
+              "currencyCode": "BRL"
+            },
+            "giftable": true
+          }
+        ]
+      },
+      "accessInfo": {
+        "country": "BR",
+        "viewability": "PARTIAL",
+        "embeddable": true,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": true,
+          "acsTokenLink": "http://books.google.com.br/books/download/O_Processo-sample-epub.acsm?id=39xcEQAAQBAJ&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+        },
+        "pdf": {
+          "isAvailable": true,
+          "acsTokenLink": "http://books.google.com.br/books/download/O_Processo-sample-pdf.acsm?id=39xcEQAAQBAJ&format=pdf&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=39xcEQAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+        "accessViewStatus": "SAMPLE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "Tragado pelo processo, busca trilhar esse labirinto burocrático atrás de respostas, deparando-se com uma justiça completamente absurda, na esperança de descobrir por que o acusam e como porventura se defender.Tradução: Wagner ..."
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "WbGjEAAAQBAJ",
+      "etag": "uOJX1hYsk10",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/WbGjEAAAQBAJ",
+      "volumeInfo": {
+        "title": "O processo - Grandes obras de Franz Kafka",
+        "authors": [
+          "Franz Kafka"
+        ],
+        "publisher": "Nova Fronteira",
+        "publishedDate": "2023-01-09",
+        "description": "O processo é um dos mais populares romances do escritor tcheco Franz Kafka. O manuscrito, ainda inacabado, foi entregue pelo autor a seu amigo, o escritor e jornalista Max Brod, e só foi publicado postumamente, em 1925. Uma das obras literárias mais adaptadas (para o teatro, cinema e quadrinhos), traz como tema principal os problemas da burocracia e da dificuldade do acesso por parte do cidadão comum a seus direitos legais. No livro, acompanhamos Josef K., que, em um dia comum de sua vida comum, é informado de que está sendo processado. Com apenas essa notícia, sem nem ao menos saber o motivo do processo, o personagem segue em busca de explicações e acaba se envolvendo com sujeitos obscuros, adentrando ambientes claustrofóbicos e situações surreais. Nessa trajetória, desenvolve-se uma atmosfera sombria, muito característica do estilo de Kafka, que prende o leitor até a última página.",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_13",
+            "identifier": "9786556406244"
+          },
+          {
+            "type": "ISBN_10",
+            "identifier": "6556406244"
+          }
+        ],
+        "readingModes": {
+          "text": true,
+          "image": true
+        },
+        "pageCount": 271,
+        "printType": "BOOK",
+        "categories": [
+          "Fiction"
+        ],
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "1.6.6.0.preview.3",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=WbGjEAAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=WbGjEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+        },
+        "language": "pt-BR",
+        "previewLink": "http://books.google.com.br/books?id=WbGjEAAAQBAJ&printsec=frontcover&dq=o+processo+kafka&hl=&as_pt=BOOKS&cd=3&source=gbs_api",
+        "infoLink": "https://play.google.com/store/books/details?id=WbGjEAAAQBAJ&source=gbs_api",
+        "canonicalVolumeLink": "https://play.google.com/store/books/details?id=WbGjEAAAQBAJ"
+      },
+      "saleInfo": {
+        "country": "BR",
+        "saleability": "FOR_SALE",
+        "isEbook": true,
+        "listPrice": {
+          "amount": 49.9,
+          "currencyCode": "BRL"
+        },
+        "retailPrice": {
+          "amount": 49.9,
+          "currencyCode": "BRL"
+        },
+        "buyLink": "https://play.google.com/store/books/details?id=WbGjEAAAQBAJ&rdid=book-WbGjEAAAQBAJ&rdot=1&source=gbs_api",
+        "offers": [
+          {
+            "finskyOfferType": 1,
+            "listPrice": {
+              "amountInMicros": 49900000,
+              "currencyCode": "BRL"
+            },
+            "retailPrice": {
+              "amountInMicros": 49900000,
+              "currencyCode": "BRL"
+            },
+            "giftable": true
+          }
+        ]
+      },
+      "accessInfo": {
+        "country": "BR",
+        "viewability": "PARTIAL",
+        "embeddable": true,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": true,
+          "acsTokenLink": "http://books.google.com.br/books/download/O_processo_Grandes_obras_de_Franz_Kafka-sample-epub.acsm?id=WbGjEAAAQBAJ&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+        },
+        "pdf": {
+          "isAvailable": true,
+          "acsTokenLink": "http://books.google.com.br/books/download/O_processo_Grandes_obras_de_Franz_Kafka-sample-pdf.acsm?id=WbGjEAAAQBAJ&format=pdf&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=WbGjEAAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+        "accessViewStatus": "SAMPLE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "O processo é um dos mais populares romances do escritor tcheco Franz Kafka."
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "D9oKEQAAQBAJ",
+      "etag": "rNuu/nMMytE",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/D9oKEQAAQBAJ",
+      "volumeInfo": {
+        "title": "O processo (Edição especial)",
+        "authors": [
+          "Franz Kafka"
+        ],
+        "publisher": "Companhia das Letras",
+        "publishedDate": "2024-08-27",
+        "description": "No centenário da morte de Kafka, O processo ganha edição especial com a consagrada tradução de Modesto Carone, organização do professor Renato Faria, textos inéditos de Jacques Derrida e Rolf-Peter Janz e desenhos do autor. Em agosto de 1914, logo após a Europa entrar em guerra, Franz Kafka escreveu dois capítulos de O processo, os primeiros de uma composição errante, que usava diferentes suportes e abria mão da linearidade. O fragmento de romance foi abandonado definitivamente em janeiro de 1915, e sua publicação ocorreu depois da morte do autor, em 1924. O livro é resultado do trabalho de edição póstumo de Max Brod, amigo e testamentário da produção literária de Kafka, que ordenou os manuscritos e impôs uma linha narrativa à absurda história de Josef K., um homem que é preso e levado a julgamento sem jamais saber de que está sendo acusado. Esta, porém, não é a única possibilidade de leitura da obra inacabada. De acordo com o organizador desta edição, Renato Faria, há caminhos para se \"imaginar e testar outras possibilidades de reconstrução e configuração de um dos maiores romances do século XX\". No ano do centenário da morte de Kafka, a Companhia das Letras traz a renomada tradução de Modesto Carone em edição especial, com desenhos do próprio autor e fortuna crítica contendo textos inéditos do filósofo francês Jacques Derrida e do germanista Rolf-Peter Janz, que atestam a modernidade e o poder da prosa kafkiana, ainda hoje capaz de nos causar assombro.",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_13",
+            "identifier": "9788535938692"
+          },
+          {
+            "type": "ISBN_10",
+            "identifier": "8535938699"
+          }
+        ],
+        "readingModes": {
+          "text": true,
+          "image": false
+        },
+        "pageCount": 459,
+        "printType": "BOOK",
+        "categories": [
+          "Fiction"
+        ],
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "1.2.2.0.preview.2",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=D9oKEQAAQBAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=D9oKEQAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+        },
+        "language": "pt-BR",
+        "previewLink": "http://books.google.com.br/books?id=D9oKEQAAQBAJ&dq=o+processo+kafka&hl=&as_pt=BOOKS&cd=4&source=gbs_api",
+        "infoLink": "https://play.google.com/store/books/details?id=D9oKEQAAQBAJ&source=gbs_api",
+        "canonicalVolumeLink": "https://play.google.com/store/books/details?id=D9oKEQAAQBAJ"
+      },
+      "saleInfo": {
+        "country": "BR",
+        "saleability": "FOR_SALE",
+        "isEbook": true,
+        "listPrice": {
+          "amount": 24.95,
+          "currencyCode": "BRL"
+        },
+        "retailPrice": {
+          "amount": 24.95,
+          "currencyCode": "BRL"
+        },
+        "buyLink": "https://play.google.com/store/books/details?id=D9oKEQAAQBAJ&rdid=book-D9oKEQAAQBAJ&rdot=1&source=gbs_api",
+        "offers": [
+          {
+            "finskyOfferType": 1,
+            "listPrice": {
+              "amountInMicros": 24950000,
+              "currencyCode": "BRL"
+            },
+            "retailPrice": {
+              "amountInMicros": 24950000,
+              "currencyCode": "BRL"
+            },
+            "giftable": true
+          }
+        ]
+      },
+      "accessInfo": {
+        "country": "BR",
+        "viewability": "NO_PAGES",
+        "embeddable": false,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": true
+        },
+        "pdf": {
+          "isAvailable": false
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=D9oKEQAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+        "accessViewStatus": "NONE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "Em agosto de 1914, logo após a Europa entrar em guerra, Franz Kafka escreveu dois capítulos de O processo, os primeiros de uma composição errante, que usava diferentes suportes e abria mão da linearidade."
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "UbGjEAAAQBAJ",
+      "etag": "hdxmIWVOpbA",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/UbGjEAAAQBAJ",
+      "volumeInfo": {
+        "title": "Box - Grandes obras de Franz Kafka",
+        "subtitle": "A metamorfose, O processo e O castelo",
+        "authors": [
+          "Franz Kafka"
+        ],
+        "publisher": "Nova Fronteira",
+        "publishedDate": "2023-01-09",
+        "description": "Franz Kafka foi um dos maiores nomes da literatura mundial do século XX. O escritor tcheco de língua alemã se notabilizou pela escrita poderosa e visceral, carregada de angústia existencial e com personagens envolvidos em situações labirínticas. Este box reúne três dos mais importantes livros de sua aclamada carreira, traduzidos diretamente do alemão. \"A metamorfose\" trata do episódio em que o caixeiro-viajante Gregor Samsa acorda transformado em um parasita e se vê obrigado a encontrar uma solução para manter seu emprego e posição social, apesar da aparência abjeta. \"O processo\" apresenta Josef K., um homem comum que, aparentemente, nunca cometeu nenhum delito, mas recebe a notícia de que está sendo processado, sem saber por quem ou por qual motivo. \"O castelo\" nos leva a um vilarejo onde a presença do agrimensor K. foi requisitada. No entanto, ao chegar lá, ninguém parece reconhecê-lo e sua entrada no castelo é vedada. Três obras-primas, que, de sua publicação até os dias de hoje, se mantêm atemporais, envolventes e arrebatadoras.",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_13",
+            "identifier": "9786556406213"
+          },
+          {
+            "type": "ISBN_10",
+            "identifier": "655640621X"
+          }
+        ],
+        "readingModes": {
+          "text": true,
+          "image": true
+        },
+        "pageCount": 740,
+        "printType": "BOOK",
+        "categories": [
+          "Fiction"
+        ],
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "1.6.6.0.preview.3",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=UbGjEAAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=UbGjEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+        },
+        "language": "pt-BR",
+        "previewLink": "http://books.google.com.br/books?id=UbGjEAAAQBAJ&printsec=frontcover&dq=o+processo+kafka&hl=&as_pt=BOOKS&cd=5&source=gbs_api",
+        "infoLink": "https://play.google.com/store/books/details?id=UbGjEAAAQBAJ&source=gbs_api",
+        "canonicalVolumeLink": "https://play.google.com/store/books/details?id=UbGjEAAAQBAJ"
+      },
+      "saleInfo": {
+        "country": "BR",
+        "saleability": "FOR_SALE",
+        "isEbook": true,
+        "listPrice": {
+          "amount": 99.99,
+          "currencyCode": "BRL"
+        },
+        "retailPrice": {
+          "amount": 99.99,
+          "currencyCode": "BRL"
+        },
+        "buyLink": "https://play.google.com/store/books/details?id=UbGjEAAAQBAJ&rdid=book-UbGjEAAAQBAJ&rdot=1&source=gbs_api",
+        "offers": [
+          {
+            "finskyOfferType": 1,
+            "listPrice": {
+              "amountInMicros": 99990000,
+              "currencyCode": "BRL"
+            },
+            "retailPrice": {
+              "amountInMicros": 99990000,
+              "currencyCode": "BRL"
+            },
+            "giftable": true
+          }
+        ]
+      },
+      "accessInfo": {
+        "country": "BR",
+        "viewability": "PARTIAL",
+        "embeddable": true,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": true,
+          "acsTokenLink": "http://books.google.com.br/books/download/Box_Grandes_obras_de_Franz_Kafka-sample-epub.acsm?id=UbGjEAAAQBAJ&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+        },
+        "pdf": {
+          "isAvailable": true,
+          "acsTokenLink": "http://books.google.com.br/books/download/Box_Grandes_obras_de_Franz_Kafka-sample-pdf.acsm?id=UbGjEAAAQBAJ&format=pdf&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=UbGjEAAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+        "accessViewStatus": "SAMPLE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "Franz Kafka foi um dos maiores nomes da literatura mundial do século XX. O escritor tcheco de língua alemã se notabilizou pela escrita poderosa e visceral, carregada de angústia existencial e com personagens envolvidos em situações ..."
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "K4kazAEACAAJ",
+      "etag": "a6hWu0lHIXk",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/K4kazAEACAAJ",
+      "volumeInfo": {
+        "title": "O processo",
+        "subtitle": "romance : ( conforme a versão manuscrita do texto)",
+        "authors": [
+          "Franz Kafka"
+        ],
+        "publishedDate": "2015",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_10",
+            "identifier": "9722525077"
+          },
+          {
+            "type": "ISBN_13",
+            "identifier": "9789722525077"
+          }
+        ],
+        "readingModes": {
+          "text": false,
+          "image": false
+        },
+        "pageCount": 310,
+        "printType": "BOOK",
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "preview-1.0.0",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "language": "en",
+        "previewLink": "http://books.google.com.br/books?id=K4kazAEACAAJ&dq=o+processo+kafka&hl=&as_pt=BOOKS&cd=6&source=gbs_api",
+        "infoLink": "http://books.google.com.br/books?id=K4kazAEACAAJ&dq=o+processo+kafka&hl=&as_pt=BOOKS&source=gbs_api",
+        "canonicalVolumeLink": "https://books.google.com/books/about/O_processo.html?hl=&id=K4kazAEACAAJ"
+      },
+      "saleInfo": {
+        "country": "BR",
+        "saleability": "NOT_FOR_SALE",
+        "isEbook": false
+      },
+      "accessInfo": {
+        "country": "BR",
+        "viewability": "NO_PAGES",
+        "embeddable": false,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": false
+        },
+        "pdf": {
+          "isAvailable": false
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=K4kazAEACAAJ&hl=&as_pt=BOOKS&source=gbs_api",
+        "accessViewStatus": "NONE",
+        "quoteSharingAllowed": false
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "1DpiCAAAQBAJ",
+      "etag": "tOk2zcoansk",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/1DpiCAAAQBAJ",
+      "volumeInfo": {
+        "title": "Nudez",
+        "authors": [
+          "Giorgio Agamben",
+          "Davi Pessoa"
+        ],
+        "publisher": "Autêntica",
+        "publishedDate": "2014-11-20",
+        "description": "Giorgio Agamben, nos ensaios que compõem Nudez, desdobra um procedimento muito caro a Furio Jesi: o problema da festa, ou melhor, do tempo festivo. O paradigma com que Jesi confronta tal problema é justamente o da máquina mitológica. Agamben sabe que o que é necessário não é destruir a máquina em si, mas a situação que torna as máquinas produtivas; e o risco que se corre nessa possibilidade de destruição é exclusivamente político, pois a \"máquina negativa\", escreve Agamben, \"produz o nada a partir do nada\", e essa é a política em que vivemos. E, para destruir tal situação, é necessário recuperar a festa do pensamento através da inoperosidade. Porém, a inoperosidade como procedimento não significa, por exemplo, resistência de um corpo ao movimento ou ao repouso. E, nesse sentido, compreendemos melhor a presença de uma reflexão provocada por uma performance da artista Vanessa Beecroft, ou a presença de Kleist, com sua marionete que articula uma zona de não conhecimento em seu corpo: sim, tal articulação requer a presença de um não saber, de algo que nos escapa, como uma dança (aqui, dança entendida como \"libertação do corpo de seus movimentos utilitários\"). A inoperosidade, portanto, faz as partes inutilizáveis do corpo glorioso dançarem. Em última análise, a potência, na inoperosidade, não está desativada: a inoperosidade coincide, portanto, com a própria festividade, com o \"fazer a festa\", ou seja, com o consumir, desativar e tornar inoperosos os gestos, as ações e as obras humanas. Davi Pessoa",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_13",
+            "identifier": "9788582173886"
+          },
+          {
+            "type": "ISBN_10",
+            "identifier": "8582173881"
+          }
+        ],
+        "readingModes": {
+          "text": true,
+          "image": true
+        },
+        "pageCount": 139,
+        "printType": "BOOK",
+        "categories": [
+          "Education"
+        ],
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": true,
+        "contentVersion": "1.6.8.0.preview.3",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=1DpiCAAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=1DpiCAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+        },
+        "language": "pt-BR",
+        "previewLink": "http://books.google.com.br/books?id=1DpiCAAAQBAJ&pg=PT42&dq=o+processo+kafka&hl=&as_pt=BOOKS&cd=7&source=gbs_api",
+        "infoLink": "https://play.google.com/store/books/details?id=1DpiCAAAQBAJ&source=gbs_api",
+        "canonicalVolumeLink": "https://play.google.com/store/books/details?id=1DpiCAAAQBAJ"
+      },
+      "saleInfo": {
+        "country": "BR",
+        "saleability": "FOR_SALE",
+        "isEbook": true,
+        "listPrice": {
+          "amount": 51.9,
+          "currencyCode": "BRL"
+        },
+        "retailPrice": {
+          "amount": 51.9,
+          "currencyCode": "BRL"
+        },
+        "buyLink": "https://play.google.com/store/books/details?id=1DpiCAAAQBAJ&rdid=book-1DpiCAAAQBAJ&rdot=1&source=gbs_api",
+        "offers": [
+          {
+            "finskyOfferType": 1,
+            "listPrice": {
+              "amountInMicros": 51900000,
+              "currencyCode": "BRL"
+            },
+            "retailPrice": {
+              "amountInMicros": 51900000,
+              "currencyCode": "BRL"
+            },
+            "giftable": true
+          }
+        ]
+      },
+      "accessInfo": {
+        "country": "BR",
+        "viewability": "PARTIAL",
+        "embeddable": true,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": true,
+          "acsTokenLink": "http://books.google.com.br/books/download/Nudez-sample-epub.acsm?id=1DpiCAAAQBAJ&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+        },
+        "pdf": {
+          "isAvailable": true,
+          "acsTokenLink": "http://books.google.com.br/books/download/Nudez-sample-pdf.acsm?id=1DpiCAAAQBAJ&format=pdf&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=1DpiCAAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+        "accessViewStatus": "SAMPLE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "... \u003cb\u003eKAFKA\u003c/b\u003e, Franz. \u003cb\u003eO processo\u003c/b\u003e. Tradução e posfácio de Modesto Carone. São Paulo: Companhia das Letras, 2005, p. 7. (N.T.) 12 \u003cb\u003eKAFKA\u003c/b\u003e. \u003cb\u003eO processo\u003c/b\u003e, p. 17. (N.T.) 13 \u003cb\u003eKAFKA\u003c/b\u003e. \u003cb\u003eO processo\u003c/b\u003e, p. 222. (N.T.) 14 Christian Matthias Theodor Mommsen (1817&nbsp;..."
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "X-FdBAAAQBAJ",
+      "etag": "5yfW/s2dMK0",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/X-FdBAAAQBAJ",
+      "volumeInfo": {
+        "title": "Il processo",
+        "authors": [
+          "Franz Kafka"
+        ],
+        "publisher": "Giulio Einaudi Editore",
+        "publishedDate": "2014-09-02",
+        "description": "«Subito bussarono alla porta, ed entrò un uomo che in quella casa K. non aveva mai visto prima...».",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_13",
+            "identifier": "9788858415566"
+          },
+          {
+            "type": "ISBN_10",
+            "identifier": "8858415566"
+          }
+        ],
+        "readingModes": {
+          "text": true,
+          "image": false
+        },
+        "pageCount": 215,
+        "printType": "BOOK",
+        "categories": [
+          "Fiction"
+        ],
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": true,
+        "contentVersion": "1.25.25.0.preview.2",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=X-FdBAAAQBAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=X-FdBAAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+        },
+        "language": "it",
+        "previewLink": "http://books.google.com.br/books?id=X-FdBAAAQBAJ&dq=o+processo+kafka&hl=&as_pt=BOOKS&cd=8&source=gbs_api",
+        "infoLink": "http://books.google.com.br/books?id=X-FdBAAAQBAJ&dq=o+processo+kafka&hl=&as_pt=BOOKS&source=gbs_api",
+        "canonicalVolumeLink": "https://books.google.com/books/about/Il_processo.html?hl=&id=X-FdBAAAQBAJ"
+      },
+      "saleInfo": {
+        "country": "BR",
+        "saleability": "NOT_FOR_SALE",
+        "isEbook": false
+      },
+      "accessInfo": {
+        "country": "BR",
+        "viewability": "NO_PAGES",
+        "embeddable": false,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": true
+        },
+        "pdf": {
+          "isAvailable": true
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=X-FdBAAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+        "accessViewStatus": "NONE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "«Subito bussarono alla porta, ed entrò un uomo che in quella casa K. non aveva mai visto prima...»."
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "1weB0gEACAAJ",
+      "etag": "qRAicRaHjYw",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/1weB0gEACAAJ",
+      "volumeInfo": {
+        "title": "O absurdo em O Processo, de Franz Kafka",
+        "authors": [
+          "Hamza Kouider"
+        ],
+        "publisher": "Edicoes Nosso Conhecimento",
+        "publishedDate": "2026-08-27",
+        "description": "Na segunda metade de 1914, enquanto a Europa ardia sob o fogo da primeira guerra total da sua história, Franz Kafka escreveu em Praga o seu segundo romance, *O Processo*: uma obra que abandonou num momento de profundo desânimo no início de 1915. No entanto, uma vez publicado em Berlim em 1925, um ano após a sua morte, começou a torná-lo um dos escritores mais conhecidos e influentes do século XX. No entanto, como se sabe, Kafka não queria que a sua obra sobrevivesse a ele, com exceção de alguns textos publicados em vida: contos, narrativas ou ainda capítulos e breves trechos dos seus romances. Estes últimos, incluindo *O Processo*, deviam ser queimados, escreveu ele ao seu amigo Max Brod enquanto se encontrava no leito de morte. Se, portanto, essa vontade tivesse sido cumprida, teríamos de O Processo apenas duas páginas, nomeadamente as relativas à lenda que o capelão conta a Josef K. no penúltimo capítulo. De facto, ele separou-as do seu manuscrito para as publicar separadamente, primeiro em Praga e depois em Leipzig, em 1915.",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_10",
+            "identifier": "6630370414"
+          },
+          {
+            "type": "ISBN_13",
+            "identifier": "9786630370416"
+          }
+        ],
+        "readingModes": {
+          "text": false,
+          "image": false
+        },
+        "pageCount": 0,
+        "printType": "BOOK",
+        "categories": [
+          "Art"
+        ],
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "preview-1.0.0",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=1weB0gEACAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=1weB0gEACAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+        },
+        "language": "pt-BR",
+        "previewLink": "http://books.google.com.br/books?id=1weB0gEACAAJ&dq=o+processo+kafka&hl=&as_pt=BOOKS&cd=9&source=gbs_api",
+        "infoLink": "http://books.google.com.br/books?id=1weB0gEACAAJ&dq=o+processo+kafka&hl=&as_pt=BOOKS&source=gbs_api",
+        "canonicalVolumeLink": "https://books.google.com/books/about/O_absurdo_em_O_Processo_de_Franz_Kafka.html?hl=&id=1weB0gEACAAJ"
+      },
+      "saleInfo": {
+        "country": "BR",
+        "saleability": "NOT_FOR_SALE",
+        "isEbook": false
+      },
+      "accessInfo": {
+        "country": "BR",
+        "viewability": "NO_PAGES",
+        "embeddable": false,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": false
+        },
+        "pdf": {
+          "isAvailable": false
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=1weB0gEACAAJ&hl=&as_pt=BOOKS&source=gbs_api",
+        "accessViewStatus": "NONE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "Na segunda metade de 1914, enquanto a Europa ardia sob o fogo da primeira guerra total da sua história, Franz Kafka escreveu em Praga o seu segundo romance, *O Processo*: uma obra que abandonou num momento de profundo desânimo no início ..."
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "1uOVEQAAQBAJ",
+      "etag": "ikCuYYLzltI",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/1uOVEQAAQBAJ",
+      "volumeInfo": {
+        "title": "Mentes Brilhantes Da Literatura Universal Ed. 01",
+        "subtitle": "O Pensamento, Obra, História e Estilo de 50 Grandes Mentes",
+        "authors": [
+          "Discovery Publicações"
+        ],
+        "publisher": "Discovery Publicações",
+        "description": "Mentes Brilhantes da Literatura Universal é um apanhado de 50 escritores icônicos, de variadas épocas e rincões do mundo, que contribuíram para a criação um patrimônio de cultura representado pelos livros que legaram à humanidade.",
+        "readingModes": {
+          "text": false,
+          "image": true
+        },
+        "pageCount": 82,
+        "printType": "BOOK",
+        "categories": [
+          "History"
+        ],
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "0.0.1.0.preview.1",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=1uOVEQAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=1uOVEQAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+        },
+        "language": "pt-BR",
+        "previewLink": "http://books.google.com.br/books?id=1uOVEQAAQBAJ&pg=PA46&dq=o+processo+kafka&hl=&as_pt=BOOKS&cd=10&source=gbs_api",
+        "infoLink": "https://play.google.com/store/books/details?id=1uOVEQAAQBAJ&source=gbs_api",
+        "canonicalVolumeLink": "https://play.google.com/store/books/details?id=1uOVEQAAQBAJ"
+      },
+      "saleInfo": {
+        "country": "BR",
+        "saleability": "FOR_SALE",
+        "isEbook": true,
+        "listPrice": {
+          "amount": 24.9,
+          "currencyCode": "BRL"
+        },
+        "retailPrice": {
+          "amount": 24.9,
+          "currencyCode": "BRL"
+        },
+        "buyLink": "https://play.google.com/store/books/details?id=1uOVEQAAQBAJ&rdid=book-1uOVEQAAQBAJ&rdot=1&source=gbs_api",
+        "offers": [
+          {
+            "finskyOfferType": 1,
+            "listPrice": {
+              "amountInMicros": 24900000,
+              "currencyCode": "BRL"
+            },
+            "retailPrice": {
+              "amountInMicros": 24900000,
+              "currencyCode": "BRL"
+            },
+            "giftable": true
+          }
+        ]
+      },
+      "accessInfo": {
+        "country": "BR",
+        "viewability": "PARTIAL",
+        "embeddable": true,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": false
+        },
+        "pdf": {
+          "isAvailable": true,
+          "acsTokenLink": "http://books.google.com.br/books/download/Mentes_Brilhantes_Da_Literatura_Universa-sample-pdf.acsm?id=1uOVEQAAQBAJ&format=pdf&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=1uOVEQAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+        "accessViewStatus": "SAMPLE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "... \u003cb\u003eO Processo\u003c/b\u003e . ) ranz \u003cb\u003eKafka\u003c/b\u003e nasceu em Praga em 03 de julho de 1883. Nascido em uma família judia , Franz era o mais velho dos seis filhos de Hermann e Julie \u003cb\u003eKafka\u003c/b\u003e . Considerado um grande escritor tanto pela crítica quanto por seus&nbsp;..."
+      }
+    }
+  ]
+}

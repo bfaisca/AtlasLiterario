@@ -1,0 +1,23 @@
+/*
+ * Fontes opcionais. O app funciona com as pilhas de fallback de tokens.css.
+ * Para usar Fraunces (títulos) e Inter (texto) auto-hospedadas — ambas sob SIL OFL —,
+ * coloque os arquivos .woff2 em public/fonts/ e descomente os blocos abaixo.
+ * Não usamos CDN de fontes para não depender de terceiros nem vazar dados de navegação.
+ */
+
+/*
+@font-face {
+  font-family: 'Fraunces';
+  src: url('/fonts/Fraunces-VariableFont.woff2') format('woff2');
+  font-weight: 300 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Inter';
+  src: url('/fonts/Inter-VariableFont.woff2') format('woff2');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+}
+*/

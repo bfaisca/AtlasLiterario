@@ -1,0 +1,111 @@
+{
+  "kind": "books#volume",
+  "id": "xSv3DwAAQBAJ",
+  "etag": "d3vieTt8o5Q",
+  "selfLink": "https://www.googleapis.com/books/v1/volumes/xSv3DwAAQBAJ",
+  "volumeInfo": {
+    "title": "O processo",
+    "authors": [
+      "Franz Kafka"
+    ],
+    "publisher": "Via Leitura",
+    "publishedDate": "2020-08-25",
+    "description": "\u003cp\u003eUm dos principais romances de Franz Kafka, \u003cb\u003e O processo \u003c/b\u003e foi publicado pela primeira vez em 1925, ano seguinte à morte do autor.\u003c/p\u003e \u003cp\u003eA obra foi editada por Max Brod, que foi guardião dos manuscritos do escritor tcheco por intermédio de seu testamento.\u003c/p\u003e \u003cp\u003eNeste livro, Kafka lança o leitor mais uma vez em uma \u003cb\u003erealidade absurda\u003c/b\u003e, na qual um bancário se vê envolvido em um processo judicial inexplicável.\u003c/p\u003e \u003cp\u003eEm seu aniversário de 30 anos, Josef K. é surpreendido por dois guardas logo que acorda.\u003c/p\u003e \u003cp\u003eApós os homens tomarem o café que deveria ser dele, comunicam-no que está preso, embora não lhe deem motivo algum para isso.\u003c/p\u003e \u003cp\u003eSem saber quem o denunciou nem o motivo de sua prisão, ele luta contra autoridades que o ameaçam e o chantageiam, embora nunca apresentem o embasamento legal da investigação.\u003c/p\u003e \u003cp\u003e \u003cb\u003e O processo \u003c/b\u003e, ao lado de \u003cb\u003e A metamorfose \u003c/b\u003e, é uma demonstração inequívoca da potência literária de Franz Kafka.\u003c/p\u003e \u003cp\u003eUm romance que não soa datado mesmo um século depois de sua publicação original.\u003c/p\u003e",
+    "industryIdentifiers": [
+      {
+        "type": "ISBN_10",
+        "identifier": "8567097851"
+      },
+      {
+        "type": "ISBN_13",
+        "identifier": "9788567097855"
+      }
+    ],
+    "readingModes": {
+      "text": true,
+      "image": false
+    },
+    "pageCount": 192,
+    "printedPageCount": 233,
+    "dimensions": {
+      "height": "18.00 cm"
+    },
+    "printType": "BOOK",
+    "categories": [
+      "Fiction / Absurdist",
+      "Fiction / Classics"
+    ],
+    "maturityRating": "NOT_MATURE",
+    "allowAnonLogging": false,
+    "contentVersion": "1.3.3.0.preview.2",
+    "panelizationSummary": {
+      "containsEpubBubbles": false,
+      "containsImageBubbles": false
+    },
+    "imageLinks": {
+      "smallThumbnail": "http://books.google.com/books/publisher/content?id=xSv3DwAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&imgtk=AFLRE72aAmQSCx3ZN_1pQhr_4en2EDE3AaFZPvY2Fup5Z4XHFs-BP1_EoexXdpfl5Egavs9gRq1HOB4_EvdBomkRUgOUTOwHZwMSab-Y3aXyMroOgsiMu8ayIw-R_SZFGNpsjw9rkU4k&source=gbs_api",
+      "thumbnail": "http://books.google.com/books/publisher/content?id=xSv3DwAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&imgtk=AFLRE71uNnvSqnQKYXERemKcxFmhgLkzdlGeWQLUyijL-oGNFynNrzHhZB4dQl-HuOvKqT0dQZdJ625GniZkBzm17LUQwqP6E19xp0k5VpqFwYdEvd9Ym5Uepr9y-Xd0dBQUggsjgFPT&source=gbs_api",
+      "small": "http://books.google.com/books/publisher/content?id=xSv3DwAAQBAJ&printsec=frontcover&img=1&zoom=2&edge=curl&imgtk=AFLRE73dJyQ3N6pTA351fsOU3WpO__hSSl11pIm5yj3G3chnhl59lqQl58_fBzL4FI2V0poOeJ5y-Q8enN8eCvJnVzWjdbH7Ub992RZEB7T4GLav0rJHMlhE34V4ilL92f8ge48fSfnc&source=gbs_api",
+      "medium": "http://books.google.com/books/publisher/content?id=xSv3DwAAQBAJ&printsec=frontcover&img=1&zoom=3&edge=curl&imgtk=AFLRE71yCeIcQhfvqj_6HTjE8NRUCmTJLkSXJjI8CMJvlpecLE66rDROVL07-JVPdsKxsXU-9BYBaUClJ7OqiXmQG2i7hPRBbrLBtNqEtL_7Zt2PTeKAhurx5jYRxU4uu2dOo6Cz8uDS&source=gbs_api",
+      "large": "http://books.google.com/books/publisher/content?id=xSv3DwAAQBAJ&printsec=frontcover&img=1&zoom=4&edge=curl&imgtk=AFLRE72za5HeTtk4WA4m-bXLYpW8vxX_e00IwHAwQ0EVar50B_4HFtT0rpU1WvHaLTB4zMyErX_ZQRz9BUTsHgGxCaGN1xzCqGQqq-WMSotQkA2Gj0MboUsDdF1Os4RDCsQkSwZkAuEY&source=gbs_api",
+      "extraLarge": "http://books.google.com/books/publisher/content?id=xSv3DwAAQBAJ&printsec=frontcover&img=1&zoom=6&edge=curl&imgtk=AFLRE72kVs8GgUfJ25WnrYMZAEYe3Ndhzr6eJp64d7NXdEzXbqprrmgKGPPQDPRgBPLMdcE7zvG95tqvgEeVh5JXbUUPR_5kO1aJhi244pvrGZVfp7DGlYOnmpf92dkJgMRoxLQGxotO&source=gbs_api"
+    },
+    "language": "pt-BR",
+    "previewLink": "http://books.google.com.br/books?id=xSv3DwAAQBAJ&hl=&source=gbs_api",
+    "infoLink": "https://play.google.com/store/books/details?id=xSv3DwAAQBAJ&source=gbs_api",
+    "canonicalVolumeLink": "https://play.google.com/store/books/details?id=xSv3DwAAQBAJ"
+  },
+  "layerInfo": {
+    "layers": [
+      {
+        "layerId": "geo",
+        "volumeAnnotationsVersion": "4"
+      }
+    ]
+  },
+  "saleInfo": {
+    "country": "BR",
+    "saleability": "FOR_SALE",
+    "isEbook": true,
+    "listPrice": {
+      "amount": 19.9,
+      "currencyCode": "BRL"
+    },
+    "retailPrice": {
+      "amount": 19.9,
+      "currencyCode": "BRL"
+    },
+    "buyLink": "https://play.google.com/store/books/details?id=xSv3DwAAQBAJ&rdid=book-xSv3DwAAQBAJ&rdot=1&source=gbs_api",
+    "offers": [
+      {
+        "finskyOfferType": 1,
+        "listPrice": {
+          "amountInMicros": 19900000,
+          "currencyCode": "BRL"
+        },
+        "retailPrice": {
+          "amountInMicros": 19900000,
+          "currencyCode": "BRL"
+        },
+        "giftable": true
+      }
+    ]
+  },
+  "accessInfo": {
+    "country": "BR",
+    "viewability": "PARTIAL",
+    "embeddable": true,
+    "publicDomain": false,
+    "textToSpeechPermission": "ALLOWED",
+    "epub": {
+      "isAvailable": true,
+      "acsTokenLink": "http://books.google.com.br/books/download/O_processo-sample-epub.acsm?id=xSv3DwAAQBAJ&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+    },
+    "pdf": {
+      "isAvailable": false
+    },
+    "webReaderLink": "http://play.google.com/books/reader?id=xSv3DwAAQBAJ&hl=&source=gbs_api",
+    "accessViewStatus": "SAMPLE",
+    "quoteSharingAllowed": false
+  }
+}

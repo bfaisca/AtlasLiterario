@@ -1,0 +1,311 @@
+{
+ "numFound": 85,
+ "start": 0,
+ "numFoundExact": true,
+ "num_found": 85,
+ "documentation_url": "https://openlibrary.org/dev/docs/api/search",
+ "q": "dom casmurro",
+ "offset": null,
+ "docs": [
+  {
+   "author_key": [
+    "OL93286A"
+   ],
+   "author_name": [
+    "Machado de Assis"
+   ],
+   "cover_i": 647501,
+   "first_publish_year": 1899,
+   "isbn": [
+    "1549784641",
+    "9781986265218",
+    "9781907970504",
+    "9788575201176",
+    "9788437609836",
+    "1796747521",
+    "9786586490084",
+    "9781521498156",
+    "9781678165260",
+    "1716221331",
+    "9781503037403",
+    "9781511733960",
+    "9798616937148",
+    "9788594318602",
+    "9781716221330",
+    "9789721044999",
+    "0557632161",
+    "6586490081",
+    "0099801108",
+    "9780557632169",
+    "0850515033",
+    "9781324095149",
+    "1099979943",
+    "8526222287",
+    "1696469074",
+    "9780099801108",
+    "9781796747522",
+    "9789722024907",
+    "9781515166641",
+    "9798830903882",
+    "9781283848312",
+    "1907970509",
+    "9780374523039",
+    "8582850352",
+    "9789898698124",
+    "9781521761007",
+    "1511733969",
+    "9781549784644",
+    "1907970517",
+    "0374523037",
+    "1324090707",
+    "9798458453264",
+    "9788582850350",
+    "9798654846945",
+    "9788538003656",
+    "9788543806631",
+    "9780140446128",
+    "9798513409199",
+    "9798678497598",
+    "9722024906",
+    "9780720618754",
+    "9780520007901",
+    "9788508040810",
+    "9780380496686",
+    "0140448365",
+    "9781324090717",
+    "9798683410308",
+    "0199938113",
+    "1500574376",
+    "1678165263",
+    "9780720608458",
+    "9781907970511",
+    "1515166643",
+    "9780199938117",
+    "9788500507007",
+    "8525406791",
+    "1490517065",
+    "1283848317",
+    "0720619122",
+    "9788508145607",
+    "1452892369",
+    "9781452892368",
+    "9781696469074",
+    "9798830529273",
+    "1521498156",
+    "0720608457",
+    "1973389541",
+    "9780720619126",
+    "9782253932680",
+    "9798630942951",
+    "9788525406798",
+    "8437609836",
+    "225393268X",
+    "9781520262376",
+    "8538003658",
+    "9788526222281",
+    "9782864244127",
+    "1986265218",
+    "0720618754",
+    "9798673639184",
+    "8575201174",
+    "9898698128",
+    "1324095148",
+    "0380496682",
+    "1521761000",
+    "1503037401",
+    "1723711411",
+    "9781324090700",
+    "152026237X",
+    "9781723711411",
+    "0195103084",
+    "0195103092",
+    "0140446125",
+    "1466303352",
+    "9780140448368",
+    "9798660012808",
+    "859431860X",
+    "9780195103083",
+    "9781973389545",
+    "8508040814",
+    "9781500574376",
+    "8508145608",
+    "9798630407252",
+    "9782864240198",
+    "9781490517063",
+    "9781099979941",
+    "1720007063",
+    "0520007905",
+    "286424019X",
+    "9721044997",
+    "2864244128",
+    "9780195103090",
+    "9781720007067",
+    "9781466303355",
+    "8543806631",
+    "8500507004",
+    "1324090715",
+    "9780850515039"
+   ],
+   "key": "/works/OL1003040W",
+   "language": [
+    "ita",
+    "spa",
+    "fre",
+    "por",
+    "eng"
+   ],
+   "publisher": [
+    "Gráfica Record Editôra",
+    "W. M. Jackson inc.",
+    "Ática",
+    "Dom Quixote",
+    "Editôra Cultrix",
+    "Publicacoes Europa-America",
+    "Scipione",
+    "BTFDREEM",
+    "Penguin Books",
+    "Institut international de coopération intellectuelle",
+    "Métailié",
+    "Penguin-Companhia",
+    "W.H.Allen",
+    "Liveright Publishing Corporation",
+    "LGF",
+    "Noonday Press",
+    "L&PM",
+    "Editorial Nova",
+    "Oxford University Press",
+    "1966 [c1953]",
+    "University of california press berkeley and los angeles",
+    "CIRANDA CULTURAL",
+    "w.h. allen",
+    "Lulu.com",
+    "Oxford University Press, Incorporated",
+    "A. Michel",
+    "W. M. Jackson",
+    "Avon Books (Mm)",
+    "Ciranda Cultural Editora e Distribuidora Ltda",
+    "Livraria Garnier",
+    "W.M. Jackson",
+    "CreateSpace Independent Publishing Platform",
+    "Espasa-Calpe",
+    "Martins Fontes",
+    "Penguin Random House",
+    "Penguin Books Ltd",
+    "Instituto Nacional do Livro",
+    "Independently published",
+    "PENGUIN BOOKS - GRUPO CIA DAS LETRAS",
+    "Projecto Adamastor",
+    "Luso-Brazilian Books",
+    "Principis",
+    "Civilização Brasileira",
+    "Edições Melhoramentos",
+    "Penguin",
+    "Ediciones Cátedra",
+    "Oxford University Press, USA",
+    "Ática",
+    "Antofágica",
+    "L&PM EDITORES",
+    "Owen Limited, Peter",
+    "Peter Owen Publishers",
+    "Editora Atica",
+    "Garnier",
+    "ABC",
+    "H. Garnier",
+    "Lulu Press, Inc.",
+    "Independently Published",
+    "University of California Press",
+    "Ediouro",
+    "Editôra Cultrix",
+    "Daunt Books"
+   ],
+   "title": "Dom Casmurro"
+  },
+  {
+   "author_key": [
+    "OL12495093A"
+   ],
+   "author_name": [
+    "Joaquim Maria Machado de Assis"
+   ],
+   "first_publish_year": 2020,
+   "isbn": [
+    "9798683678777"
+   ],
+   "key": "/works/OL35798215W",
+   "language": [
+    "por"
+   ],
+   "publisher": [
+    "Independently Published"
+   ],
+   "title": "Dom Casmurro : a Novel"
+  },
+  {
+   "author_key": [
+    "OL15368627A"
+   ],
+   "author_name": [
+    "machado de assis"
+   ],
+   "first_publish_year": 1953,
+   "key": "/works/OL43184593W",
+   "language": [
+    "eng"
+   ],
+   "publisher": [
+    "the noon press inc"
+   ],
+   "title": "dom casmurro "
+  },
+  {
+   "author_key": [
+    "OL8849070A"
+   ],
+   "author_name": [
+    "Geanneti Tavares Salomon"
+   ],
+   "first_publish_year": 2021,
+   "isbn": [
+    "9781800790117",
+    "9781789979725",
+    "1800790104",
+    "1800790112",
+    "1789979722",
+    "1800790120",
+    "9781800790100",
+    "9781800790124"
+   ],
+   "key": "/works/OL25765826W",
+   "language": [
+    "eng"
+   ],
+   "publisher": [
+    "Lang Publishing, Incorporated, Peter",
+    "NBN International"
+   ],
+   "title": "Fashion and Irony in «Dom Casmurro»"
+  },
+  {
+   "author_key": [
+    "OL93692A"
+   ],
+   "author_name": [
+    "Fernando Tavares Sabino"
+   ],
+   "cover_i": 4534095,
+   "first_publish_year": 1999,
+   "isbn": [
+    "9788508071296",
+    "8508071299"
+   ],
+   "key": "/works/OL1006145W",
+   "language": [
+    "por"
+   ],
+   "publisher": [
+    "Editora Atica"
+   ],
+   "title": "Amor de Capitu"
+  }
+ ]
+}

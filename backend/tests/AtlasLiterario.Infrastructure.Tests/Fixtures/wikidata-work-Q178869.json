@@ -1,0 +1,51 @@
+{
+ "head": {
+  "vars": [
+   "kind",
+   "value",
+   "rank",
+   "iso",
+   "code"
+  ]
+ },
+ "results": {
+  "bindings": [
+   {
+    "value": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q414"
+    },
+    "rank": {
+     "type": "uri",
+     "value": "http://wikiba.se/ontology#NormalRank"
+    },
+    "kind": {
+     "type": "literal",
+     "value": "origin"
+    },
+    "iso": {
+     "type": "literal",
+     "value": "ARG"
+    }
+   },
+   {
+    "value": {
+     "type": "uri",
+     "value": "http://www.wikidata.org/entity/Q1321"
+    },
+    "rank": {
+     "type": "uri",
+     "value": "http://wikiba.se/ontology#NormalRank"
+    },
+    "kind": {
+     "type": "literal",
+     "value": "language"
+    },
+    "code": {
+     "type": "literal",
+     "value": "es"
+    }
+   }
+  ]
+ }
+}

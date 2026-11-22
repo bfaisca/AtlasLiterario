@@ -1,0 +1,712 @@
+{
+  "kind": "books#volumes",
+  "totalItems": 20,
+  "items": [
+    {
+      "kind": "books#volume",
+      "id": "MAqQDwAAQBAJ",
+      "etag": "zUV4ZD5DS1g",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/MAqQDwAAQBAJ",
+      "volumeInfo": {
+        "title": "Cem anos de solidão",
+        "authors": [
+          "Gabriel García Márquez"
+        ],
+        "publisher": "Editora Record",
+        "publishedDate": "2019-04-03",
+        "description": "O livro mais importante de Gabriel Garcia Márquez. Neste que é um dos maiores clássicos da literatura, o prestigiado autor narra a incrível e triste história dos Buendía – a estirpe de solitários para a qual não será dada \"uma segunda oportunidade sobre a terra\" e apresenta o maravilhoso universo da fictícia Macondo, onde se passa o romance. É lá que acompanhamos diversas gerações dessa família, assim como a ascensão e a queda do vilarejo. Para além dos artifícios técnicos e das influências literárias que transbordam do livro, ainda vemos em suas páginas o que por muitos é considerado uma autêntica enciclopédia do imaginário, num estilo que consagrou o colombiano como um dos maiores autores do século XX.",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_13",
+            "identifier": "9788501116550"
+          },
+          {
+            "type": "ISBN_10",
+            "identifier": "8501116556"
+          }
+        ],
+        "readingModes": {
+          "text": true,
+          "image": false
+        },
+        "pageCount": 417,
+        "printType": "BOOK",
+        "categories": [
+          "Fiction"
+        ],
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": true,
+        "contentVersion": "0.8.10.0.preview.2",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=MAqQDwAAQBAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=MAqQDwAAQBAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+        },
+        "language": "pt-BR",
+        "previewLink": "http://books.google.com.br/books?id=MAqQDwAAQBAJ&dq=intitle:cem+anos+de+solid%C3%A3o&hl=&as_pt=BOOKS&cd=1&source=gbs_api",
+        "infoLink": "https://play.google.com/store/books/details?id=MAqQDwAAQBAJ&source=gbs_api",
+        "canonicalVolumeLink": "https://play.google.com/store/books/details?id=MAqQDwAAQBAJ"
+      },
+      "saleInfo": {
+        "country": "BR",
+        "saleability": "FOR_SALE",
+        "isEbook": true,
+        "listPrice": {
+          "amount": 29.9,
+          "currencyCode": "BRL"
+        },
+        "retailPrice": {
+          "amount": 29.9,
+          "currencyCode": "BRL"
+        },
+        "buyLink": "https://play.google.com/store/books/details?id=MAqQDwAAQBAJ&rdid=book-MAqQDwAAQBAJ&rdot=1&source=gbs_api",
+        "offers": [
+          {
+            "finskyOfferType": 1,
+            "listPrice": {
+              "amountInMicros": 29900000,
+              "currencyCode": "BRL"
+            },
+            "retailPrice": {
+              "amountInMicros": 29900000,
+              "currencyCode": "BRL"
+            },
+            "giftable": true
+          }
+        ]
+      },
+      "accessInfo": {
+        "country": "BR",
+        "viewability": "NO_PAGES",
+        "embeddable": false,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": true
+        },
+        "pdf": {
+          "isAvailable": true
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=MAqQDwAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+        "accessViewStatus": "NONE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "O livro mais importante de Gabriel Garcia Márquez."
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "V-a-EAAAQBAJ",
+      "etag": "FHjV1CoiNQY",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/V-a-EAAAQBAJ",
+      "volumeInfo": {
+        "title": "Cem Anos de Solidão de Gabriel García Márquez (Análise do livro)",
+        "subtitle": "Análise completa e resumo pormenorizado do trabalho",
+        "authors": [
+          "Marie Bouhon"
+        ],
+        "publisher": "Primento Digital sprl",
+        "publishedDate": "2023-05-05",
+        "description": "O que devemos aprender com Cem Anos de Solidão, o representante do realismo mágico? Descubra tudo o que precisa de saber sobre este trabalho num relatório completo e detalhado do livro. Encontrará em particular neste livrinho : - Um resumo completo - Uma apresentação das personagens principais como José Arcadio Buendia e Ursula Iguarán - Uma análise das especificidades do trabalho: Realismo mágico, tempo cíclico e o tema da solidão Uma análise de referência para compreender rapidamente o significado da obra.",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_13",
+            "identifier": "9782808692243"
+          },
+          {
+            "type": "ISBN_10",
+            "identifier": "2808692242"
+          }
+        ],
+        "readingModes": {
+          "text": true,
+          "image": true
+        },
+        "pageCount": 19,
+        "printType": "BOOK",
+        "categories": [
+          "Fiction"
+        ],
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "0.3.4.0.preview.3",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=V-a-EAAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=V-a-EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+        },
+        "language": "pt-BR",
+        "previewLink": "http://books.google.com.br/books?id=V-a-EAAAQBAJ&printsec=frontcover&dq=intitle:cem+anos+de+solid%C3%A3o&hl=&as_pt=BOOKS&cd=2&source=gbs_api",
+        "infoLink": "https://play.google.com/store/books/details?id=V-a-EAAAQBAJ&source=gbs_api",
+        "canonicalVolumeLink": "https://play.google.com/store/books/details?id=V-a-EAAAQBAJ"
+      },
+      "saleInfo": {
+        "country": "BR",
+        "saleability": "FOR_SALE",
+        "isEbook": true,
+        "listPrice": {
+          "amount": 58.38,
+          "currencyCode": "BRL"
+        },
+        "retailPrice": {
+          "amount": 58.38,
+          "currencyCode": "BRL"
+        },
+        "buyLink": "https://play.google.com/store/books/details?id=V-a-EAAAQBAJ&rdid=book-V-a-EAAAQBAJ&rdot=1&source=gbs_api",
+        "offers": [
+          {
+            "finskyOfferType": 1,
+            "listPrice": {
+              "amountInMicros": 58380000,
+              "currencyCode": "BRL"
+            },
+            "retailPrice": {
+              "amountInMicros": 58380000,
+              "currencyCode": "BRL"
+            },
+            "giftable": true
+          }
+        ]
+      },
+      "accessInfo": {
+        "country": "BR",
+        "viewability": "PARTIAL",
+        "embeddable": true,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": true
+        },
+        "pdf": {
+          "isAvailable": true
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=V-a-EAAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+        "accessViewStatus": "SAMPLE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "O que devemos aprender com Cem Anos de Solidão, o representante do realismo mágico?"
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "M5o60AEACAAJ",
+      "etag": "XSM3Qq++Jio",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/M5o60AEACAAJ",
+      "volumeInfo": {
+        "title": "Resumo E Analise: Cem Anos De Solidão (One Hundred Years Of Solitude) - Baseado No Livro De Gabriel García Márquez",
+        "authors": [
+          "Mentors Library"
+        ],
+        "publishedDate": "2020",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_10",
+            "identifier": "3966102404"
+          },
+          {
+            "type": "ISBN_13",
+            "identifier": "9783966102407"
+          }
+        ],
+        "readingModes": {
+          "text": false,
+          "image": false
+        },
+        "pageCount": 0,
+        "printType": "BOOK",
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "preview-1.0.0",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "language": "pt-BR",
+        "previewLink": "http://books.google.com.br/books?id=M5o60AEACAAJ&dq=intitle:cem+anos+de+solid%C3%A3o&hl=&as_pt=BOOKS&cd=3&source=gbs_api",
+        "infoLink": "http://books.google.com.br/books?id=M5o60AEACAAJ&dq=intitle:cem+anos+de+solid%C3%A3o&hl=&as_pt=BOOKS&source=gbs_api",
+        "canonicalVolumeLink": "https://books.google.com/books/about/Resumo_E_Analise_Cem_Anos_De_Solid%C3%A3o_On.html?hl=&id=M5o60AEACAAJ"
+      },
+      "saleInfo": {
+        "country": "BR",
+        "saleability": "NOT_FOR_SALE",
+        "isEbook": false
+      },
+      "accessInfo": {
+        "country": "BR",
+        "viewability": "NO_PAGES",
+        "embeddable": false,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": false
+        },
+        "pdf": {
+          "isAvailable": false
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=M5o60AEACAAJ&hl=&as_pt=BOOKS&source=gbs_api",
+        "accessViewStatus": "NONE",
+        "quoteSharingAllowed": false
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "Rez2oQEACAAJ",
+      "etag": "yuwVEqCop9M",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/Rez2oQEACAAJ",
+      "volumeInfo": {
+        "title": "Cem anos de solidao",
+        "authors": [
+          "Gabriel García Márquez"
+        ],
+        "publishedDate": "2003",
+        "industryIdentifiers": [
+          {
+            "type": "OTHER",
+            "identifier": "OCLC:893573291"
+          }
+        ],
+        "readingModes": {
+          "text": false,
+          "image": false
+        },
+        "pageCount": 383,
+        "printType": "BOOK",
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "preview-1.0.0",
+        "language": "es",
+        "previewLink": "http://books.google.com.br/books?id=Rez2oQEACAAJ&dq=intitle:cem+anos+de+solid%C3%A3o&hl=&as_pt=BOOKS&cd=4&source=gbs_api",
+        "infoLink": "http://books.google.com.br/books?id=Rez2oQEACAAJ&dq=intitle:cem+anos+de+solid%C3%A3o&hl=&as_pt=BOOKS&source=gbs_api",
+        "canonicalVolumeLink": "https://books.google.com/books/about/Cem_anos_de_solidao.html?hl=&id=Rez2oQEACAAJ"
+      },
+      "saleInfo": {
+        "country": "BR",
+        "saleability": "NOT_FOR_SALE",
+        "isEbook": false
+      },
+      "accessInfo": {
+        "country": "BR",
+        "viewability": "NO_PAGES",
+        "embeddable": false,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": false
+        },
+        "pdf": {
+          "isAvailable": false
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=Rez2oQEACAAJ&hl=&as_pt=BOOKS&source=gbs_api",
+        "accessViewStatus": "NONE",
+        "quoteSharingAllowed": false
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "ZfjpEAAAQBAJ",
+      "etag": "clOgHQnA320",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/ZfjpEAAAQBAJ",
+      "volumeInfo": {
+        "title": "Cem Anos de Solidão",
+        "authors": [
+          "Gabriel García Márquez"
+        ],
+        "publisher": "D. QUIXOTE",
+        "publishedDate": "2006-01-01",
+        "description": "\"Muitos anos depois, diante do pelotão de fuzilamento, o coronel Aureliano Buendía haveria de recordar aquela tarde remota em que o pai o levou a conhecer o gelo.\" Com estas palavras - tão célebres já como as palavras iniciais do Dom Quixote ou de À Procura do Tempo Perdido - começam estes Cem Anos de Solidão, obra-prima da literatura contemporânea, traduzida em todas as línguas do mundo, que consagrou definitivamente Gabriel García Márquez como um dos maiores escritores do nosso tempo. A fabulosa aventura da família Buendía-Iguarán com os seus milagres, fantasias, obsessões, tragédias, incestos, adultérios, rebeldias, descobertas e condenações são a representação ao mesmo tempo do mito e da história, da tragédia e do amor do mundo inteiro.",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_13",
+            "identifier": "9789722079600"
+          },
+          {
+            "type": "ISBN_10",
+            "identifier": "9722079603"
+          }
+        ],
+        "readingModes": {
+          "text": true,
+          "image": true
+        },
+        "pageCount": 354,
+        "printType": "BOOK",
+        "categories": [
+          "Fiction"
+        ],
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": true,
+        "contentVersion": "0.2.2.0.preview.3",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=ZfjpEAAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=ZfjpEAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+        },
+        "language": "pt-BR",
+        "previewLink": "http://books.google.com.br/books?id=ZfjpEAAAQBAJ&pg=PT2&dq=intitle:cem+anos+de+solid%C3%A3o&hl=&as_pt=BOOKS&cd=5&source=gbs_api",
+        "infoLink": "http://books.google.com.br/books?id=ZfjpEAAAQBAJ&dq=intitle:cem+anos+de+solid%C3%A3o&hl=&as_pt=BOOKS&source=gbs_api",
+        "canonicalVolumeLink": "https://books.google.com/books/about/Cem_Anos_de_Solid%C3%A3o.html?hl=&id=ZfjpEAAAQBAJ"
+      },
+      "saleInfo": {
+        "country": "BR",
+        "saleability": "NOT_FOR_SALE",
+        "isEbook": false
+      },
+      "accessInfo": {
+        "country": "BR",
+        "viewability": "PARTIAL",
+        "embeddable": true,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": true,
+          "acsTokenLink": "http://books.google.com.br/books/download/Cem_Anos_de_Solid%C3%A3o-sample-epub.acsm?id=ZfjpEAAAQBAJ&format=epub&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+        },
+        "pdf": {
+          "isAvailable": true,
+          "acsTokenLink": "http://books.google.com.br/books/download/Cem_Anos_de_Solid%C3%A3o-sample-pdf.acsm?id=ZfjpEAAAQBAJ&format=pdf&output=acs4_fulfillment_token&dl_type=sample&source=gbs_api"
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=ZfjpEAAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+        "accessViewStatus": "SAMPLE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "Gabriel García Márquez. Ficha Técnica Título : Cem \u003cb\u003eAnos de Solidão\u003c/b\u003e Título original : Cien \u003cb\u003eaños\u003c/b\u003e de soledad Autor : Gabriel García Márquez Capa : Maria Manuel Lacerda Imagem de capa : pintura A Encantadora de Serpentes , de Henri Julien&nbsp;..."
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "V-a-EAAAQBAJ",
+      "etag": "Ol3rpcZwoBc",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/V-a-EAAAQBAJ",
+      "volumeInfo": {
+        "title": "Cem Anos de Solidão de Gabriel García Márquez (Análise do livro)",
+        "subtitle": "Análise completa e resumo pormenorizado do trabalho",
+        "authors": [
+          "Marie Bouhon"
+        ],
+        "publisher": "Primento Digital sprl",
+        "publishedDate": "2023-05-05",
+        "description": "O que devemos aprender com Cem Anos de Solidão, o representante do realismo mágico? Descubra tudo o que precisa de saber sobre este trabalho num relatório completo e detalhado do livro. Encontrará em particular neste livrinho : - Um resumo completo - Uma apresentação das personagens principais como José Arcadio Buendia e Ursula Iguarán - Uma análise das especificidades do trabalho: Realismo mágico, tempo cíclico e o tema da solidão Uma análise de referência para compreender rapidamente o significado da obra.",
+        "industryIdentifiers": [
+          {
+            "type": "ISBN_13",
+            "identifier": "9782808692243"
+          },
+          {
+            "type": "ISBN_10",
+            "identifier": "2808692242"
+          }
+        ],
+        "readingModes": {
+          "text": true,
+          "image": true
+        },
+        "pageCount": 19,
+        "printType": "BOOK",
+        "categories": [
+          "Fiction"
+        ],
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "0.3.4.0.preview.3",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=V-a-EAAAQBAJ&printsec=frontcover&img=1&zoom=5&edge=curl&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=V-a-EAAAQBAJ&printsec=frontcover&img=1&zoom=1&edge=curl&source=gbs_api"
+        },
+        "language": "pt-BR",
+        "previewLink": "http://books.google.com.br/books?id=V-a-EAAAQBAJ&pg=PP16&dq=intitle:cem+anos+de+solid%C3%A3o&hl=&as_pt=BOOKS&cd=6&source=gbs_api",
+        "infoLink": "https://play.google.com/store/books/details?id=V-a-EAAAQBAJ&source=gbs_api",
+        "canonicalVolumeLink": "https://play.google.com/store/books/details?id=V-a-EAAAQBAJ"
+      },
+      "saleInfo": {
+        "country": "BR",
+        "saleability": "FOR_SALE",
+        "isEbook": true,
+        "listPrice": {
+          "amount": 58.38,
+          "currencyCode": "BRL"
+        },
+        "retailPrice": {
+          "amount": 58.38,
+          "currencyCode": "BRL"
+        },
+        "buyLink": "https://play.google.com/store/books/details?id=V-a-EAAAQBAJ&rdid=book-V-a-EAAAQBAJ&rdot=1&source=gbs_api",
+        "offers": [
+          {
+            "finskyOfferType": 1,
+            "listPrice": {
+              "amountInMicros": 58380000,
+              "currencyCode": "BRL"
+            },
+            "retailPrice": {
+              "amountInMicros": 58380000,
+              "currencyCode": "BRL"
+            },
+            "giftable": true
+          }
+        ]
+      },
+      "accessInfo": {
+        "country": "BR",
+        "viewability": "PARTIAL",
+        "embeddable": true,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": true
+        },
+        "pdf": {
+          "isAvailable": true
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=V-a-EAAAQBAJ&hl=&as_pt=BOOKS&source=gbs_api",
+        "accessViewStatus": "SAMPLE",
+        "quoteSharingAllowed": false
+      },
+      "searchInfo": {
+        "textSnippet": "... Years of Solitude. Trans. Rabassa, G. Londres: Pinguim. ESTUDOS DE REFERÊNCIA Chao, R., Delcas, M. e Noiville, F. (2014) Mort de Gabriel García Márquez, légende de la littérature. Le Monde. [Online]. [Acedido a 20 de novembro de 2015]&nbsp;..."
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "mjRCAAAAYAAJ",
+      "etag": "r9Tp91OIezc",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/mjRCAAAAYAAJ",
+      "volumeInfo": {
+        "title": "Cem anos de solidão",
+        "subtitle": "romance",
+        "authors": [
+          "Gabriel García Márquez"
+        ],
+        "publishedDate": "1974",
+        "industryIdentifiers": [
+          {
+            "type": "OTHER",
+            "identifier": "UTEXAS:059173026526776"
+          }
+        ],
+        "readingModes": {
+          "text": false,
+          "image": false
+        },
+        "pageCount": 416,
+        "printType": "BOOK",
+        "averageRating": 4.5,
+        "ratingsCount": 4,
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "0.4.2.0.preview.0",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "imageLinks": {
+          "smallThumbnail": "http://books.google.com/books/content?id=mjRCAAAAYAAJ&printsec=frontcover&img=1&zoom=5&source=gbs_api",
+          "thumbnail": "http://books.google.com/books/content?id=mjRCAAAAYAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"
+        },
+        "language": "es",
+        "previewLink": "http://books.google.com.br/books?id=mjRCAAAAYAAJ&q=intitle:cem+anos+de+solid%C3%A3o&dq=intitle:cem+anos+de+solid%C3%A3o&hl=&as_pt=BOOKS&cd=7&source=gbs_api",
+        "infoLink": "http://books.google.com.br/books?id=mjRCAAAAYAAJ&dq=intitle:cem+anos+de+solid%C3%A3o&hl=&as_pt=BOOKS&source=gbs_api",
+        "canonicalVolumeLink": "https://books.google.com/books/about/Cem_anos_de_solid%C3%A3o.html?hl=&id=mjRCAAAAYAAJ"
+      },
+      "saleInfo": {
+        "country": "BR",
+        "saleability": "NOT_FOR_SALE",
+        "isEbook": false
+      },
+      "accessInfo": {
+        "country": "BR",
+        "viewability": "NO_PAGES",
+        "embeddable": false,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": false
+        },
+        "pdf": {
+          "isAvailable": false
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=mjRCAAAAYAAJ&hl=&as_pt=BOOKS&source=gbs_api",
+        "accessViewStatus": "NONE",
+        "quoteSharingAllowed": false
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "mAOKuwEACAAJ",
+      "etag": "Hl6IXxupCCA",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/mAOKuwEACAAJ",
+      "volumeInfo": {
+        "title": "Cem anos de solidão",
+        "authors": [
+          "Gabriel García Márquez"
+        ],
+        "publishedDate": "1979",
+        "industryIdentifiers": [
+          {
+            "type": "OTHER",
+            "identifier": "OCLC:263466650"
+          }
+        ],
+        "readingModes": {
+          "text": false,
+          "image": false
+        },
+        "pageCount": 364,
+        "printType": "BOOK",
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "preview-1.0.0",
+        "panelizationSummary": {
+          "containsEpubBubbles": false,
+          "containsImageBubbles": false
+        },
+        "language": "pt-BR",
+        "previewLink": "http://books.google.com.br/books?id=mAOKuwEACAAJ&dq=intitle:cem+anos+de+solid%C3%A3o&hl=&as_pt=BOOKS&cd=8&source=gbs_api",
+        "infoLink": "http://books.google.com.br/books?id=mAOKuwEACAAJ&dq=intitle:cem+anos+de+solid%C3%A3o&hl=&as_pt=BOOKS&source=gbs_api",
+        "canonicalVolumeLink": "https://books.google.com/books/about/Cem_anos_de_solid%C3%A3o.html?hl=&id=mAOKuwEACAAJ"
+      },
+      "saleInfo": {
+        "country": "BR",
+        "saleability": "NOT_FOR_SALE",
+        "isEbook": false
+      },
+      "accessInfo": {
+        "country": "BR",
+        "viewability": "NO_PAGES",
+        "embeddable": false,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": false
+        },
+        "pdf": {
+          "isAvailable": false
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=mAOKuwEACAAJ&hl=&as_pt=BOOKS&source=gbs_api",
+        "accessViewStatus": "NONE",
+        "quoteSharingAllowed": false
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "FfBsmgEACAAJ",
+      "etag": "cubsISqhZmo",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/FfBsmgEACAAJ",
+      "volumeInfo": {
+        "title": "Cem anos de solidão",
+        "authors": [
+          "Gabriel García Márques"
+        ],
+        "publishedDate": "1970",
+        "industryIdentifiers": [
+          {
+            "type": "OTHER",
+            "identifier": "OCLC:10387846"
+          }
+        ],
+        "readingModes": {
+          "text": false,
+          "image": false
+        },
+        "pageCount": 364,
+        "printType": "BOOK",
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "preview-1.0.0",
+        "language": "pt-BR",
+        "previewLink": "http://books.google.com.br/books?id=FfBsmgEACAAJ&dq=intitle:cem+anos+de+solid%C3%A3o&hl=&as_pt=BOOKS&cd=9&source=gbs_api",
+        "infoLink": "http://books.google.com.br/books?id=FfBsmgEACAAJ&dq=intitle:cem+anos+de+solid%C3%A3o&hl=&as_pt=BOOKS&source=gbs_api",
+        "canonicalVolumeLink": "https://books.google.com/books/about/Cem_anos_de_solid%C3%A3o.html?hl=&id=FfBsmgEACAAJ"
+      },
+      "saleInfo": {
+        "country": "BR",
+        "saleability": "NOT_FOR_SALE",
+        "isEbook": false
+      },
+      "accessInfo": {
+        "country": "BR",
+        "viewability": "NO_PAGES",
+        "embeddable": false,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": false
+        },
+        "pdf": {
+          "isAvailable": false
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=FfBsmgEACAAJ&hl=&as_pt=BOOKS&source=gbs_api",
+        "accessViewStatus": "NONE",
+        "quoteSharingAllowed": false
+      }
+    },
+    {
+      "kind": "books#volume",
+      "id": "5xMCmgEACAAJ",
+      "etag": "WGgjClGKZS8",
+      "selfLink": "https://www.googleapis.com/books/v1/volumes/5xMCmgEACAAJ",
+      "volumeInfo": {
+        "title": "Cem anos de solidão",
+        "authors": [
+          "Gabriel Garcia Marquez"
+        ],
+        "publishedDate": "1976",
+        "industryIdentifiers": [
+          {
+            "type": "OTHER",
+            "identifier": "OCLC:817039249"
+          }
+        ],
+        "readingModes": {
+          "text": false,
+          "image": false
+        },
+        "pageCount": 364,
+        "printType": "BOOK",
+        "maturityRating": "NOT_MATURE",
+        "allowAnonLogging": false,
+        "contentVersion": "preview-1.0.0",
+        "language": "pt-BR",
+        "previewLink": "http://books.google.com.br/books?id=5xMCmgEACAAJ&dq=intitle:cem+anos+de+solid%C3%A3o&hl=&as_pt=BOOKS&cd=10&source=gbs_api",
+        "infoLink": "http://books.google.com.br/books?id=5xMCmgEACAAJ&dq=intitle:cem+anos+de+solid%C3%A3o&hl=&as_pt=BOOKS&source=gbs_api",
+        "canonicalVolumeLink": "https://books.google.com/books/about/Cem_anos_de_solid%C3%A3o.html?hl=&id=5xMCmgEACAAJ"
+      },
+      "saleInfo": {
+        "country": "BR",
+        "saleability": "NOT_FOR_SALE",
+        "isEbook": false
+      },
+      "accessInfo": {
+        "country": "BR",
+        "viewability": "NO_PAGES",
+        "embeddable": false,
+        "publicDomain": false,
+        "textToSpeechPermission": "ALLOWED",
+        "epub": {
+          "isAvailable": false
+        },
+        "pdf": {
+          "isAvailable": false
+        },
+        "webReaderLink": "http://play.google.com/books/reader?id=5xMCmgEACAAJ&hl=&as_pt=BOOKS&source=gbs_api",
+        "accessViewStatus": "NONE",
+        "quoteSharingAllowed": false
+      }
+    }
+  ]
+}

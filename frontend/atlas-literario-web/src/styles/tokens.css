@@ -1,0 +1,127 @@
+/*
+ * Atlas Literário — tokens de design.
+ * Direção: atlas pessoal noturno — oceano azul-marinho quase preto, papel de carta
+ * náutica nos textos, latão (bússola) como acento raro. Nada de painel administrativo.
+ */
+:root {
+  color-scheme: dark;
+
+  /* Superfícies (do mais profundo ao mais elevado) */
+  --color-ocean: #060b14; /* fundo do mapa / app */
+  --color-bg: #070d18;
+  --color-surface: #0c1626;
+  --color-surface-2: #111e33;
+  --color-surface-3: #172843;
+  --color-overlay: rgb(3 7 14 / 0.72);
+
+  /* Linhas */
+  --color-hairline: rgb(160 190 230 / 0.1);
+  --color-border: rgb(160 190 230 / 0.18);
+  --color-border-strong: rgb(160 190 230 / 0.32);
+
+  /* Texto */
+  --color-text: #e8eef8;
+  --color-text-muted: #9badc6;
+  --color-text-faint: #64789a;
+  --color-text-inverse: #0a1120;
+
+  /* Acentos */
+  --color-brass: #e3bf7c; /* latão — destaque principal, usado com parcimônia */
+  --color-brass-strong: #f0d39b;
+  --color-brass-soft: rgb(227 191 124 / 0.14);
+  --color-sky: #9ccaf5; /* links e foco */
+  --color-sky-soft: rgb(156 202 245 / 0.14);
+
+  /* Estados */
+  --color-success: #7fd1ae;
+  --color-success-soft: rgb(127 209 174 / 0.14);
+  --color-danger: #f29b8f;
+  --color-danger-soft: rgb(242 155 143 / 0.14);
+  --color-warning: #f2c46d;
+  --color-warning-soft: rgb(242 196 109 / 0.14);
+
+  /* Status de leitura */
+  --status-want: #b9a6f2;
+  --status-reading: #9ccaf5;
+  --status-read: #7fd1ae;
+  --status-abandoned: #8b97aa;
+
+  /* Escala do mapa (docs/api-contracts.md §9) */
+  --map-ocean: #060b14;
+  --map-unexplored: #0f1a2b;
+  --map-stop-0: #13294b;
+  --map-stop-35: #1f4e8c;
+  --map-stop-65: #3f86d1;
+  --map-stop-100: #bfe0ff;
+  --map-border: rgb(160 190 230 / 0.18);
+  --map-selected: #e6f1ff;
+
+  /* Tipografia — fontes remotas são opcionais (ver fonts.css); pilhas com fallback do sistema */
+  --font-display:
+    'Fraunces', 'Cormorant Garamond', 'Iowan Old Style', 'Palatino Linotype', Palatino,
+    'Book Antiqua', Georgia, serif;
+  --font-body:
+    'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: clamp(2rem, 1.4rem + 2.2vw, 2.75rem);
+  --text-display: clamp(2.5rem, 1.6rem + 3.6vw, 4rem);
+
+  --leading-tight: 1.15;
+  --leading-normal: 1.55;
+  --tracking-caps: 0.14em;
+
+  /* Espaçamento (escala de 4px) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+
+  /* Formas */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 999px;
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 8px 24px -8px rgb(0 0 0 / 0.6);
+  --shadow-lg: 0 24px 64px -16px rgb(0 0 0 / 0.75);
+  --glow-brass: 0 0 0 1px rgb(227 191 124 / 0.4), 0 6px 24px -6px rgb(227 191 124 / 0.35);
+
+  /* Movimento */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 140ms;
+  --duration-base: 240ms;
+  --duration-slow: 480ms;
+
+  /* Layout */
+  --sidebar-width: 248px;
+  --bottom-nav-height: 64px;
+  --content-max: 1200px;
+  --focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-sky);
+
+  --z-nav: 20;
+  --z-overlay: 40;
+  --z-modal: 50;
+  --z-toast: 60;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-base: 0ms;
+    --duration-slow: 0ms;
+  }
+}

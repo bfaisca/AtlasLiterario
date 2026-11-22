@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>AtlasLiterario.Infrastructure</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- PasswordHasher<T>, options, configuration, hosting abstractions -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AtlasLiterario.Application\AtlasLiterario.Application.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+    <!-- Brings Microsoft.IdentityModel.JsonWebTokens (token creation) aligned with the API's JwtBearer version. -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="AtlasLiterario.Application.Tests" />
+    <InternalsVisibleTo Include="AtlasLiterario.API.IntegrationTests" />
+    <InternalsVisibleTo Include="AtlasLiterario.Infrastructure.Tests" />
+  </ItemGroup>
+</Project>

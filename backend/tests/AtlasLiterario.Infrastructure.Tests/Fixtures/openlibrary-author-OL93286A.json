@@ -1,0 +1,103 @@
+{
+ "name": "Machado de Assis",
+ "birth_date": "21 June 1839",
+ "photos": [
+  8569287,
+  7105366
+ ],
+ "source_records": [
+  "amazon:1665176334",
+  "amazon:8575207245",
+  "amazon:1716221331",
+  "bwb:9781712352854",
+  "amazon:9871673779",
+  "bwb:9798477095186",
+  "bwb:9798764232218",
+  "bwb:9798525584402",
+  "bwb:9781678165260",
+  "bwb:9798446162642",
+  "amazon:2915540705",
+  "amazon:1503037460",
+  "bwb:9780557632169",
+  "amazon:1665176342",
+  "bwb:9781549606663",
+  "bwb:9781520298870",
+  "bwb:9781521777114",
+  "bwb:9781710725735",
+  "bwb:9798690535193",
+  "promise:bwb_daily_pallets_2021-01-11",
+  "bwb:9781490517063",
+  "marc:harvard_bibliographic_metadata/ab.bib.01.20150123.full.mrc:307927190:816"
+ ],
+ "alternate_names": [
+  "Joaquim Maria Machado de Assis Beamin",
+  "J. M. Machado de Assis",
+  "J. Machado de Assis",
+  "Joaqium Maria Machado de Assis",
+  "Joaquim M. Machado de Assis",
+  "Joaquim Machado de Assis",
+  "Joaquim Maria Machado de Assis",
+  "Joaquín María Machado de Assis",
+  "Machado de Assís",
+  "Machado de Machado de Assis"
+ ],
+ "personal_name": "Machado de Assis",
+ "type": {
+  "key": "/type/author"
+ },
+ "remote_ids": {
+  "wikidata": "Q311145",
+  "isni": "0000000121441225",
+  "project_gutenberg": "9685",
+  "librarything": "assismachadode",
+  "viaf": "95151633",
+  "goodreads": "22458",
+  "bookbrainz": "2a9960cb-57f6-4a58-9b34-f69dc982eaa8",
+  "imdb": "nm0207162",
+  "lc_naf": "n80002329",
+  "opac_sbn": "CFIV041748"
+ },
+ "bio": "Machado de Assis was a pioneer Brazilian novelist, poet, playwright and short story writer, widely regarded as the greatest writer of Brazilian literature.\r\n\r\n----------\r\n\r\nMachado de Assis foi um escritor brasileiro, considerado por muitos críticos, estudiosos, escritores e leitores o maior nome da literatura brasileira. Escreveu em praticamente todos os gêneros literários, sendo poeta, romancista, cronista, dramaturgo, contista, folhetinista, jornalista e crítico literário.",
+ "key": "/authors/OL93286A",
+ "death_date": "29 September 1908",
+ "links": [
+  {
+   "title": "Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/Machado_de_Assis",
+   "type": {
+    "key": "/type/link"
+   }
+  },
+  {
+   "title": "Wikipédia",
+   "url": "https://pt.wikipedia.org/wiki/Machado_de_Assis",
+   "type": {
+    "key": "/type/link"
+   }
+  },
+  {
+   "title": "Infopédia",
+   "url": "https://www.infopedia.pt/apoio/artigos/$machado-de-assis",
+   "type": {
+    "key": "/type/link"
+   }
+  },
+  {
+   "title": "Encyclopedia.com",
+   "url": "https://www.encyclopedia.com/humanities/encyclopedias-almanacs-transcripts-and-maps/machado-de-assis-joaquim-maria-1839-1908",
+   "type": {
+    "key": "/type/link"
+   }
+  }
+ ],
+ "latest_revision": 20,
+ "revision": 20,
+ "created": {
+  "type": "/type/datetime",
+  "value": "2008-04-01T03:28:50.625462"
+ },
+ "last_modified": {
+  "type": "/type/datetime",
+  "value": "2026-11-04T20:12:31.836285"
+ }
+}

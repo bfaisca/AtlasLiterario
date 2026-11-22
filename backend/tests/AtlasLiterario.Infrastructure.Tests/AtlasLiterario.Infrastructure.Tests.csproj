@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Using Include="Xunit" />
+    <Using Include="Shouldly" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Shouldly" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\AtlasLiterario.Infrastructure\AtlasLiterario.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Real responses captured on 2026-11-15 (Open Library, Wikidata SPARQL, Google Books). No credentials inside. -->
+    <None Include="Fixtures\*.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

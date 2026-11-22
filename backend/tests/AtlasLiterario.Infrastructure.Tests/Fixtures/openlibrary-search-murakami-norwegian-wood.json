@@ -1,0 +1,272 @@
+{
+ "numFound": 11,
+ "start": 0,
+ "numFoundExact": true,
+ "num_found": 11,
+ "documentation_url": "https://openlibrary.org/dev/docs/api/search",
+ "q": "norwegian wood murakami",
+ "offset": null,
+ "docs": [
+  {
+   "author_key": [
+    "OL382524A"
+   ],
+   "author_name": [
+    "村上春樹"
+   ],
+   "cover_i": 2237620,
+   "first_publish_year": 1987,
+   "isbn": [
+    "1860468098",
+    "9787540704605",
+    "9789621708960",
+    "9571340065",
+    "9785699046645",
+    "8483103079",
+    "9788490664445",
+    "9787532742929",
+    "9781860468094",
+    "8573025972",
+    "1417709065",
+    "9782020579391",
+    "753274292X",
+    "9782020134736",
+    "9787532725694",
+    "9789571340043",
+    "9789621708953",
+    "9626343931",
+    "7540704608",
+    "9785699253814",
+    "0099554569",
+    "9781613834732",
+    "9785699038329",
+    "9781860468001",
+    "9789871210190",
+    "0870119435",
+    "8937463105",
+    "3442730503",
+    "9871210728",
+    "9780307744661",
+    "9780870119439",
+    "9782264075673",
+    "7532725693",
+    "9780099485254",
+    "9780375704024",
+    "8483835045",
+    "9784061848931",
+    "8560281525",
+    "5699038329",
+    "9621708958",
+    "9789626343937",
+    "1448103703",
+    "9789871210725",
+    "9706991174",
+    "9783442730506",
+    "9782298062137",
+    "9788806216467",
+    "9781784877996",
+    "0099485257",
+    "9783770156092",
+    "9780099554547",
+    "8490664447",
+    "1784877999",
+    "9788377585696",
+    "0099490781",
+    "2264075678",
+    "569904664X",
+    "4061848933",
+    "9780099528982",
+    "0099554542",
+    "9788560281527",
+    "2264047739",
+    "9784062035163",
+    "9782264047731",
+    "161383473X",
+    "0099448823",
+    "0375704027",
+    "9789985332047",
+    "9788937463105",
+    "9784062035156",
+    "0099584352",
+    "4062035154",
+    "9781860468186",
+    "5699253815",
+    "9781417709069",
+    "9780099584353",
+    "1860468004",
+    "9788483835043",
+    "9871210191",
+    "3770156099",
+    "9782264056009",
+    "9789571340050",
+    "880618315X",
+    "1860468187",
+    "9788573025972",
+    "9571340057",
+    "9571340049",
+    "2264056002",
+    "9781448103706",
+    "030795062X",
+    "9789706991171",
+    "9780099448822",
+    "8377585693",
+    "4061860526",
+    "9780099554561",
+    "0099528983",
+    "4061848925",
+    "9985332040",
+    "202013473X",
+    "9788806183158",
+    "9780307950628",
+    "2020579391",
+    "9789571340067",
+    "4062035162",
+    "8806216465",
+    "9621708966",
+    "9784061848924",
+    "9780099490784",
+    "9784061860520",
+    "9788483103074",
+    "0307744663",
+    "2298062137"
+   ],
+   "key": "/works/OL2625457W",
+   "language": [
+    "fre",
+    "spa",
+    "ita",
+    "jpn",
+    "por",
+    "ger",
+    "dut",
+    "eng",
+    "rus",
+    "est",
+    "chi"
+   ],
+   "publisher": [
+    "Tusquets editores",
+    "Varrak",
+    "Maxi-Tusquets",
+    "Tandem Library",
+    "Kodansha",
+    "TusQuets",
+    "Vintage Books USA",
+    "Penguin Random House",
+    "Shi Bao",
+    "France Loisirs",
+    "Bo yi chu ban ji tuan you xian gong si",
+    "Shi bao wen hua chu ban qi ye gu fen you xian gong si",
+    "ĖKSMO",
+    "Seuil",
+    "Shanghai yi wen chu ban she",
+    "Btb Bei Goldmann",
+    "TUSQUETS",
+    "Alfaguara",
+    "Perfection Learning",
+    "Van In",
+    "Naxos AudioBooks",
+    "The Harvill Press",
+    "Tusquets",
+    "Vintage Books",
+    "Muza",
+    "Vintage",
+    "Objetiva",
+    "Li jiang chu ban she",
+    "Random House Export",
+    "Tusquets USA Pub",
+    "Einaudi",
+    "10-18",
+    "DUMONT Literatur und Kunst Verlag",
+    "講談社",
+    "Kodansha International",
+    "Kōdansha",
+    "Eksmo",
+    "Mineumsa",
+    "Vintage International"
+   ],
+   "title": "Norwegian Wood"
+  },
+  {
+   "author_key": [
+    "OL382524A"
+   ],
+   "author_name": [
+    "村上春樹"
+   ],
+   "cover_i": 13613167,
+   "first_publish_year": 2013,
+   "isbn": [
+    "9789025442842",
+    "9025442846"
+   ],
+   "key": "/works/OL34834857W",
+   "publisher": [
+    "Atlas Contact"
+   ],
+   "title": "Norwegian wood"
+  },
+  {
+   "author_key": [
+    "OL382524A"
+   ],
+   "author_name": [
+    "村上春樹"
+   ],
+   "first_publish_year": 2007,
+   "isbn": [
+    "9780099520290",
+    "009952029X"
+   ],
+   "key": "/works/OL29357149W",
+   "language": [
+    "eng"
+   ],
+   "publisher": [
+    "Penguin Random House"
+   ],
+   "title": "Norwegian Wood"
+  },
+  {
+   "author_key": [
+    "OL382524A"
+   ],
+   "author_name": [
+    "村上春樹"
+   ],
+   "cover_i": 14853522,
+   "first_publish_year": 2025,
+   "isbn": [
+    "1529957710",
+    "9781529957716"
+   ],
+   "key": "/works/OL42395456W",
+   "language": [
+    "eng"
+   ],
+   "publisher": [
+    "Penguin Random House"
+   ],
+   "title": "Norwegian Wood"
+  },
+  {
+   "author_key": [
+    "OL382524A"
+   ],
+   "author_name": [
+    "村上春樹"
+   ],
+   "cover_i": 12493574,
+   "first_publish_year": 2015,
+   "isbn": [
+    "6074211213",
+    "9786074211214"
+   ],
+   "key": "/works/OL26455633W",
+   "publisher": [
+    "Planeta Publishing"
+   ],
+   "title": "Tokio Blues. Norwegian Wood"
+  }
+ ]
+}

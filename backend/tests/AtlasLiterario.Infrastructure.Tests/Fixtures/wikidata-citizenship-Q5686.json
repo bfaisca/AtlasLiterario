@@ -1,0 +1,30 @@
+{
+  "head" : {
+    "vars" : [ "country", "rank", "iso" ]
+  },
+  "results" : {
+    "bindings" : [ {
+      "country" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q145"
+      },
+      "rank" : {
+        "type" : "uri",
+        "value" : "http://wikiba.se/ontology#DeprecatedRank"
+      },
+      "iso" : {
+        "type" : "literal",
+        "value" : "GBR"
+      }
+    }, {
+      "country" : {
+        "type" : "uri",
+        "value" : "http://www.wikidata.org/entity/Q174193"
+      },
+      "rank" : {
+        "type" : "uri",
+        "value" : "http://wikiba.se/ontology#NormalRank"
+      }
+    } ]
+  }
+}

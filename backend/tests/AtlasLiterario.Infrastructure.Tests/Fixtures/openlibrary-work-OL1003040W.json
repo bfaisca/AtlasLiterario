@@ -1,0 +1,78 @@
+{
+ "title": "Dom Casmurro",
+ "key": "/works/OL1003040W",
+ "authors": [
+  {
+   "author": {
+    "key": "/authors/OL93286A"
+   },
+   "type": {
+    "key": "/type/author_role"
+   }
+  }
+ ],
+ "type": {
+  "key": "/type/work"
+ },
+ "covers": [
+  647501,
+  123224,
+  -1,
+  2152130,
+  7946576,
+  123225,
+  11050581,
+  12453800,
+  10404973,
+  10558903,
+  11495715,
+  3150035,
+  3149900,
+  14947740
+ ],
+ "subjects": [
+  "Religious",
+  "Fiction",
+  "Reminiscing in old age",
+  "Adultery",
+  "Authorship",
+  "Catholics",
+  "Catholic Church",
+  "Latin American literature",
+  "History and criticism",
+  "General",
+  "Brazilian literature",
+  "Historical fiction",
+  "Brazilian fiction",
+  "Continental european fiction (fictional works by one author)"
+ ],
+ "description": "**Dom Casmurro**, publicado pela primeira vez em 1899, é um dos romances realistas mais importantes de Machado de Assis, considerado por alguns sua obra-prima. O livro narra a história de Bento Gonçalves desde sua juventude, abordando temas como religião, adultério e ambiguidade moral.",
+ "subject_places": [
+  "Rio de Janeiro (Brazil)"
+ ],
+ "subject_times": [
+  "19th century"
+ ],
+ "links": [
+  {
+   "title": "Free eBook at Projecto Adamastor",
+   "url": "https://projectoadamastor.org/dom-casmurro-machado-de-assis/",
+   "type": {
+    "key": "/type/link"
+   }
+  }
+ ],
+ "genres": [
+  "/tags/OL170T"
+ ],
+ "latest_revision": 12,
+ "revision": 12,
+ "created": {
+  "type": "/type/datetime",
+  "value": "2009-12-09T19:08:41.964839"
+ },
+ "last_modified": {
+  "type": "/type/datetime",
+  "value": "2026-11-04T20:11:09.842699"
+ }
+}

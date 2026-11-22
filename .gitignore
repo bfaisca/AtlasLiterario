@@ -1,0 +1,24 @@
+# Segredos
+.env
+*.local
+appsettings.*.local.json
+
+# .NET
+bin/
+obj/
+*.user
+.vs/
+TestResults/
+
+# Node / Vite
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+
+# IDE / SO
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db

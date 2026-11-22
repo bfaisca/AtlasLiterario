@@ -1,0 +1,5 @@
+node_modules/
+# listas pessoais e resultados das importações
+data/*
+!data/.gitkeep
+!data/modelo-livros.xlsx

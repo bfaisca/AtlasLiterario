@@ -1,0 +1,9 @@
+node_modules
+dist
+coverage
+*.tsbuildinfo
+.env
+.env.local
+.env.*.local
+# GeoJSON gerado por `npm run geo:fetch` (pode ser versionado se o time preferir; ver README)
+# public/geo/countries-110m.geojson
