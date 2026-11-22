@@ -8,6 +8,8 @@ public interface IAppDbContext
 {
     DbSet<User> Users { get; }
 
+    DbSet<UserFollow> UserFollows { get; }
+
     DbSet<RefreshToken> RefreshTokens { get; }
 
     DbSet<PasswordResetToken> PasswordResetTokens { get; }

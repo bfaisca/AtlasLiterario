@@ -48,7 +48,7 @@ public sealed record GeoRelationDto(
     decimal Confidence,
     bool IsVerified);
 
-/// <summary>Manual creation of a book (also used by PUT /books/{id}).</summary>
+/// <summary>Manual creation of a book (also used by PUT /books/{id}). <c>AuthorIds</c> (optional) is aligned with <c>AuthorNames</c>: a non-null id reuses that catalog author.</summary>
 public sealed record CreateBookRequest(
     string Title,
     string? Subtitle,
@@ -61,7 +61,8 @@ public sealed record CreateBookRequest(
     string? OriginalLanguage,
     IReadOnlyList<string>? Genres,
     IReadOnlyList<string> AuthorNames,
-    IReadOnlyList<string>? OriginCountryIsos);
+    IReadOnlyList<string>? OriginCountryIsos,
+    IReadOnlyList<Guid?>? AuthorIds = null);
 
 /// <summary>Replaces the origins of a work (Source = Manual).</summary>
 public sealed record UpdateOriginCountriesRequest(IReadOnlyList<string> CountryIsos);

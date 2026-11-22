@@ -36,6 +36,10 @@ public sealed class MapAggregatorTests
         }
 
         public MapAggregationInput Build() => new(_library, _bookAuthors, _citizenships, _origins);
+
+        public MapAggregationInput BuildWithNames(Dictionary<Guid, string> names) =>
+            new(_library, _bookAuthors, _citizenships, _origins,
+                names.Select(n => new AuthorNameRow(n.Key, n.Value, n.Value.ToLowerInvariant())).ToList());
     }
 
     private static CountryMapDatum Country(MapDataDto map, string iso) => map.Countries.Single(c => c.Iso == iso);
@@ -229,5 +233,77 @@ public sealed class MapAggregatorTests
         var map = MapAggregator.Build(MapType.Authors, input.Build());
 
         map.Countries.Select(c => c.Iso).ShouldBe(["BRA", "JPN"]);
+    }
+
+    [Fact]
+    public void Status_filter_selects_the_book_set_and_defaults_to_Read()
+    {
+        var input = new InputBuilder();
+        var kafka = input.Author(Austria, Czechia);
+        input.Book(ReadingStatus.Read, [kafka]);
+        input.Book(ReadingStatus.Reading, [kafka]);
+        input.Book(ReadingStatus.WantToRead, [kafka]);
+        input.Book(ReadingStatus.Abandoned, [input.Author()]);
+        var data = input.Build();
+
+        MapAggregator.BuildAuthorsMap(data).Status.ShouldBe("Read");
+        Country(MapAggregator.BuildAuthorsMap(data), "AUT").BookCount.ShouldBe(1);
+
+        var all = MapAggregator.Build(MapType.Authors, data, MapStatusFilter.All);
+        all.TotalReadBooks.ShouldBe(4);
+        Country(all, "AUT").BookCount.ShouldBe(3);
+        all.ExploredCountries.ShouldBe(2);
+        all.UnknownBookCount.ShouldBe(1);
+
+        var abandoned = MapAggregator.Build(MapType.Authors, data, MapStatusFilter.Abandoned);
+        abandoned.Countries.ShouldBeEmpty();
+        abandoned.UnknownBookCount.ShouldBe(1);
+    }
+
+    private static CountryBookDto PanelBook(Guid bookId, string title) =>
+        new(Guid.NewGuid(), bookId, title, null, [], null, null);
+
+    [Fact]
+    public void Authors_of_a_country_are_unique_sorted_and_only_from_books_of_the_status_set()
+    {
+        var input = new InputBuilder();
+        var zed = input.Author(Brazil);
+        var abe = input.Author(Brazil, Japan);
+        var unread = input.Author(Brazil);
+        var b1 = input.Book(ReadingStatus.Read, [zed, abe]);
+        var b2 = input.Book(ReadingStatus.Read, [abe]);
+        var b3 = input.Book(ReadingStatus.WantToRead, [unread]);
+        var built = input.BuildWithNames(new() { [zed] = "Zed", [abe] = "Abe", [unread] = "Ulisses" });
+        var readPanel = new[] { PanelBook(b1, "B1"), PanelBook(b2, "B2") };
+        var wantPanel = new[] { PanelBook(b3, "B3") };
+
+        var authors = MapAggregator.GetAuthorsForCountry(MapType.Authors, built, Brazil, readPanel);
+
+        authors.Select(a => a.Name).ShouldBe(["Abe", "Zed"]);
+        authors.Select(a => a.AuthorId).Distinct().Count().ShouldBe(authors.Count);
+        authors.Count.ShouldBe(Country(MapAggregator.BuildAuthorsMap(built), "BRA").AuthorCount);
+        MapAggregator.GetAuthorsForCountry(MapType.Authors, built, Japan, readPanel).ShouldHaveSingleItem().Name.ShouldBe("Abe");
+        MapAggregator.GetAuthorsForCountry(MapType.Authors, built, Brazil, wantPanel, MapStatusFilter.WantToRead)
+            .ShouldHaveSingleItem().Name.ShouldBe("Ulisses");
+        MapAggregator.GetAuthorsForCountry(MapType.Origins, built, Brazil, readPanel).ShouldBeEmpty();
+    }
+
+    [Fact]
+    public void Author_cards_carry_only_their_own_books_in_panel_order_and_never_empty()
+    {
+        var input = new InputBuilder();
+        var abe = input.Author(Brazil);
+        var zed = input.Author(Brazil);
+        var shared = input.Book(ReadingStatus.Read, [abe, zed]);
+        var onlyAbe = input.Book(ReadingStatus.Read, [abe]);
+        var onlyZed = input.Book(ReadingStatus.Read, [zed]);
+        var built = input.BuildWithNames(new() { [abe] = "Abe", [zed] = "Zed" });
+        var panel = new[] { PanelBook(onlyZed, "Z"), PanelBook(shared, "S"), PanelBook(onlyAbe, "A") };
+
+        var authors = MapAggregator.GetAuthorsForCountry(MapType.Authors, built, Brazil, panel);
+
+        authors.Single(a => a.Name == "Abe").Books.Select(b => b.Title).ShouldBe(["S", "A"]);
+        authors.Single(a => a.Name == "Zed").Books.Select(b => b.Title).ShouldBe(["Z", "S"]);
+        authors.ShouldAllBe(a => a.Books.Count > 0);
     }
 }

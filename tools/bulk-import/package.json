@@ -4,12 +4,19 @@
   "private": true,
   "description": "Ferramenta externa (debug) para importar vários livros de uma planilha para a biblioteca de um usuário do Atlas Literário, usando apenas a API REST.",
   "type": "module",
-  "engines": { "node": ">=20" },
-  "bin": { "atlas-bulk-import": "src/cli.mjs" },
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "atlas-bulk-import": "src/cli.mjs"
+  },
   "scripts": {
     "import": "node src/cli.mjs",
     "template": "node src/template.mjs",
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/*.test.mjs",
+    "geo:export": "node src/geo-export.mjs",
+    "geo:apply": "node src/geo-apply.mjs",
+    "authors:dedupe": "node src/authors-dedupe.mjs"
   },
   "dependencies": {
     "exceljs": "^4.4.0"

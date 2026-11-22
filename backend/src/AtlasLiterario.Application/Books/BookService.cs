@@ -46,7 +46,7 @@ public sealed class BookService(
     {
         ArgumentNullException.ThrowIfNull(request);
         var userId = currentUser.GetRequiredUserId();
-        var authorNames = ValidateRequest(request);
+        var authorRefs = ValidateRequest(request);
         var origins = await CountryResolution.ResolveIsosAsync(db, request.OriginCountryIsos, "originCountryIsos", ct);
         var now = clock.UtcNow;
 
@@ -56,7 +56,7 @@ public sealed class BookService(
         await EnsureIsbnAvailableAsync(book, ct);
         db.Books.Add(book);
 
-        await ReplaceAuthorsAsync(book, authorNames, existingAuthors: [], now, ct);
+        await ReplaceAuthorsAsync(book, authorRefs, existingAuthors: [], now, ct);
         foreach (var country in origins)
         {
             book.OriginCountries.Add(BookOriginCountry.CreateManual(book.Id, country.Id, userId, now));
@@ -74,7 +74,7 @@ public sealed class BookService(
         var userId = currentUser.GetRequiredUserId();
         var book = await LoadTrackedAsync(id, ct);
         await LibraryAccess.EnsureUserHasBookAsync(db, userId, id, ct);
-        var authorNames = ValidateRequest(request);
+        var authorRefs = ValidateRequest(request);
         var now = clock.UtcNow;
 
         book.SetTitle(request.Title);
@@ -89,7 +89,7 @@ public sealed class BookService(
             db.BookAuthors.Remove(link);
         }
 
-        await ReplaceAuthorsAsync(book, authorNames, current, now, ct);
+        await ReplaceAuthorsAsync(book, authorRefs, current, now, ct);
 
         if (request.OriginCountryIsos is not null)
         {
@@ -156,24 +156,43 @@ public sealed class BookService(
     /// book with the same normalized name, then a single catalog author with that normalized name; otherwise a new one.
     /// </summary>
     private async Task ReplaceAuthorsAsync(
-        Book book, IReadOnlyList<string> names, IReadOnlyList<Author> existingAuthors, DateTimeOffset now, CancellationToken ct)
+        Book book, IReadOnlyList<AuthorRef> refs, IReadOnlyList<Author> existingAuthors, DateTimeOffset now, CancellationToken ct)
     {
+        // Authors picked by id (validated to exist in ValidateAuthorIdsAsync) are used as-is: no name resolution, no creation.
+        var ids = refs.Where(r => r.Id is not null).Select(r => r.Id!.Value).ToList();
+        var byId = ids.Count == 0
+            ? new Dictionary<Guid, Author>()
+            : await db.Authors.Where(a => ids.Contains(a.Id)).ToDictionaryAsync(a => a.Id, ct);
+        if (byId.Count != ids.Count)
+        {
+            throw ValidationException.ForField("validation.failed", "authorIds", "Um ou mais autores informados não existem.");
+        }
+
         short position = 0;
         var linked = new HashSet<Guid>();
-        foreach (var name in names)
+        foreach (var authorRef in refs)
         {
-            var normalized = Author.NormalizeName(name);
-            var author = existingAuthors.FirstOrDefault(a => a.NormalizedName == normalized);
-            if (author is null)
+            Author? author;
+            if (authorRef.Id is { } id)
             {
-                var matches = await db.Authors.Where(a => a.NormalizedName == normalized).Take(2).ToListAsync(ct);
-                author = matches.Count == 1 ? matches[0] : null;
+                author = byId[id];
             }
-
-            if (author is null)
+            else
             {
-                author = new Author(name, now);
-                db.Authors.Add(author);
+                var name = authorRef.Name;
+                var normalized = Author.NormalizeName(name);
+                author = existingAuthors.FirstOrDefault(a => a.NormalizedName == normalized);
+                if (author is null)
+                {
+                    var matches = await db.Authors.Where(a => a.NormalizedName == normalized).Take(2).ToListAsync(ct);
+                    author = matches.Count == 1 ? matches[0] : null;
+                }
+
+                if (author is null)
+                {
+                    author = new Author(name, now);
+                    db.Authors.Add(author);
+                }
             }
 
             if (linked.Add(author.Id))
@@ -184,7 +203,10 @@ public sealed class BookService(
         }
     }
 
-    private static IReadOnlyList<string> ValidateRequest(CreateBookRequest request)
+    /// <summary>An author entry of the request: an existing author picked by <see cref="Id"/>, or a name to resolve/create.</summary>
+    private sealed record AuthorRef(string Name, Guid? Id);
+
+    private static IReadOnlyList<AuthorRef> ValidateRequest(CreateBookRequest request)
     {
         var errors = new ValidationErrors();
         if (string.IsNullOrWhiteSpace(request.Title) || request.Title.Trim().Length > Book.MaxTitleLength)
@@ -192,16 +214,12 @@ public sealed class BookService(
             errors.Add("title", $"O título deve ter entre 1 e {Book.MaxTitleLength} caracteres.");
         }
 
-        var names = (request.AuthorNames ?? [])
-            .Where(n => !string.IsNullOrWhiteSpace(n))
-            .Select(n => n.Trim())
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList();
-        if (names.Count == 0 || names.Count > MaxAuthors)
+        var refs = BuildAuthorRefs(request, errors);
+        if (refs.Count == 0 || refs.Count > MaxAuthors)
         {
             errors.Add("authorNames", $"Informe de 1 a {MaxAuthors} autores.");
         }
-        else if (names.Any(n => n.Length > Author.MaxNameLength))
+        else if (refs.Any(r => r.Name.Length > Author.MaxNameLength))
         {
             errors.Add("authorNames", $"Cada nome deve ter no máximo {Author.MaxNameLength} caracteres.");
         }
@@ -227,7 +245,47 @@ public sealed class BookService(
         }
 
         errors.ThrowIfAny();
-        return names;
+        return refs;
+    }
+
+    /// <summary>
+    /// Pairs names with the optional ids by position. Without ids: trimmed, blank-free, case-insensitively distinct names
+    /// (previous behaviour). With ids the lists must have the same size, ids must be unique, and entries with an id are kept as-is.
+    /// </summary>
+    private static List<AuthorRef> BuildAuthorRefs(CreateBookRequest request, ValidationErrors errors)
+    {
+        var names = request.AuthorNames ?? [];
+        var ids = request.AuthorIds;
+        if (ids is not null && ids.Count != names.Count)
+        {
+            errors.Add("authorIds", "authorIds deve ter o mesmo tamanho de authorNames.");
+            ids = null;
+        }
+
+        var refs = new List<AuthorRef>();
+        var seenNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        var seenIds = new HashSet<Guid>();
+        for (var i = 0; i < names.Count; i++)
+        {
+            var name = (names[i] ?? string.Empty).Trim();
+            var id = ids?[i];
+            if (id is { } authorId)
+            {
+                if (!seenIds.Add(authorId))
+                {
+                    errors.Add("authorIds", "O mesmo autor não pode ser informado mais de uma vez.");
+                    continue;
+                }
+
+                refs.Add(new AuthorRef(name, authorId));
+            }
+            else if (name.Length > 0 && seenNames.Add(name))
+            {
+                refs.Add(new AuthorRef(name, null));
+            }
+        }
+
+        return refs;
     }
 
     private static void ApplyBibliographicData(Book book, CreateBookRequest request)

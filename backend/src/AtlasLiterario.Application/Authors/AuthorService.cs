@@ -12,6 +12,9 @@ public interface IAuthorService
 {
     Task<AuthorDetailsDto> GetAsync(Guid id, CancellationToken ct);
 
+    /// <summary>Autocomplete: accent/case-insensitive prefix of the name or of any word (prefix of the whole name first).</summary>
+    Task<IReadOnlyList<AuthorSuggestionDto>> SearchAsync(string? q, int? limit, CancellationToken ct);
+
     /// <summary>Catalog books of the author that are in the current user's library.</summary>
     Task<IReadOnlyList<BookDetailsDto>> GetBooksInLibraryAsync(Guid id, CancellationToken ct);
 
@@ -21,6 +24,76 @@ public interface IAuthorService
 
 public sealed class AuthorService(IAppDbContext db, ICurrentUser currentUser, IClock clock) : IAuthorService
 {
+    public const int MinQueryLength = 2;
+    public const int DefaultLimit = 10;
+    public const int MaxLimit = 20;
+
+    public async Task<IReadOnlyList<AuthorSuggestionDto>> SearchAsync(string? q, int? limit, CancellationToken ct)
+    {
+        currentUser.GetRequiredUserId();
+        var errors = new ValidationErrors();
+        var term = (q ?? string.Empty).Trim();
+        if (term.Length < MinQueryLength)
+        {
+            errors.Add("q", $"Informe ao menos {MinQueryLength} caracteres.");
+        }
+
+        var take = limit ?? DefaultLimit;
+        if (take is < 1 or > MaxLimit)
+        {
+            errors.Add("limit", $"O limite deve estar entre 1 e {MaxLimit}.");
+        }
+
+        errors.ThrowIfAny();
+
+        var normalized = Author.NormalizeName(term);
+        if (normalized.Length == 0)
+        {
+            return [];
+        }
+
+        var escaped = EscapeLike(normalized);
+        var prefix = escaped + "%";
+        var wordPrefix = "% " + escaped + "%";
+
+        var authors = await db.Authors.AsNoTracking()
+            .Where(a => EF.Functions.Like(a.NormalizedName, prefix, "\\")
+                        || EF.Functions.Like(a.NormalizedName, wordPrefix, "\\"))
+            .OrderBy(a => EF.Functions.Like(a.NormalizedName, prefix, "\\") ? 0 : 1)
+            .ThenBy(a => a.NormalizedName)
+            .ThenBy(a => a.Id)
+            .Take(take)
+            .Select(a => new { a.Id, a.Name })
+            .ToListAsync(ct);
+        if (authors.Count == 0)
+        {
+            return [];
+        }
+
+        var ids = authors.Select(a => a.Id).ToList();
+        var nationalities = await db.AuthorCountries.AsNoTracking()
+            .Where(ac => ac.RelationshipType == AuthorCountryRelationship.Citizenship && ids.Contains(ac.AuthorId))
+            .Select(ac => new { ac.AuthorId, ac.Country!.IsoCode, ac.Country.NamePt })
+            .ToListAsync(ct);
+        var byAuthor = nationalities
+            .GroupBy(n => n.AuthorId)
+            .ToDictionary(g => g.Key, g => g.OrderBy(n => n.IsoCode, StringComparer.Ordinal).ToList());
+
+        return authors
+            .Select(a =>
+            {
+                var countries = byAuthor.GetValueOrDefault(a.Id) ?? [];
+                return new AuthorSuggestionDto(
+                    a.Id, a.Name, countries.Select(c => c.IsoCode).ToList(), countries.Select(c => c.NamePt).ToList());
+            })
+            .ToList();
+    }
+
+    private static string EscapeLike(string value) =>
+        value.Replace("\\", "\\\\", StringComparison.Ordinal)
+            .Replace("%", "\\%", StringComparison.Ordinal)
+            .Replace("_", "\\_", StringComparison.Ordinal);
+
     public async Task<AuthorDetailsDto> GetAsync(Guid id, CancellationToken ct)
     {
         currentUser.GetRequiredUserId();

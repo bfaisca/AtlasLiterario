@@ -5,4 +5,7 @@ public enum MapVisibility : short
 {
     Private = 0,
     LinkOnly = 1,
+
+    /// <summary>Discoverable profile; maps (countries, authors, titles, reviews) visible to any authenticated user. Explicit opt-in only.</summary>
+    Public = 2,
 }

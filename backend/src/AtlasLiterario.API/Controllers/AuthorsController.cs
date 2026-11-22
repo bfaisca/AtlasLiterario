@@ -6,8 +6,16 @@ namespace AtlasLiterario.API.Controllers;
 
 [Route("api/authors")]
 [Tags("Authors")]
-public sealed class AuthorsController(IAuthorService authorService) : ApiControllerBase
+public sealed class AuthorsController(IAuthorService authorService, IAuthorDeduplicationService deduplicationService) : ApiControllerBase
 {
+    /// <summary>Autocomplete of authors for the book form (q ≥ 2 chars, limit 1–20, default 10).</summary>
+    [HttpGet]
+    [ProducesResponseType<IReadOnlyList<AuthorSuggestionDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<HttpValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
+    public async Task<ActionResult<IReadOnlyList<AuthorSuggestionDto>>> Search(
+        [FromQuery] string? q, [FromQuery] int? limit, CancellationToken ct) =>
+        Ok(await authorService.SearchAsync(q, limit, ct));
+
     [HttpGet("{id:guid}")]
     [ProducesResponseType<AuthorDetailsDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")]
@@ -30,4 +38,20 @@ public sealed class AuthorsController(IAuthorService authorService) : ApiControl
     public async Task<ActionResult<AuthorDetailsDto>> UpdateCountries(
         Guid id, UpdateAuthorCountriesRequest request, CancellationToken ct) =>
         Ok(await authorService.UpdateCountriesAsync(id, request, ct));
+
+    /// <summary>Groups of authors with the same normalized name (Moderator only).</summary>
+    [HttpGet("duplicates")]
+    [ProducesResponseType<IReadOnlyList<AuthorDuplicateGroupDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json")]
+    public async Task<ActionResult<IReadOnlyList<AuthorDuplicateGroupDto>>> GetDuplicates(CancellationToken ct) =>
+        Ok(await deduplicationService.GetDuplicatesAsync(ct));
+
+    /// <summary>Merges duplicate authors into the target without losing book links (Moderator only, one transaction).</summary>
+    [HttpPost("merge")]
+    [ProducesResponseType<AuthorMergeResultDto>(StatusCodes.Status200OK)]
+    [ProducesResponseType<HttpValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json")]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound, "application/problem+json")]
+    public async Task<ActionResult<AuthorMergeResultDto>> Merge(MergeAuthorsRequest request, CancellationToken ct) =>
+        Ok(await deduplicationService.MergeAsync(request, ct));
 }

@@ -4,7 +4,7 @@ import { flushPromises, mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import { defineComponent, h } from 'vue'
-import type { CountryDetailDto, MapDataDto, MapType } from '@/types/api'
+import type { CountryDetailDto, MapDataDto, MapStatusFilter, MapType } from '@/types/api'
 import MapPage from '../MapPage.vue'
 
 const mapsApi = vi.hoisted(() => ({ get: vi.fn(), getCountryDetail: vi.fn() }))
@@ -34,6 +34,7 @@ function country(iso: string, name: string, bookCount: number) {
 }
 const authors: MapDataDto = {
   mapType: 'Authors',
+  status: 'Read',
   totalReadBooks: 5,
   exploredCountries: 2,
   maxBookCount: 3,
@@ -42,20 +43,27 @@ const authors: MapDataDto = {
 }
 const origins: MapDataDto = {
   mapType: 'Origins',
+  status: 'Read',
   totalReadBooks: 5,
   exploredCountries: 1,
   maxBookCount: 2,
   unknownBookCount: 0,
   countries: [country('BRA', 'Brasil', 2)],
 }
-const detailFor = (mapType: MapType, iso: string): CountryDetailDto => ({
+const detailFor = (
+  mapType: MapType,
+  iso: string,
+  status: MapStatusFilter = 'Read',
+): CountryDetailDto => ({
   mapType,
+  status,
   iso,
   name: iso,
   continent: 'Europe',
   bookCount: 1,
   authorCount: 1,
   books: [],
+  authors: [],
 })
 
 async function setup(url: string) {
@@ -82,11 +90,13 @@ describe('MapPage (URL e seleção)', () => {
     setActivePinia(createPinia())
     mapsApi.get.mockReset()
     mapsApi.getCountryDetail.mockReset()
-    mapsApi.get.mockImplementation(async (type: MapType) =>
-      type === 'Authors' ? authors : origins,
-    )
-    mapsApi.getCountryDetail.mockImplementation(async (type: MapType, iso: string) =>
-      detailFor(type, iso),
+    mapsApi.get.mockImplementation(async (type: MapType, status?: MapStatusFilter) => ({
+      ...(type === 'Authors' ? authors : origins),
+      status: status ?? 'Read',
+    }))
+    mapsApi.getCountryDetail.mockImplementation(
+      async (type: MapType, iso: string, status?: MapStatusFilter) =>
+        detailFor(type, iso, status ?? 'Read'),
     )
   })
   afterEach(() => {
@@ -195,7 +205,7 @@ describe('MapPage (URL e seleção)', () => {
     expect(note.text()).toContain('2 livros lidos')
     expect(note.text()).toContain('sem nacionalidade conhecida')
     expect(note.text()).toContain('Dado ausente não é país inexplorado')
-    expect(note.find('a').attributes('href')).toBe('/library?status=Read')
+    expect(note.find('a').attributes('href')).toBe('/library?status=Read&geoMissing=author')
   })
 
   it('sem livros lidos: mostra o estado vazio com CTA para a biblioteca', async () => {
@@ -216,7 +226,7 @@ describe('MapPage (URL e seleção)', () => {
 
   it('mostra a atribuição Natural Earth e as fontes de dados', async () => {
     const { wrapper } = await setup('/map/authors')
-    const credits = wrapper.find('.map-page__credits')
+    const credits = wrapper.find('.explorer__credits')
     expect(credits.text()).toContain('Natural Earth')
     expect(credits.text()).toContain('Wikidata')
     expect(credits.find('a').attributes('rel')).toContain('noopener')
@@ -230,5 +240,102 @@ describe('MapPage (URL e seleção)', () => {
       '2',
       '3',
     ])
+  })
+
+  describe('filtro de status', () => {
+    const statusRadio = (wrapper: Awaited<ReturnType<typeof setup>>['wrapper'], label: string) =>
+      wrapper
+        .find('[aria-label="Status de leitura exibido no mapa"]')
+        .findAll('[role="radio"]')
+        .find((r) => r.text() === label)!
+
+    it('padrão é Lido: sem ?status= na URL, sem aviso e API chamada sem status', async () => {
+      const { wrapper, router } = await setup('/map/authors')
+      expect(statusRadio(wrapper, 'Lido').attributes('aria-checked')).toBe('true')
+      expect(router.currentRoute.value.query.status).toBeUndefined()
+      expect(wrapper.find('[data-testid="status-scope-note"]').exists()).toBe(false)
+      expect(mapsApi.get).toHaveBeenCalledWith('Authors')
+      expect(wrapper.text()).toContain('5 livros lidos')
+    })
+
+    it('lê ?status= da URL, envia à API e avisa que Passaporte só conta lidos', async () => {
+      const { wrapper } = await setup('/map/authors?status=WantToRead')
+      expect(statusRadio(wrapper, 'Quero ler').attributes('aria-checked')).toBe('true')
+      expect(mapsApi.get).toHaveBeenCalledWith('Authors', 'WantToRead')
+      expect(wrapper.find('[data-testid="status-scope-note"]').text()).toContain(
+        'o Passaporte e as estatísticas contam apenas livros lidos',
+      )
+      expect(wrapper.text()).toContain('5 livros que quero ler')
+    })
+
+    it('valor inválido em ?status= cai no padrão', async () => {
+      const { wrapper } = await setup('/map/authors?status=xyz')
+      expect(statusRadio(wrapper, 'Lido').attributes('aria-checked')).toBe('true')
+      expect(mapsApi.get).toHaveBeenCalledWith('Authors')
+    })
+
+    it('trocar o status grava na URL (Lido remove), mantém tipo e país e recarrega o detalhe', async () => {
+      const { wrapper, router } = await setup('/map/authors?country=FRA')
+      await statusRadio(wrapper, 'Todos').trigger('click')
+      await flushPromises()
+      expect(router.currentRoute.value.query).toEqual({ country: 'FRA', status: 'All' })
+      expect(router.currentRoute.value.params.type).toBe('authors')
+      expect(mapsApi.get).toHaveBeenCalledWith('Authors', 'All')
+      expect(mapsApi.getCountryDetail).toHaveBeenLastCalledWith('Authors', 'FRA', 'All')
+      expect(wrapper.find('[data-testid="country-panel"]').exists()).toBe(true)
+      expect(wrapper.text()).toContain('5 livros')
+
+      await statusRadio(wrapper, 'Lido').trigger('click')
+      await flushPromises()
+      expect(router.currentRoute.value.query).toEqual({ country: 'FRA' })
+    })
+
+    it('trocar Autores/Obras preserva o status', async () => {
+      const { wrapper, router } = await setup('/map/authors?status=Reading')
+      const radio = wrapper.findAll('[role="radio"]').find((r) => r.text() === 'Obras')!
+      await radio.trigger('click')
+      await flushPromises()
+      expect(router.currentRoute.value.query.status).toBe('Reading')
+      expect(mapsApi.get).toHaveBeenCalledWith('Origins', 'Reading')
+    })
+
+    it('descarta o país selecionado que não existe no mapa do novo status', async () => {
+      mapsApi.get.mockImplementation(async (type: MapType, status?: MapStatusFilter) => ({
+        ...(type === 'Authors' ? authors : origins),
+        status: status ?? 'Read',
+        countries: status === 'Abandoned' ? [country('BRA', 'Brasil', 1)] : authors.countries,
+      }))
+      const { wrapper, router } = await setup('/map/authors?country=FRA')
+      await statusRadio(wrapper, 'Abandonado').trigger('click')
+      await flushPromises()
+      expect(router.currentRoute.value.query).toEqual({ status: 'Abandoned' })
+      expect(wrapper.find('[data-testid="country-panel"]').exists()).toBe(false)
+    })
+
+    it('estado vazio de um status não pede para marcar livros como lidos', async () => {
+      mapsApi.get.mockImplementation(async (type: MapType, status?: MapStatusFilter) => ({
+        ...(type === 'Authors' ? authors : origins),
+        status: status ?? 'Read',
+        totalReadBooks: status === 'Abandoned' ? 0 : 5,
+        countries: status === 'Abandoned' ? [] : authors.countries,
+        unknownBookCount: 0,
+      }))
+      const { wrapper } = await setup('/map/authors?status=Abandoned')
+      expect(wrapper.text()).toContain('Nenhum livro neste filtro')
+      expect(wrapper.text()).not.toContain('Nenhum livro lido ainda')
+    })
+
+    it('o texto de livros sem país acompanha o filtro e liga à biblioteca com o mesmo status', async () => {
+      mapsApi.get.mockImplementation(async (type: MapType, status?: MapStatusFilter) => ({
+        ...(type === 'Authors' ? authors : origins),
+        status: status ?? 'Read',
+        unknownBookCount: 2,
+      }))
+      const { wrapper } = await setup('/map/origins?status=Abandoned')
+      const note = wrapper.find('[role="note"]')
+      expect(note.text()).toContain('2 livros abandonados')
+      expect(note.text()).toContain('de obra sem origem conhecida')
+      expect(note.find('a').attributes('href')).toBe('/library?status=Abandoned&geoMissing=origin')
+    })
   })
 })

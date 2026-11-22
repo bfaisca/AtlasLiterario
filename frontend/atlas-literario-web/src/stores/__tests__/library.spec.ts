@@ -6,6 +6,7 @@ import {
   filtersFromRouteQuery,
   filtersToQueryParams,
   filtersToRouteQuery,
+  hasActiveFilters,
 } from '../libraryFilters'
 import { LIBRARY_PAGE_SIZE, useLibraryStore } from '../library'
 import { useMapsStore } from '../maps'
@@ -74,6 +75,7 @@ describe('filtros da biblioteca', () => {
       status: ['WantToRead', 'Read'],
       genre: 'Romance',
       minRating: null,
+      geoMissing: null,
       sort: 'createdAt',
       order: 'asc',
     })
@@ -85,6 +87,29 @@ describe('filtros da biblioteca', () => {
     })
     expect(filtersFromRouteQuery(filtersToRouteQuery(filters) as never)).toEqual(filters)
     expect(filtersToRouteQuery(defaultFilters())).toEqual({})
+  })
+})
+
+describe('filtro de dados geográficos', () => {
+  it('vai para a query da API e da URL só quando definido', () => {
+    const filters = { ...defaultFilters(), geoMissing: 'origin' as const }
+    expect(filtersToQueryParams(filters, 1, 24).geoMissing).toBe('origin')
+    expect(filtersToQueryParams(defaultFilters(), 1, 24)).not.toHaveProperty('geoMissing')
+    expect(filtersToRouteQuery(filters)).toEqual({ geoMissing: 'origin' })
+    expect(filtersToRouteQuery(defaultFilters())).not.toHaveProperty('geoMissing')
+  })
+
+  it('URL ↔ filtro: aceita os quatro valores e ignora inválidos', () => {
+    for (const value of ['any', 'origin', 'author', 'both'] as const) {
+      expect(filtersFromRouteQuery({ geoMissing: value }).geoMissing).toBe(value)
+    }
+    expect(filtersFromRouteQuery({ geoMissing: 'nope' }).geoMissing).toBeNull()
+    expect(filtersFromRouteQuery({}).geoMissing).toBeNull()
+  })
+
+  it('conta como filtro ativo', () => {
+    expect(hasActiveFilters({ ...defaultFilters(), geoMissing: 'any' })).toBe(true)
+    expect(hasActiveFilters(defaultFilters())).toBe(false)
   })
 })
 
@@ -110,6 +135,23 @@ describe('library store', () => {
     })
     expect(store.items.map((i) => i.id)).toEqual(['a', 'b'])
     expect(store.hasMore).toBe(true)
+  })
+
+  it('setFilters com geoMissing envia o parâmetro e volta à página 1', async () => {
+    libraryApi.list.mockResolvedValue(page(['a'], 1, 3))
+    const store = useLibraryStore()
+    await store.setFilters(defaultFilters())
+    libraryApi.list.mockResolvedValue({ ...page(['a'], 2, 3), page: 2 })
+    await store.loadMore()
+    expect(store.page).toBe(2)
+
+    libraryApi.list.mockResolvedValue(page(['x'], 1, 1))
+    await store.setFilters({ ...defaultFilters(), geoMissing: 'both' })
+    expect(libraryApi.list).toHaveBeenLastCalledWith(
+      expect.objectContaining({ geoMissing: 'both', page: 1 }),
+    )
+    expect(store.page).toBe(1)
+    expect(store.items.map((i) => i.id)).toEqual(['x'])
   })
 
   it('loadMore acrescenta a próxima página sem duplicar', async () => {

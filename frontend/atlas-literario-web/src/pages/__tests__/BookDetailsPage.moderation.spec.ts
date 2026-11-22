@@ -11,8 +11,8 @@ import BookDetailsPage from '../BookDetailsPage.vue'
 
 const api = vi.hoisted(() => ({
   library: { get: vi.fn() },
-  books: { updateOriginCountries: vi.fn() },
-  authors: { updateCountries: vi.fn() },
+  books: { updateOriginCountries: vi.fn(), update: vi.fn() },
+  authors: { updateCountries: vi.fn(), search: vi.fn() },
   countries: { list: vi.fn().mockResolvedValue([]) },
 }))
 vi.mock('@/api', () => ({ api }))
@@ -67,6 +67,9 @@ async function mountAs(role: UserRole, filled: boolean) {
     mapVisibility: 'Private',
     role,
     createdAt: '2025-01-01T00:00:00Z',
+    handle: null,
+    followersCount: 0,
+    followingCount: 0,
   }
   api.library.get.mockResolvedValue(itemWith(filled))
   const router = createRouter({
@@ -155,5 +158,44 @@ describe('BookDetailsPage: quem pode alterar países', () => {
     expect(api.library.get.mock.calls.length).toBeGreaterThan(reads)
     // a tela já reflete o dado preenchido: sem botão, com a nota
     expect(wrapper.find('[data-testid="moderation-note"]').exists()).toBe(true)
+  })
+})
+
+describe('BookDetailsPage: correção de dados com autocomplete de autor', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+    document.body.innerHTML = ''
+  })
+
+  it('o campo de autor da correção é um combobox; escolher sugestão envia authorIds no PUT', async () => {
+    api.books.update.mockReset().mockResolvedValue({})
+    api.authors.search
+      .mockReset()
+      .mockResolvedValue([
+        { id: 'a-7', name: 'Autora Maior', nationalityIsos: ['BRA'], nationalityNames: ['Brasil'] },
+      ])
+    const wrapper = await mountAs('User', true)
+    await wrapper
+      .findAll('button')
+      .find((b) => b.text().includes('Corrigir dados do livro'))!
+      .trigger('click')
+    await flushPromises()
+    const input = document.querySelector<HTMLInputElement>('input[role="combobox"]')!
+    expect(input.value).toBe('Autora')
+    input.value = 'autora m'
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+    await new Promise((resolve) => setTimeout(resolve, 300))
+    await flushPromises()
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }))
+    await flushPromises()
+    input.dispatchEvent(
+      new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }),
+    )
+    await flushPromises()
+    document.querySelector<HTMLFormElement>('#book-form')!.dispatchEvent(new Event('submit'))
+    await flushPromises()
+    const request = api.books.update.mock.calls[0]![1]
+    expect(request.authorNames).toEqual(['Autora Maior'])
+    expect(request.authorIds).toEqual(['a-7'])
   })
 })

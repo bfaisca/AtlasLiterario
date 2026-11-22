@@ -11,6 +11,7 @@ import ManualBookPage from '../ManualBookPage.vue'
 
 const api = vi.hoisted(() => ({
   books: { create: vi.fn(), uploadCover: vi.fn() },
+  authors: { search: vi.fn() },
   library: { add: vi.fn() },
   countries: { list: vi.fn().mockResolvedValue([]) },
 }))
@@ -171,5 +172,88 @@ describe('ManualBookPage: capa', () => {
     expect(api.books.uploadCover).toHaveBeenCalledTimes(1)
     finish()
     await flushPromises()
+  })
+})
+
+describe('ManualBookPage: autocomplete de autor (authorIds)', () => {
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    api.books.create.mockReset().mockResolvedValue({ id: 'book-1' })
+    api.library.add.mockReset().mockResolvedValue(item)
+    api.authors.search.mockReset().mockResolvedValue([
+      {
+        id: 'a-9',
+        name: 'Clarice Lispector',
+        nationalityIsos: ['BRA'],
+        nationalityNames: ['Brasil'],
+      },
+    ])
+  })
+  afterEach(() => {
+    vi.useRealTimers()
+    document.body.innerHTML = ''
+  })
+
+  async function chooseSuggestion(wrapper: Awaited<ReturnType<typeof setup>>['wrapper']) {
+    const input = wrapper.find<HTMLInputElement>('input[role="combobox"]')
+    await input.setValue('clari')
+    await new Promise((resolve) => setTimeout(resolve, 300))
+    await flushPromises()
+    await input.trigger('keydown', { key: 'ArrowDown' })
+    await input.trigger('keydown', { key: 'Enter' })
+  }
+
+  it('escolher sugestão envia authorIds alinhado a authorNames (id + null para texto livre)', async () => {
+    const { wrapper } = await setup()
+    await wrapper.find<HTMLInputElement>('input[role="combobox"]').setValue('') // garante o 1º campo
+    const byLabel = (text: string) => {
+      const label = wrapper.findAll('label').find((l) => l.text().startsWith(text))!
+      return wrapper.find<HTMLInputElement>(`#${label.attributes('for')}`)
+    }
+    await byLabel('Título').setValue('Livro Novo')
+    await chooseSuggestion(wrapper)
+    await wrapper
+      .findAll('button')
+      .find((b) => b.text().includes('Adicionar autor'))!
+      .trigger('click')
+    await byLabel('Autor 2').setValue('Autor Livre')
+    await wrapper.find('form').trigger('submit')
+    await flushPromises()
+
+    expect(api.authors.search).toHaveBeenCalledWith('clari', 8, expect.any(AbortSignal))
+    const request = api.books.create.mock.calls[0]![0]
+    expect(request.authorNames).toEqual(['Clarice Lispector', 'Autor Livre'])
+    expect(request.authorIds).toEqual(['a-9', null])
+  })
+
+  it('texto livre, sem escolher sugestão, NÃO envia authorIds (comportamento anterior)', async () => {
+    const { wrapper } = await setup()
+    await fill(wrapper)
+    await wrapper.find('form').trigger('submit')
+    await flushPromises()
+    const request = api.books.create.mock.calls[0]![0]
+    expect(request.authorNames).toEqual(['Autora Nova'])
+    expect('authorIds' in request).toBe(false)
+  })
+
+  it('editar o texto depois de escolher desfaz o id; remover um autor mantém o alinhamento', async () => {
+    const { wrapper } = await setup()
+    const byLabel = (text: string) => {
+      const label = wrapper.findAll('label').find((l) => l.text().startsWith(text))!
+      return wrapper.find<HTMLInputElement>(`#${label.attributes('for')}`)
+    }
+    await byLabel('Título').setValue('Livro Novo')
+    await chooseSuggestion(wrapper)
+    await wrapper
+      .findAll('button')
+      .find((b) => b.text().includes('Adicionar autor'))!
+      .trigger('click')
+    await byLabel('Autor 2').setValue('Segundo')
+    await wrapper.find('button[aria-label="Remover autor 1"]').trigger('click')
+    await wrapper.find('form').trigger('submit')
+    await flushPromises()
+    const request = api.books.create.mock.calls[0]![0]
+    expect(request.authorNames).toEqual(['Segundo'])
+    expect('authorIds' in request).toBe(false)
   })
 })

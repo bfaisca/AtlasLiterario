@@ -16,6 +16,7 @@ public sealed class LibraryController(ILibraryService libraryService) : ApiContr
     /// <param name="mapType">authors | origins</param>
     /// <param name="genre">Genre (exact).</param>
     /// <param name="minRating">1–5.</param>
+    /// <param name="geoMissing">any | origin | author | both — books with no stored origin country and/or no author citizenship (unknown, not "none").</param>
     /// <param name="sort">title | author | createdAt | finishedDate | rating | publicationYear</param>
     /// <param name="order">asc | desc</param>
     /// <param name="page">1-based.</param>
@@ -35,9 +36,10 @@ public sealed class LibraryController(ILibraryService libraryService) : ApiContr
         [FromQuery] string? order,
         [FromQuery] int? page,
         [FromQuery] int? pageSize,
+        [FromQuery] string? geoMissing,
         CancellationToken ct) =>
         Ok(await libraryService.ListAsync(
-            new LibraryQuery(q, status, countryIso, mapType, genre, minRating, sort, order, page, pageSize), ct));
+            new LibraryQuery(q, status, countryIso, mapType, genre, minRating, sort, order, page, pageSize, geoMissing), ct));
 
     /// <param name="id">UserBook id.</param>
     /// <param name="ct">Cancellation token.</param>

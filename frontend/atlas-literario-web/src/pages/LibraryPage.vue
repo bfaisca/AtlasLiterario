@@ -11,7 +11,13 @@ import {
   type LibraryFilters,
 } from '@/stores/libraryFilters'
 import { getErrorMessage } from '@/api/errors'
-import { READING_STATUSES, type LibrarySort, type ReadingStatus } from '@/types/api'
+import {
+  READING_STATUSES,
+  type LibraryGeoMissing,
+  type LibrarySort,
+  type ReadingStatus,
+} from '@/types/api'
+import { GEO_MISSING_OPTIONS } from '@/utils/libraryGeo'
 import { debounce } from '@/utils/debounce'
 import { READING_STATUS_LABELS, pluralize } from '@/utils/labels'
 import AppIcon from '@/components/ui/AppIcon.vue'
@@ -49,11 +55,19 @@ const minRating = computed({
   get: () => form.value.minRating ?? 0,
   set: (value: number) => apply({ ...form.value, minRating: value || null }),
 })
+const geoMissing = computed({
+  get: () => form.value.geoMissing ?? '',
+  set: (value: LibraryGeoMissing | '') => apply({ ...form.value, geoMissing: value || null }),
+})
 const sort = computed({
   get: () => form.value.sort,
   set: (value: LibrarySort) => apply({ ...form.value, sort: value }),
 })
 const active = computed(() => hasActiveFilters(form.value))
+/** Só o filtro de dados geográficos está ativo: a lista vazia tem mensagem própria. */
+const onlyGeoFilter = computed(
+  () => !!form.value.geoMissing && !hasActiveFilters({ ...form.value, geoMissing: null }),
+)
 const knownGenres = computed(() =>
   [...new Set(items.value.flatMap((i) => i.book.genres))].sort((a, b) =>
     a.localeCompare(b, 'pt-BR'),
@@ -168,6 +182,12 @@ watch(
           </datalist>
         </div>
         <BaseSelect v-model="minRating" label="Avaliação mínima" :options="RATING_OPTIONS" />
+        <BaseSelect
+          v-model="geoMissing"
+          label="Dados geográficos"
+          :options="GEO_MISSING_OPTIONS"
+          data-testid="geo-missing-select"
+        />
         <div class="filters__sort">
           <BaseSelect v-model="sort" label="Ordenar por" :options="SORT_OPTIONS" />
           <button
@@ -200,6 +220,14 @@ watch(
       <BaseButton variant="secondary" @click="library.fetch({ force: true })"
         >Tentar novamente</BaseButton
       >
+    </EmptyState>
+    <EmptyState
+      v-else-if="!items.length && onlyGeoFilter"
+      icon="globe"
+      title="Nenhum livro com dados geográficos faltando."
+      description="Todos os livros que se encaixam já têm país conhecido. Dado ausente é só informação ainda não encontrada: assim que aparecer algum, ele será listado aqui."
+    >
+      <BaseButton variant="secondary" @click="clearFilters">Ver todos os livros</BaseButton>
     </EmptyState>
     <EmptyState
       v-else-if="!items.length && active"
@@ -320,7 +348,7 @@ watch(
 }
 .filters {
   display: grid;
-  grid-template-columns: minmax(160px, 1fr) minmax(160px, 1fr) minmax(240px, 1.4fr) auto;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: end;
   gap: var(--space-3);
 }
@@ -332,6 +360,7 @@ watch(
   color: var(--color-text-muted);
 }
 .filters__sort {
+  grid-column: span 2;
   display: flex;
   align-items: flex-end;
   gap: var(--space-2);
@@ -368,6 +397,9 @@ watch(
   }
   .filters.is-open {
     display: grid;
+  }
+  .filters__sort {
+    grid-column: auto;
   }
 }
 .shelf {

@@ -1,11 +1,13 @@
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using AtlasLiterario.Application.Common;
 using AtlasLiterario.Application.Maps;
+using AtlasLiterario.Application.Statistics;
 using AtlasLiterario.Application.Auth;
 using AtlasLiterario.Application.Authors;
 using AtlasLiterario.Application.Books;
 using AtlasLiterario.Application.Library;
 using AtlasLiterario.Application.Countries;
+using AtlasLiterario.Application.Profiles;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace AtlasLiterario.Application;
@@ -22,7 +24,10 @@ public static class DependencyInjection
         services.AddScoped<IBookCoverService, BookCoverService>();
         services.AddScoped<ILibraryService, LibraryService>();
         services.AddScoped<IAuthorService, AuthorService>();
+        services.AddScoped<IAuthorDeduplicationService, AuthorDeduplicationService>();
         services.AddScoped<IMapService, MapService>();
+        services.AddScoped<IStatisticsService, StatisticsService>();
+        services.AddScoped<IProfileService, ProfileService>();
         services.TryAddSingleton<IEnrichmentSettings, DefaultEnrichmentSettings>();
         services.AddScoped<RequestBudget>();
         return services;

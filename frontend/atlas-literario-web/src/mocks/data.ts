@@ -170,6 +170,26 @@ function buildCatalog() {
       [rel('Citizenship', 'PER'), rel('Citizenship', 'ESP')],
       'Q39803',
     ),
+    // Maurício: país insular minúsculo (marcador no mapa; sem polígono visível no mapa-múndi)
+    devi: author(
+      'Ananda Devi',
+      '1957-03-23',
+      [rel('Citizenship', 'MUS'), rel('BirthPlace', 'MUS')],
+      'Q458630',
+    ),
+    // Demonstra território com código próprio (GUF ≠ FRA). Cidadania em GUF é um dado de demonstração
+    // (no Wikidata a cidadania é a França): confiança reduzida e não verificada.
+    damas: author(
+      'Léon-Gontran Damas',
+      '1912-03-28',
+      [rel('Citizenship', 'GUF', 'Wikidata', 0.6), rel('BirthPlace', 'GUF')],
+      'Q3270094',
+    ),
+    // Dados de demonstração para o filtro "dados geográficos faltando"
+    duarte: author('Helena Duarte (demo)', null, []), // nacionalidade ainda desconhecida
+    mahfouz: author('Naguib Mahfouz', '1911-12-11', [rel('Citizenship', 'EGY')], 'Q37281'),
+    camus: author('Albert Camus', '1913-11-07', [rel('Citizenship', 'FRA')], 'Q34670'),
+    joyce: author('James Joyce', '1882-02-02', [rel('Citizenship', 'IRL')], 'Q6882'),
   } satisfies Record<string, AuthorDetailsDto>
   const A = authors
 
@@ -311,6 +331,75 @@ function buildCatalog() {
       description: 'Xerazade conta histórias noite após noite para adiar a própria morte.',
       status: 'Partial',
     }),
+    pagli: book({
+      title: 'Pagli',
+      authors: [A.devi],
+      origins: [geo('MUS')],
+      year: 2001,
+      language: 'fr',
+      genres: ['Romance'],
+      description:
+        'Uma jovem de uma ilha do Índico é condenada ao silêncio e à loucura pela família.',
+    }),
+    pigments: book({
+      title: 'Pigments',
+      authors: [A.damas],
+      origins: [geo('GUF')],
+      year: 1937,
+      language: 'fr',
+      genres: ['Poesia'],
+      description:
+        'Poemas fundadores da negritude, escritos por um poeta nascido na Guiana Francesa.',
+    }),
+    // Lido, autor com nacionalidade conhecida mas obra SEM país de origem (demonstração)
+    lucidez: book({
+      title: 'Ensaio sobre a Lucidez',
+      authors: [A.saramago],
+      origins: [],
+      year: 2004,
+      language: 'pt',
+      genres: ['Romance'],
+      description: 'Numa capital sem nome, a maioria dos eleitores vota em branco.',
+    }),
+    // Lido, obra com país de origem mas autor SEM nacionalidade conhecida (demonstração)
+    farol: book({
+      title: 'Cartas de um Farol (demo)',
+      authors: [A.duarte],
+      origins: [geo('NOR')],
+      year: 2019,
+      language: 'pt',
+      genres: ['Romance'],
+      description:
+        'Livro fictício de demonstração: a nacionalidade da autora ainda não é conhecida.',
+    }),
+    miramar: book({
+      title: 'Miramar',
+      authors: [A.mahfouz],
+      origins: [geo('EGY')],
+      year: 1967,
+      language: 'ar',
+      genres: ['Romance'],
+      description:
+        'Uma pensão em Alexandria reúne hóspedes que contam o mesmo verão de formas distintas.',
+    }),
+    estrangeiro: book({
+      title: 'O Estrangeiro',
+      authors: [A.camus],
+      origins: [geo('FRA')],
+      year: 1942,
+      language: 'fr',
+      genres: ['Romance'],
+      description: 'Meursault narra a morte da mãe e um crime sob o sol de Argel.',
+    }),
+    ulisses: book({
+      title: 'Ulisses',
+      authors: [A.joyce],
+      origins: [geo('IRL')],
+      year: 1922,
+      language: 'en',
+      genres: ['Romance', 'Modernismo'],
+      description: 'Um único dia, 16 de junho de 1904, na vida de Leopold Bloom em Dublin.',
+    }),
     // Fora da biblioteca: aparece apenas na pesquisa simulada
     grandeSertao: book({
       title: 'Grande Sertão: Veredas',
@@ -337,7 +426,7 @@ export function getMockCatalog() {
 
 // ---------------------------------------------------------------- Biblioteca do usuário demo
 
-interface ItemSeed {
+export interface ItemSeed {
   book: BookDetailsDto
   status: ReadingStatus
   rating?: number
@@ -346,7 +435,7 @@ interface ItemSeed {
   finished?: string
 }
 
-function item(seed: ItemSeed): LibraryItemDto {
+export function mockLibraryItem(seed: ItemSeed): LibraryItemDto {
   const created = `${seed.start ?? seed.finished ?? '2025-01-01'}T12:00:00Z`
   const updated = seed.finished ? `${seed.finished}T20:00:00Z` : created
   return {
@@ -365,7 +454,7 @@ function item(seed: ItemSeed): LibraryItemDto {
 export function createMockLibrary(): LibraryItemDto[] {
   const B = getMockCatalog().books
   return [
-    item({
+    mockLibraryItem({
       book: B.cemAnos,
       status: 'Read',
       rating: 5,
@@ -373,28 +462,28 @@ export function createMockLibrary(): LibraryItemDto[] {
       start: '2024-12-20',
       finished: '2025-01-18',
     }),
-    item({
+    mockLibraryItem({
       book: B.metamorfose,
       status: 'Read',
       rating: 4,
       start: '2025-02-01',
       finished: '2025-02-03',
     }),
-    item({
+    mockLibraryItem({
       book: B.processo,
       status: 'Read',
       rating: 4,
       start: '2025-02-10',
       finished: '2025-03-02',
     }),
-    item({
+    mockLibraryItem({
       book: B.norwegianWood,
       status: 'Read',
       rating: 4,
       start: '2025-03-05',
       finished: '2025-03-28',
     }),
-    item({
+    mockLibraryItem({
       book: B.domCasmurro,
       status: 'Read',
       rating: 5,
@@ -402,46 +491,82 @@ export function createMockLibrary(): LibraryItemDto[] {
       start: '2025-04-02',
       finished: '2025-04-20',
     }),
-    item({
+    mockLibraryItem({
       book: B.cegueira,
       status: 'Read',
       rating: 5,
       start: '2025-05-01',
       finished: '2025-05-25',
     }),
-    item({
+    mockLibraryItem({
       book: B.crimeCastigo,
       status: 'Read',
       rating: 4,
       start: '2025-06-01',
       finished: '2025-07-14',
     }),
-    item({
+    mockLibraryItem({
       book: B.americanah,
       status: 'Read',
       rating: 5,
       start: '2025-08-03',
       finished: '2025-08-30',
     }),
-    item({
+    mockLibraryItem({
       book: B.belasMaldicoes,
       status: 'Read',
       rating: 4,
       start: '2025-09-02',
       finished: '2025-09-19',
     }),
-    item({
+    mockLibraryItem({
       book: B.cidadeCachorros,
       status: 'Read',
       rating: 3,
       start: '2025-10-01',
       finished: '2025-10-27',
     }),
-    item({ book: B.milEUmaNoites, status: 'Read', start: '2025-11-01', finished: '2025-12-15' }),
-    item({ book: B.bras, status: 'Reading', start: '2026-10-28' }),
-    item({ book: B.pedroParamo, status: 'Reading', start: '2026-11-02' }),
-    item({ book: B.ficcoes, status: 'WantToRead' }),
-    item({ book: B.horaEstrela, status: 'Abandoned', start: '2026-01-10' }),
+    mockLibraryItem({
+      book: B.milEUmaNoites,
+      status: 'Read',
+      start: '2025-11-01',
+      finished: '2025-12-15',
+    }),
+    mockLibraryItem({
+      book: B.pagli,
+      status: 'Read',
+      rating: 4,
+      start: '2026-01-05',
+      finished: '2026-01-20',
+    }),
+    mockLibraryItem({
+      book: B.pigments,
+      status: 'Read',
+      rating: 5,
+      start: '2026-02-01',
+      finished: '2026-02-08',
+    }),
+    mockLibraryItem({
+      book: B.lucidez,
+      status: 'Read',
+      rating: 4,
+      start: '2026-03-01',
+      finished: '2026-03-20',
+    }),
+    mockLibraryItem({
+      book: B.farol,
+      status: 'Read',
+      rating: 3,
+      start: '2026-04-02',
+      finished: '2026-04-15',
+    }),
+    mockLibraryItem({ book: B.estrangeiro, status: 'Reading', start: '2026-11-10' }),
+    mockLibraryItem({ book: B.miramar, status: 'WantToRead' }),
+    mockLibraryItem({ book: B.ulisses, status: 'Abandoned', start: '2026-05-04' }),
+    mockLibraryItem({ book: B.bras, status: 'Reading', start: '2026-10-28' }),
+    mockLibraryItem({ book: B.pedroParamo, status: 'Reading', start: '2026-11-02' }),
+    mockLibraryItem({ book: B.ficcoes, status: 'WantToRead' }),
+    mockLibraryItem({ book: B.horaEstrela, status: 'Abandoned', start: '2026-01-10' }),
   ]
 }
 
@@ -452,6 +577,9 @@ export const MOCK_DEMO_USER: UserProfileDto = {
   mapVisibility: 'Private',
   role: 'User',
   createdAt: '2024-12-01T10:00:00Z',
+  handle: null,
+  followersCount: 0,
+  followingCount: 0,
 }
 
 /** Moderadora de demonstração: pode alterar países já informados (contrato v1.7). */
@@ -462,6 +590,9 @@ export const MOCK_MODERATOR_USER: UserProfileDto = {
   mapVisibility: 'Private',
   role: 'Moderator',
   createdAt: '2024-11-01T10:00:00Z',
+  handle: null,
+  followersCount: 0,
+  followingCount: 0,
 }
 
 export const MOCK_DEMO_PASSWORD = 'atlas1234'

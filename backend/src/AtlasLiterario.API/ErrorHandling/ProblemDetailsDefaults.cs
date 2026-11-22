@@ -29,6 +29,7 @@ public static class ProblemDetailsDefaults
         StatusCodes.Status405MethodNotAllowed => "http.method_not_allowed",
         StatusCodes.Status409Conflict => "resource.conflict",
         StatusCodes.Status415UnsupportedMediaType => "http.unsupported_media_type",
+        StatusCodes.Status429TooManyRequests => "rate_limit.exceeded",
         StatusCodes.Status501NotImplemented => "feature.not_implemented",
         StatusCodes.Status502BadGateway => "external.unavailable",
         >= 500 => "server.error",

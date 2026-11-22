@@ -4,7 +4,8 @@
  * implementação existe para que a interface funcione e seja testada sem a API.
  *
  * Regras-chave:
- * - Conjunto base R = itens com status `Read`.
+ * - Conjunto base R = itens com status `Read` (os mapas aceitam, só para visualização, outro
+ *   status ou `All`; estatísticas e Passaportes seguem sempre `Read`).
  * - Autores: C_a(b) = união das CIDADANIAS de todos os autores de b (um livro conta 1x por país).
  * - Obras: C_o(b) = países de origem de b.
  * - Livro sem país conhecido → `unknownBookCount` (desconhecido ≠ ausência).
@@ -14,6 +15,7 @@ import type {
   BookDetailsDto,
   Continent,
   ContinentProgressDto,
+  CountryAuthorDto,
   CountryBookDto,
   CountryDetailDto,
   CountryDto,
@@ -21,10 +23,13 @@ import type {
   DashboardDto,
   LibraryItemDto,
   MapDataDto,
+  MapStatusFilter,
   MapType,
   PassportMapStatsDto,
   PassportProgressDto,
   PassportsDto,
+  ProfileBookDto,
+  ProfileCountryDetailDto,
   TimelinePointDto,
   TopCountryDto,
 } from '@/types/api'
@@ -42,6 +47,14 @@ export const PASSPORT_CONTINENTS: readonly Continent[] = [
 
 export function readItems(items: readonly LibraryItemDto[]): LibraryItemDto[] {
   return items.filter((item) => item.status === 'Read')
+}
+
+/** Conjunto de livros de um mapa: um status de leitura ou `All` (padrão: `Read`). */
+export function itemsForStatus(
+  items: readonly LibraryItemDto[],
+  status: MapStatusFilter = 'Read',
+): LibraryItemDto[] {
+  return status === 'All' ? [...items] : items.filter((item) => item.status === status)
 }
 
 /** Países de um livro no mapa indicado (conjunto, sem repetição). */
@@ -76,8 +89,9 @@ export function computeMapData(
   items: readonly LibraryItemDto[],
   mapType: MapType,
   countries: CountryLookup,
+  status: MapStatusFilter = 'Read',
 ): MapDataDto {
-  const read = readItems(items)
+  const read = itemsForStatus(items, status)
   const byCountry = new Map<string, { books: Set<string>; authors: Set<string> }>()
   let unknownBookCount = 0
 
@@ -115,6 +129,7 @@ export function computeMapData(
 
   return {
     mapType,
+    status,
     totalReadBooks: read.length,
     exploredCountries: data.length,
     maxBookCount: data.reduce((max, d) => Math.max(max, d.bookCount), 0),
@@ -144,25 +159,63 @@ export function toCountryBook(item: LibraryItemDto): CountryBookDto {
   }
 }
 
+/** Autores com cidadania em `iso` nos livros do conjunto (ordem alfabética sem acento). */
+function toCountryAuthors(
+  books: readonly LibraryItemDto[],
+  mapType: MapType,
+  iso: string,
+  countryName: string,
+): CountryAuthorDto[] {
+  if (mapType !== 'Authors') return []
+  const byId = new Map<string, CountryAuthorDto>()
+  // `books` já vem em finishedDate desc, então os livros de cada autor herdam a ordem.
+  for (const item of books) {
+    for (const author of item.book.authors) {
+      if (!author.nationalities.some((n) => n.countryIso === iso)) continue
+      const entry = byId.get(author.id)
+      if (entry) {
+        if (!entry.books.some((b) => b.libraryItemId === item.id))
+          entry.books.push(toCountryBook(item))
+      } else {
+        byId.set(author.id, {
+          authorId: author.id,
+          name: author.name,
+          countryIso: iso,
+          countryName,
+          books: [toCountryBook(item)],
+        })
+      }
+    }
+  }
+  return [...byId.values()].sort(
+    (a, b) =>
+      a.name.localeCompare(b.name, 'pt-BR', { sensitivity: 'base' }) ||
+      a.authorId.localeCompare(b.authorId),
+  )
+}
+
 export function computeCountryDetail(
   items: readonly LibraryItemDto[],
   mapType: MapType,
   iso: string,
   countries: CountryLookup,
+  status: MapStatusFilter = 'Read',
 ): CountryDetailDto {
   const country = lookupCountry(countries, iso)
-  const books = readItems(items)
+  const books = itemsForStatus(items, status)
     .filter((item) => countriesOfBook(item.book, mapType).has(iso))
     .sort(compareFinishedDesc)
   const authors = new Set(books.flatMap((i) => authorsOfBookInCountry(i.book, mapType, iso)))
   return {
     mapType,
+    status,
     iso,
     name: country.namePt,
     continent: country.continent,
     bookCount: books.length,
     authorCount: authors.size,
     books: books.map(toCountryBook),
+    authors: toCountryAuthors(books, mapType, iso, country.namePt),
   }
 }
 
@@ -298,5 +351,48 @@ export function computePassports(
     continents,
     timeline: computeTimeline(items),
     progress: progress(distinct.size, totalCountries),
+  }
+}
+
+/** Livro de um perfil público: sem `libraryItemId` (não expõe ids da biblioteca de terceiros) e com a resenha. */
+export function toProfileBook(item: LibraryItemDto): ProfileBookDto {
+  return {
+    bookId: item.book.id,
+    title: item.book.title,
+    coverUrl: item.book.coverUrl,
+    authors: item.book.authors.map((a) => a.name),
+    finishedDate: item.finishedDate,
+    rating: item.rating,
+    review: item.review?.trim() ? item.review : null,
+  }
+}
+
+/** Painel de país de um perfil público (api-contracts §8.1): sempre só `Read`, com resenhas. */
+export function computeProfileCountryDetail(
+  items: readonly LibraryItemDto[],
+  mapType: MapType,
+  iso: string,
+  countries: CountryLookup,
+): ProfileCountryDetailDto {
+  const detail = computeCountryDetail(items, mapType, iso, countries, 'Read')
+  const byItemId = new Map(items.map((item) => [item.id, item]))
+  const convert = (book: CountryBookDto): ProfileBookDto =>
+    toProfileBook(byItemId.get(book.libraryItemId)!)
+  return {
+    mapType: detail.mapType,
+    iso: detail.iso,
+    name: detail.name,
+    continent: detail.continent,
+    bookCount: detail.bookCount,
+    authorCount: detail.authorCount,
+    books: detail.books.map(convert),
+    authors: detail.authors.map((author) => ({
+      authorId: author.authorId,
+      name: author.name,
+      countryIso: author.countryIso,
+      countryName: author.countryName,
+      books: author.books.map(convert),
+    })),
+    status: 'Read',
   }
 }

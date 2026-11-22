@@ -30,13 +30,18 @@ export interface ProblemDetails {
 export type ReadingStatus = 'WantToRead' | 'Reading' | 'Read' | 'Abandoned'
 /** Rota usa minúsculo: /maps/authors, /maps/origins (ver `MapRouteType`). */
 export type MapType = 'Authors' | 'Origins'
+/** Filtro de visualização do mapa: um status de leitura ou `All` (os quatro). Padrão: `Read`. */
+export type MapStatusFilter = ReadingStatus | 'All'
+/** GET /library?geoMissing= — livros sem país conhecido (obra e/ou autor). */
+export type LibraryGeoMissing = 'any' | 'origin' | 'author' | 'both'
 export type Continent =
   'Africa' | 'Asia' | 'Europe' | 'NorthAmerica' | 'SouthAmerica' | 'Oceania' | 'Antarctica'
 export type GeoSource = 'Manual' | 'Wikidata' | 'OpenLibrary' | 'GoogleBooks'
 export type AuthorCountryRelationship = 'Citizenship' | 'BirthPlace' | 'Residence'
 export type ExternalProvider = 'GoogleBooks' | 'OpenLibrary' | 'Wikidata' | 'Local'
 export type GeoEnrichmentStatus = 'Pending' | 'Completed' | 'Partial' | 'Failed'
-export type MapVisibility = 'Private' | 'LinkOnly'
+/** v1.12: `Public` = perfil descobrível por apelido e mapas completos visíveis a usuários autenticados. */
+export type MapVisibility = 'Private' | 'LinkOnly' | 'Public'
 export type SearchType = 'all' | 'title' | 'author' | 'isbn'
 export type LibrarySort =
   'title' | 'author' | 'createdAt' | 'finishedDate' | 'rating' | 'publicationYear'
@@ -81,6 +86,8 @@ export interface ChangePasswordRequest {
 export interface UpdateProfileRequest {
   name: string
   mapVisibility: MapVisibility
+  /** v1.12: omitido = mantém; `null`/"" = remove (só se `mapVisibility` ≠ `Public`). */
+  handle?: string | null
 }
 
 export interface AuthResponse {
@@ -100,6 +107,10 @@ export interface UserProfileDto {
   mapVisibility: MapVisibility
   role: UserRole
   createdAt: string
+  /** v1.12: apelido único (`^[a-z0-9_]{3,30}$`); `null` em contas sem apelido. */
+  handle: string | null
+  followersCount: number
+  followingCount: number
 }
 
 // ---------------------------------------------------------------- 3. Livros (catálogo)
@@ -188,6 +199,11 @@ export interface CreateBookRequest {
   genres?: string[]
   /** ≥ 1 */
   authorNames: string[]
+  /**
+   * v1.10: opcional; MESMO tamanho e ordem de `authorNames`. Id não nulo = usar este autor já
+   * cadastrado (escolhido no autocomplete); null = resolver/criar por nome.
+   */
+  authorIds?: (string | null)[] | null
   /** gravados como Manual/verificados */
   /** Em PUT: omitido/null = não alterar as origens; array (inclusive vazio) = substituir. */
   originCountryIsos?: string[] | null
@@ -207,6 +223,8 @@ export interface LibraryQueryParams {
   mapType?: MapRouteType
   genre?: string
   minRating?: number
+  /** omitido = sem filtro; combina com os demais */
+  geoMissing?: LibraryGeoMissing
   /** padrão createdAt */
   sort?: LibrarySort
   /** padrão desc */
@@ -262,6 +280,16 @@ export interface AuthorDetailsDto {
   countries: AuthorCountryDto[]
   externalIds: ExternalSourceRef[]
 }
+/** v1.10 — sugestão do autocomplete (`GET /authors?q=&limit=`). */
+export interface AuthorSuggestionDto {
+  id: string
+  name: string
+  /** somente Citizenship; vazio = desconhecido */
+  nationalityIsos: string[]
+  /** nomes em português, mesma ordem de `nationalityIsos` */
+  nationalityNames: string[]
+}
+
 export interface UpdateAuthorCountriesRequest {
   citizenshipIsos: string[]
 }
@@ -292,7 +320,9 @@ export interface CountryMapDatum {
 
 export interface MapDataDto {
   mapType: MapType
-  /** |R| */
+  /** filtro de status aplicado (eco; `Read` quando omitido na requisição) */
+  status: MapStatusFilter
+  /** |R| (total de livros do conjunto do status escolhido; nome mantido por compatibilidade) */
   totalReadBooks: number
   /** países com bookCount ≥ 1 */
   exploredCountries: number
@@ -314,15 +344,31 @@ export interface CountryBookDto {
   rating: number | null
 }
 
+/** v1.10/v1.11 — card do autor no painel do mapa de autores (clicável: expande `books`). */
+export interface CountryAuthorDto {
+  authorId: string
+  name: string
+  /** = iso do painel */
+  countryIso: string
+  /** português */
+  countryName: string
+  /** v1.11: livros DESTE autor no filtro de status (finishedDate desc), só do usuário; nunca vazio */
+  books: CountryBookDto[]
+}
+
 export interface CountryDetailDto {
   mapType: MapType
+  /** filtro de status aplicado (eco) */
+  status: MapStatusFilter
   iso: string
   name: string
   continent: Continent
   bookCount: number
   authorCount: number
-  /** ordenado por finishedDate desc */
+  /** ordenado por finishedDate desc (devolvido nos dois mapas; a UI só o exibe em Origins) */
   books: CountryBookDto[]
+  /** v1.10: mapa Authors = autores com Citizenship no país (ordem alfabética sem acento); Origins = [] */
+  authors: CountryAuthorDto[]
 }
 
 export interface CreateMapShareRequest {
@@ -422,4 +468,62 @@ export interface PassportsDto {
   /** mensal, desde o primeiro livro lido */
   timeline: TimelinePointDto[]
   progress: PassportProgressDto
+}
+
+// ---------------------------------------------------------------- 8.1 Perfis públicos e seguidores (v1.12)
+
+export interface ProfileSummaryDto {
+  handle: string
+  name: string
+  followersCount: number
+  /** livros `Read` */
+  readBooksCount: number
+  /** o usuário logado segue este perfil */
+  isFollowing: boolean
+  /** este perfil segue o usuário logado */
+  followsYou: boolean
+}
+
+export interface ProfileDto extends ProfileSummaryDto {
+  followingCount: number
+  exploredCountriesAuthors: number
+  exploredCountriesOrigins: number
+  /** ISO */
+  memberSince: string
+  /** quando `true`, `isFollowing`/`followsYou` = `false` */
+  isSelf: boolean
+}
+
+/** Sem `libraryItemId`: não expõe ids da biblioteca de terceiros. */
+export interface ProfileBookDto {
+  bookId: string
+  title: string
+  coverUrl: string | null
+  authors: string[]
+  finishedDate: string | null
+  rating: number | null
+  /** texto da resenha (público neste perfil) */
+  review: string | null
+}
+
+export interface ProfileCountryAuthorDto {
+  authorId: string
+  name: string
+  countryIso: string
+  countryName: string
+  books: ProfileBookDto[]
+}
+
+export interface ProfileCountryDetailDto {
+  mapType: MapType
+  iso: string
+  name: string
+  continent: Continent
+  bookCount: number
+  authorCount: number
+  /** finishedDate desc */
+  books: ProfileBookDto[]
+  /** mapa `Authors`; `[]` em `Origins` */
+  authors: ProfileCountryAuthorDto[]
+  status: 'Read'
 }

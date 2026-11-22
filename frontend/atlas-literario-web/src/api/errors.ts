@@ -145,6 +145,13 @@ const CODE_MESSAGES: Record<string, string> = {
   'user.invalid_name': 'Informe um nome válido (até 100 caracteres).',
   'user.invalid_email': 'Informe um e-mail válido.',
   'user.invalid_map_visibility': 'Opção de visibilidade inválida.',
+  'profile.handle_invalid':
+    'Apelido inválido. Use de 3 a 30 caracteres: letras minúsculas, números e sublinhado (_).',
+  'profile.handle_required': 'Para deixar o perfil público, escolha um apelido.',
+  'profile.handle_taken': 'Este apelido já está em uso. Escolha outro.',
+  // Perfis e seguidores
+  'profile.not_found': 'Perfil não encontrado ou privado.',
+  'follow.self': 'Você não pode seguir a si mesmo.',
   // Biblioteca
   'library.duplicate': 'Este livro já está na sua biblioteca.',
   'library.invalid_rating': 'A avaliação deve ser de 1 a 5 estrelas.',

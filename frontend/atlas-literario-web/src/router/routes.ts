@@ -55,6 +55,33 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/ProfilePage.vue'),
         meta: { title: 'Perfil' },
       },
+      {
+        path: 'pessoas',
+        name: 'people',
+        component: () => import('@/pages/PeoplePage.vue'),
+        meta: { title: 'Pessoas' },
+      },
+      {
+        path: 'u/:handle',
+        name: 'user-profile',
+        component: () => import('@/pages/UserProfilePage.vue'),
+        props: true,
+        meta: { title: 'Perfil de leitor' },
+      },
+      {
+        path: 'me/followers',
+        name: 'me-followers',
+        component: () => import('@/pages/MyFollowsPage.vue'),
+        props: { kind: 'followers' },
+        meta: { title: 'Seguidores' },
+      },
+      {
+        path: 'me/following',
+        name: 'me-following',
+        component: () => import('@/pages/MyFollowsPage.vue'),
+        props: { kind: 'following' },
+        meta: { title: 'Seguindo' },
+      },
     ],
   },
   {

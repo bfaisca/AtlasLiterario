@@ -6,6 +6,8 @@ export interface BookDraft {
   title: string
   subtitle: string
   authorNames: string[]
+  /** Alinhado a `authorNames`: id do autor escolhido no autocomplete; null = nome digitado livremente. */
+  authorIds: (string | null)[]
   publisher: string
   publicationYear: string
   isbn13: string
@@ -26,6 +28,7 @@ export function emptyBookDraft(): BookDraft {
     title: '',
     subtitle: '',
     authorNames: [''],
+    authorIds: [null],
     publisher: '',
     publicationYear: '',
     isbn13: '',
@@ -43,6 +46,8 @@ export function draftFromBook(book: BookDetailsDto): BookDraft {
     title: book.title,
     subtitle: book.subtitle ?? '',
     authorNames: book.authors.length ? book.authors.map((a) => a.name) : [''],
+    // Sem escolha no autocomplete não há id: o backend resolve por nome, como antes.
+    authorIds: book.authors.length ? book.authors.map(() => null) : [null],
     publisher: book.publisher ?? '',
     publicationYear: book.publicationYear?.toString() ?? '',
     isbn13: book.isbn13 ?? '',
@@ -98,8 +103,23 @@ export function toCreateBookRequest(draft: BookDraft, includeOrigins: boolean): 
       .split(',')
       .map((g) => g.trim())
       .filter(Boolean),
-    authorNames: [...new Set(draft.authorNames.map((n) => n.trim()).filter(Boolean))],
+    authorNames: [],
   }
+  // Nomes e ids andam juntos: descarta vazios e duplicados (mesmo id ou mesmo nome) mantendo o alinhamento.
+  const authorIds: (string | null)[] = []
+  const seenNames = new Set<string>()
+  const seenIds = new Set<string>()
+  draft.authorNames.forEach((raw, index) => {
+    const name = raw.trim()
+    const id = draft.authorIds[index] ?? null
+    if (!name || seenNames.has(name) || (id && seenIds.has(id))) return
+    seenNames.add(name)
+    if (id) seenIds.add(id)
+    request.authorNames.push(name)
+    authorIds.push(id)
+  })
+  // Só envia `authorIds` quando houve escolha (contrato v1.10: opcional).
+  if (authorIds.some(Boolean)) request.authorIds = authorIds
   if (includeOrigins) request.originCountryIsos = [...draft.originCountryIsos]
   return request
 }

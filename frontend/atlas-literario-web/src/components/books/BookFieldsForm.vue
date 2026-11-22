@@ -5,6 +5,7 @@ import AppIcon from '@/components/ui/AppIcon.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseTextArea from '@/components/ui/BaseTextArea.vue'
+import AuthorAutocomplete from '@/components/books/AuthorAutocomplete.vue'
 import CountryPicker from '@/components/geo/CountryPicker.vue'
 
 /** Campos bibliográficos (cadastro manual e correção). Validação: utils/bookForm. */
@@ -20,20 +21,35 @@ function set<K extends keyof BookDraft>(key: K, value: BookDraft[K]) {
   draft.value = { ...draft.value, [key]: value }
 }
 
-function setAuthor(index: number, name: string) {
-  set(
-    'authorNames',
-    draft.value.authorNames.map((n, i) => (i === index ? name : n)),
-  )
+/** `authorNames` e `authorIds` são paralelos: toda alteração mantém os dois alinhados. */
+function setAuthor(index: number, name: string, id: string | null) {
+  draft.value = {
+    ...draft.value,
+    authorNames: draft.value.authorNames.map((n, i) => (i === index ? name : n)),
+    authorIds: draft.value.authorNames.map((_, i) =>
+      i === index ? id : (draft.value.authorIds[i] ?? null),
+    ),
+  }
 }
 
 function addAuthor() {
-  set('authorNames', [...draft.value.authorNames, ''])
+  draft.value = {
+    ...draft.value,
+    authorNames: [...draft.value.authorNames, ''],
+    authorIds: [...draft.value.authorNames.map((_, i) => draft.value.authorIds[i] ?? null), null],
+  }
 }
 
 function removeAuthor(index: number) {
-  const next = draft.value.authorNames.filter((_, i) => i !== index)
-  set('authorNames', next.length ? next : [''])
+  const names = draft.value.authorNames.filter((_, i) => i !== index)
+  const ids = draft.value.authorNames
+    .map((_, i) => draft.value.authorIds[i] ?? null)
+    .filter((_, i) => i !== index)
+  draft.value = {
+    ...draft.value,
+    authorNames: names.length ? names : [''],
+    authorIds: names.length ? ids : [null],
+  }
 }
 </script>
 
@@ -55,11 +71,12 @@ function removeAuthor(index: number) {
     <fieldset class="book-form__authors">
       <legend class="book-form__legend">Autores</legend>
       <div v-for="(name, index) in draft.authorNames" :key="index" class="book-form__author">
-        <BaseInput
+        <AuthorAutocomplete
           :model-value="name"
+          :author-id="draft.authorIds[index] ?? null"
           :label="`Autor ${index + 1}`"
           :error="index === 0 ? props.errors.authorNames : null"
-          @update:model-value="setAuthor(index, $event)"
+          @change="setAuthor(index, $event.name, $event.authorId)"
         />
         <button
           v-if="draft.authorNames.length > 1"

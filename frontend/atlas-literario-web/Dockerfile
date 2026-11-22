@@ -12,12 +12,12 @@ COPY . .
 
 ARG VITE_API_BASE_URL=/api
 ARG VITE_USE_MOCKS=false
-# Baixa o GeoJSON de países caso ainda não esteja presente (exige rede no build).
+# Gera os GeoJSON de países (polígonos + marcadores) caso ainda não esteja presente (exige rede no build).
 ARG FETCH_GEO=true
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL \
     VITE_USE_MOCKS=$VITE_USE_MOCKS
 
-RUN if [ "$FETCH_GEO" = "true" ] && [ ! -f public/geo/countries-110m.geojson ]; then \
+RUN if [ "$FETCH_GEO" = "true" ] && [ ! -f public/geo/countries-50m.geojson ]; then \
       npm run geo:fetch || echo "AVISO: GeoJSON não baixado; o mapa exibirá estado vazio."; \
     fi
 RUN npm run build

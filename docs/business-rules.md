@@ -13,8 +13,9 @@
 ## 2. Geografia
 
 - Países identificados por **ISO 3166-1 alpha-3** (`Country.IsoCode`). Nunca relacionar por nome.
-- Tipos de relação autor→país (`AuthorCountryRelationship`): `Citizenship` (usada no mapa), `BirthPlace`, `Residence` (informativas, **não** entram no mapa).
-- Relação obra→país (`BookOriginCountry`): origem literária da obra. Não usar local da narrativa, país de publicação nem nacionalidade do autor como substituto automático.
+- No cadastro de livros o autor pode ser escolhido por autocomplete (reutiliza o registro existente por id); nomes digitados livremente seguem a resolução por nome/identificador externo. O painel do mapa de autores exibe nome e país do autor e, ao expandir, os livros dele no filtro de status. Autores duplicados (mesmo nome normalizado) são unidos por moderador sem perder vínculos com livros (api-contracts v1.11).
+- Tipos de relação autor→país (`AuthorCountryRelationship`): `Citizenship` (usada no mapa), `BirthPlace`, `Residence` (informativas, **não** entram no mapa), com **uma exceção decidida em 2026-11-22**: **territórios** (ex.: Guiana Francesa, Martinica) só contam como país explorado no mapa de autores quando o autor **nasceu** lá (`BirthPlace`); a cidadania do autor continua sendo a do Estado soberano (ex.: Fanon = `Citizenship` FRA + `BirthPlace` MTQ). Implementação pendente (marcar territórios na tabela `country` e aceitar `BirthPlace` de territórios no mapa de autores). **Mapa de obras:** a origem da obra segue a **nacionalidade do autor**, nunca o país de publicação (ex.: Isabel Allende, chilena, publicada nos EUA → obras chilenas). Uma origem registrada num território conta como qualquer país no mapa de obras, mas, como o padrão é a nacionalidade do autor (soberana), territórios aparecem nesse mapa só quando a origem for definida explicitamente.
+- Relação obra→país (`BookOriginCountry`): origem literária da obra. Não usar local da narrativa nem país de publicação. A nacionalidade do autor **não é derivada automaticamente no banco** (os campos são independentes e há exceções), mas é o **padrão de curadoria** ao preencher a origem; com **dupla nacionalidade, vale só o país de origem da pessoa**. Exceções são decididas caso a caso (ex.: obra em língua/decisão do autor de outro país).
 - Procedência obrigatória em cada relação: `Source` (`Wikidata`, `OpenLibrary`, `GoogleBooks`, `Manual`), `Confidence` (0–1), `IsVerified`.
 - **Dados ausentes ≠ dados negativos**: autor sem cidadania conhecida e obra sem origem conhecida aparecem em `unknown` nos mapas/estatísticas e nunca reduzem contagens nem marcam países como não explorados.
 - **Entidades históricas** (ex.: Áustria-Hungria, URSS, Iugoslávia, Império Otomano): o Wikidata frequentemente retorna Estados que não existem mais. Mapeamento explícito em tabela `HistoricalCountryMapping` (QID histórico → um ou mais ISO atuais), com `Confidence` reduzida (0.6) e `IsVerified=false`. Ex.: Kafka (P27 = Áustria-Hungria, Tchecoslováquia) → AUT/CZE conforme o mapeamento configurado; o usuário pode corrigir manualmente. O mapeamento é consultado quando o país do Wikidata **não tem P298** ou quando o P298 **não existe na tabela `country`**: o Wikidata usa códigos ISO 3166-3 de Estados extintos (SUN, CSK, DDR, YUG).
@@ -30,6 +31,8 @@
 ## 3. Contagens dos mapas (sem duplicidade)
 
 Conjunto base: `R = { UserBook do usuário com Status = Read }`.
+
+**Filtro de visualização por status (v1.9).** Os mapas privados (`GET /maps/{type}` e `GET /maps/{type}/countries/{iso}`) podem ser vistos por outro status (`WantToRead`, `Reading`, `Abandoned`) ou por todos (`All`). O **padrão continua `Read`** (sem o parâmetro, o resultado é idêntico ao anterior). É apenas um filtro de visualização: todas as regras abaixo (livro conta uma vez por país, autor com duas nacionalidades conta nos dois países, `unknownBookCount`, `exploredCountries`, `maxBookCount`) valem sobre o conjunto de livros do status escolhido, que passa a ocupar o lugar de `R` (o campo `totalReadBooks` conta os livros desse conjunto; a resposta traz `status` ecoando o filtro). **Não mudam e seguem só com `Read`:** indicadores e estatísticas (`/statistics/*`), Passaportes Literários, evolução histórica e mapas compartilhados/públicos. Livro desejado, em andamento ou abandonado continua não contando como leitura concluída.
 
 ### Mapa de nacionalidades dos autores (`authors`)
 - Para cada livro `b ∈ R`, `C_a(b) = ⋃ países de cidadania de todos os autores de b` (conjunto — sem repetição).
@@ -48,7 +51,7 @@ Conjunto base: `R = { UserBook do usuário com Status = Read }`.
 - `distinctCountriesBothMaps` = `|países(authors) ∪ países(origins)|`.
 - `continentsExplored` = continentes distintos dos países em `distinctCountriesBothMaps` (por mapa também disponível).
 - A **soma** de `bookCount` entre países pode exceder o total de livros lidos (livros multinacionais) — o total de livros lidos é sempre `|R|`, nunca a soma.
-- Evolução histórica: para cada mês, países cumulativamente explorados considerando livros com `FinishedDate ≤ fim do mês`. Livros `Read` sem `FinishedDate` (não deve ocorrer, mas por segurança) entram no mês de `UpdatedAt`.
+- Evolução histórica (sempre só `Read`, independente do filtro de status dos mapas): para cada mês, países cumulativamente explorados considerando livros com `FinishedDate ≤ fim do mês`. Livros `Read` sem `FinishedDate` (não deve ocorrer, mas por segurança) entram no mês de `UpdatedAt`.
 
 ## 4. Escala de cores (frontend)
 
@@ -58,6 +61,14 @@ Conjunto base: `R = { UserBook do usuário com Status = Read }`.
 
 ## 5. Compartilhamento e privacidade
 
-- Perfil possui `MapVisibility`: `Private` (padrão) ou `LinkOnly`.
+- Perfil possui `MapVisibility`: `Private` (padrão atual) ou `LinkOnly`. **Decisão de produto (2026-11-22):** os mapas são feitos para serem compartilhados; quem encontrar o perfil (busca por apelido) vê os mapas **sem seguir**. Isso exige um terceiro nível, `Public` (perfil descobrível + mapas visíveis a qualquer usuário), e um **apelido único** (o e-mail não é verificado e nunca é usado para busca). **Decisão (2026-11-22): um perfil `Public` exibe o mapa completo** a qualquer usuário: países, autores, **títulos** dos livros e **resenhas** (mais a nota). Não expõe livros que não estejam em leitura concluída (`Read`) nem datas privadas além da data de conclusão exibida no item. `LinkOnly` e a imagem gerada continuam só com dados agregados. **Pela exposição de conteúdo pessoal, `Public` é sempre escolha explícita:** padrão `Private` para contas existentes e novas, com aviso claro na tela de configuração (resenhas ficarão visíveis). Fica a avaliar, como melhoria, esconder resenhas individuais.
 - Link público exige `LinkOnly` e token ativo; expõe apenas: nome de exibição, tipo de mapa, países e contagens, total de livros lidos e de países. Nunca títulos, resenhas, notas ou datas.
 - A geração da imagem (local, no navegador) não depende de link público.
+
+## 4. Biblioteca sem dados geográficos (v1.9)
+
+`GET /library?geoMissing=any|origin|author|both` lista os livros do usuário sem **relação geográfica gravada**, para que ele complete o cadastro. "Sem país" aqui significa apenas "nenhuma relação armazenada" — é dado **desconhecido**, não afirmação de que o autor ou a obra não tenham nacionalidade/origem.
+- `origin`: o livro não tem nenhum país de origem da obra.
+- `author`: nenhum autor do livro tem relação `Citizenship` (nascimento e residência não contam como nacionalidade). Livro sem autores cadastrados conta como "sem país do autor".
+- `both`: `origin` **e** `author`. `any`: `origin` **ou** `author`.
+- Combina (E) com os demais filtros da biblioteca; não altera nenhuma contagem de mapa, estatística ou Passaporte.

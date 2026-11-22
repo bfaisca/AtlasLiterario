@@ -7,6 +7,7 @@ import { createHttpCountriesApi } from './countries'
 import { http } from './http'
 import { createHttpLibraryApi } from './library'
 import { createHttpMapsApi } from './maps'
+import { createHttpProfilesApi } from './profiles'
 import { createHttpStatisticsApi } from './statistics'
 import type { AtlasApi } from './types'
 
@@ -19,6 +20,7 @@ export function createHttpApi(client: AxiosInstance): AtlasApi {
     countries: createHttpCountriesApi(client),
     maps: createHttpMapsApi(client),
     statistics: createHttpStatisticsApi(client),
+    profiles: createHttpProfilesApi(client),
   }
 }
 

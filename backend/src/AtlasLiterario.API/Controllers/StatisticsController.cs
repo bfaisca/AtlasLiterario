@@ -5,16 +5,19 @@ namespace AtlasLiterario.API.Controllers;
 
 [Route("api/statistics")]
 [Tags("Statistics")]
-[ProducesResponseType<ProblemDetails>(StatusCodes.Status501NotImplemented, "application/problem+json")]
-public sealed class StatisticsController : ApiControllerBase
+public sealed class StatisticsController(IStatisticsService statisticsService) : ApiControllerBase
 {
-    private const string Stage = "Etapa 5";
-
+    /// <summary>Dashboard of the logged-in user: totals, recent reads, top countries and passport progress (Read books only).</summary>
+    /// <param name="ct">Cancellation token.</param>
     [HttpGet("dashboard")]
     [ProducesResponseType<DashboardDto>(StatusCodes.Status200OK)]
-    public ActionResult<DashboardDto> GetDashboard() => NotImplementedYet(Stage);
+    public async Task<ActionResult<DashboardDto>> GetDashboard(CancellationToken ct) =>
+        Ok(await statisticsService.GetDashboardAsync(ct));
 
+    /// <summary>Literary Passports: per-map stats, continents, monthly timeline and progress (Read books only).</summary>
+    /// <param name="ct">Cancellation token.</param>
     [HttpGet("passports")]
     [ProducesResponseType<PassportsDto>(StatusCodes.Status200OK)]
-    public ActionResult<PassportsDto> GetPassports() => NotImplementedYet(Stage);
+    public async Task<ActionResult<PassportsDto>> GetPassports(CancellationToken ct) =>
+        Ok(await statisticsService.GetPassportsAsync(ct));
 }

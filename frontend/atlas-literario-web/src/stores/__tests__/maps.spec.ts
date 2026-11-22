@@ -1,14 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPinia, setActivePinia } from 'pinia'
 import { ApiError } from '@/api/errors'
-import type { CountryDetailDto, MapDataDto, MapType } from '@/types/api'
-import { useMapsStore } from '../maps'
+import type { CountryDetailDto, MapDataDto, MapStatusFilter, MapType } from '@/types/api'
+import { mapKey, useMapsStore } from '../maps'
 
 const mapsApi = vi.hoisted(() => ({ get: vi.fn(), getCountryDetail: vi.fn() }))
 vi.mock('@/api', () => ({ api: { maps: mapsApi } }))
 
-const mapData = (mapType: MapType, max = 3): MapDataDto => ({
+const mapData = (mapType: MapType, max = 3, status: MapStatusFilter = 'Read'): MapDataDto => ({
   mapType,
+  status,
   totalReadBooks: 4,
   exploredCountries: 1,
   maxBookCount: max,
@@ -17,14 +18,20 @@ const mapData = (mapType: MapType, max = 3): MapDataDto => ({
     { iso: 'BRA', name: 'Brasil', continent: 'SouthAmerica', bookCount: max, authorCount: 1 },
   ],
 })
-const detail = (iso: string, mapType: MapType = 'Authors'): CountryDetailDto => ({
+const detail = (
+  iso: string,
+  mapType: MapType = 'Authors',
+  status: MapStatusFilter = 'Read',
+): CountryDetailDto => ({
   mapType,
+  status,
   iso,
   name: iso,
   continent: 'Europe',
   bookCount: 1,
   authorCount: 1,
   books: [],
+  authors: [],
 })
 function deferred<T>() {
   let resolve!: (value: T) => void
@@ -49,10 +56,10 @@ describe('maps store', () => {
     const store = useMapsStore()
     await store.fetchMap('Authors')
     await store.fetchMap('Origins')
-    expect(store.data.Authors?.mapType).toBe('Authors')
-    expect(store.data.Origins).toBeUndefined()
-    expect(store.errorByType.Origins?.status).toBe(501)
-    expect(store.errorByType.Authors).toBeNull()
+    expect(store.data[mapKey('Authors')]?.mapType).toBe('Authors')
+    expect(store.data[mapKey('Origins')]).toBeUndefined()
+    expect(store.errorByKey[mapKey('Origins')]?.status).toBe(501)
+    expect(store.errorByKey[mapKey('Authors')]).toBeNull()
   })
 
   it('não repete requisição já em cache nem em andamento', async () => {
@@ -70,8 +77,8 @@ describe('maps store', () => {
   it('pré-carregamento silencioso não registra erro', async () => {
     mapsApi.get.mockRejectedValue(new ApiError({ status: 500, title: 'x' }))
     const store = useMapsStore()
-    await store.fetchMap('Origins', { silent: true })
-    expect(store.errorByType.Origins).toBeUndefined()
+    await store.fetchMap('Origins', 'Read', { silent: true })
+    expect(store.errorByKey[mapKey('Origins')]).toBeUndefined()
   })
 
   it('descarta resposta de detalhe antiga quando outro país foi selecionado', async () => {
@@ -94,7 +101,7 @@ describe('maps store', () => {
     await store.fetchCountryDetail('Authors', 'FRA')
     expect(store.detailError?.status).toBe(500)
     expect(store.countryDetail).toBeNull()
-    await store.fetchCountryDetail('Authors', 'FRA', true)
+    await store.fetchCountryDetail('Authors', 'FRA', 'Read', true)
     expect(store.detailError).toBeNull()
     expect(store.countryDetail?.iso).toBe('FRA')
   })
@@ -119,6 +126,61 @@ describe('maps store', () => {
     store.invalidate()
     pending.resolve(mapData('Authors'))
     await request
-    expect(store.data.Authors).toBeUndefined()
+    expect(store.data[mapKey('Authors')]).toBeUndefined()
+  })
+
+  it('chama a API sem `status` no padrão (Read) e com `status` nos demais', async () => {
+    mapsApi.get.mockImplementation(async (t: MapType, status?: MapStatusFilter) =>
+      mapData(t, 3, status ?? 'Read'),
+    )
+    const store = useMapsStore()
+    await store.fetchMap('Authors')
+    expect(mapsApi.get).toHaveBeenLastCalledWith('Authors')
+    await store.fetchMap('Authors', 'WantToRead')
+    expect(mapsApi.get).toHaveBeenLastCalledWith('Authors', 'WantToRead')
+    await store.fetchMap('Authors', 'All')
+    expect(mapsApi.get).toHaveBeenLastCalledWith('Authors', 'All')
+  })
+
+  it('guarda mapas por (tipo, status) sem misturar caches', async () => {
+    mapsApi.get.mockImplementation(async (t: MapType, status?: MapStatusFilter) =>
+      mapData(t, status === 'Reading' ? 7 : 3, status ?? 'Read'),
+    )
+    const store = useMapsStore()
+    await store.fetchMap('Authors')
+    await store.fetchMap('Authors', 'Reading')
+    await store.fetchMap('Authors', 'Reading') // cache: sem nova chamada
+    expect(mapsApi.get).toHaveBeenCalledTimes(2)
+    expect(store.data[mapKey('Authors', 'Read')]?.maxBookCount).toBe(3)
+    expect(store.data[mapKey('Authors', 'Reading')]?.maxBookCount).toBe(7)
+    expect(store.data[mapKey('Origins', 'Reading')]).toBeUndefined()
+  })
+
+  it('erro de um status não afeta o mapa já carregado de outro', async () => {
+    mapsApi.get.mockImplementation(async (t: MapType, status?: MapStatusFilter) => {
+      if (status === 'Abandoned') throw new ApiError({ status: 500, title: 'x' })
+      return mapData(t, 3, status ?? 'Read')
+    })
+    const store = useMapsStore()
+    await store.fetchMap('Authors')
+    await store.fetchMap('Authors', 'Abandoned')
+    expect(store.errorByKey[mapKey('Authors', 'Abandoned')]?.status).toBe(500)
+    expect(store.errorByKey[mapKey('Authors')]).toBeNull()
+    expect(store.data[mapKey('Authors')]).toBeDefined()
+  })
+
+  it('detalhe do país: cache por status e chamada com status só quando difere de Read', async () => {
+    mapsApi.getCountryDetail.mockImplementation(
+      async (t: MapType, iso: string, status?: MapStatusFilter) => detail(iso, t, status ?? 'Read'),
+    )
+    const store = useMapsStore()
+    await store.fetchCountryDetail('Authors', 'FRA')
+    expect(mapsApi.getCountryDetail).toHaveBeenLastCalledWith('Authors', 'FRA')
+    await store.fetchCountryDetail('Authors', 'FRA', 'All')
+    expect(mapsApi.getCountryDetail).toHaveBeenLastCalledWith('Authors', 'FRA', 'All')
+    expect(store.countryDetail?.status).toBe('All')
+    await store.fetchCountryDetail('Authors', 'FRA') // volta ao cache de Read
+    expect(mapsApi.getCountryDetail).toHaveBeenCalledTimes(2)
+    expect(store.countryDetail?.status).toBe('Read')
   })
 })

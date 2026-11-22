@@ -28,6 +28,8 @@ export const useLibraryStore = defineStore('library', () => {
 
   const cache = new Map<string, { result: PagedResult<LibraryItemDto>; at: number }>()
   let requestSeq = 0
+  /** Incrementado por `reset()` (troca de sessão): impede gravar no cache respostas antigas. */
+  let epoch = 0
 
   const hasMore = computed(() => page.value < totalPages.value)
 
@@ -36,8 +38,10 @@ export const useLibraryStore = defineStore('library', () => {
     const key = JSON.stringify(params)
     const cached = cache.get(key)
     if (!force && cached && Date.now() - cached.at < CACHE_TTL_MS) return cached.result
+    const gen = epoch
     const result = await api.library.list(params)
-    cache.set(key, { result, at: Date.now() })
+    // Só grava no cache se a sessão não mudou (reset) durante a requisição.
+    if (gen === epoch) cache.set(key, { result, at: Date.now() })
     return result
   }
 
@@ -78,9 +82,9 @@ export const useLibraryStore = defineStore('library', () => {
       totalPages.value = result.totalPages
       totalCount.value = result.totalCount
     } catch (e) {
-      error.value = toApiError(e)
+      if (seq === requestSeq) error.value = toApiError(e)
     } finally {
-      loadingMore.value = false
+      if (seq === requestSeq) loadingMore.value = false
     }
   }
 
@@ -89,6 +93,26 @@ export const useLibraryStore = defineStore('library', () => {
     cache.clear()
     useMapsStore().invalidate()
     useStatisticsStore().invalidate()
+  }
+
+  /**
+   * Troca/encerramento de sessão: zera todo o estado por usuário (inclusive mapas e estatísticas)
+   * e descarta respostas em voo do usuário anterior.
+   */
+  function reset() {
+    epoch++
+    requestSeq++
+    filters.value = defaultFilters()
+    items.value = []
+    page.value = 0
+    totalPages.value = 0
+    totalCount.value = 0
+    loading.value = false
+    loadingMore.value = false
+    error.value = null
+    cache.clear()
+    useMapsStore().reset()
+    useStatisticsStore().reset()
   }
 
   async function getItem(id: string) {
@@ -130,6 +154,7 @@ export const useLibraryStore = defineStore('library', () => {
     setFilters,
     loadMore,
     invalidate,
+    reset,
     getItem,
     add,
     update,

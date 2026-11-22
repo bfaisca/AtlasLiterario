@@ -31,6 +31,9 @@ function authResponse(overrides: Partial<AuthResponse> = {}): AuthResponse {
       mapVisibility: 'Private',
       role: 'User',
       createdAt: '2025-01-01T00:00:00Z',
+      handle: null,
+      followersCount: 0,
+      followingCount: 0,
     },
     ...overrides,
   }
@@ -165,6 +168,57 @@ describe('auth store', () => {
       expect(store.isModerator).toBe(true)
       tokenManager.applyAuthResponse(authResponse()) // refresh automático devolveu papel User
       expect(store.isModerator).toBe(false)
+    })
+  })
+  describe('perfil: salvar e recarregar (v1.12)', () => {
+    const base = authResponse().user
+
+    it('updateProfile publica o perfil salvo (apelido, visibilidade)', async () => {
+      authApi.login.mockResolvedValue(authResponse())
+      const store = useAuthStore()
+      await store.login({ email: 'ana@example.com', password: 'x' })
+      authApi.updateMe.mockResolvedValue({ ...base, handle: 'ana_lima', mapVisibility: 'Public' })
+      await store.updateProfile({ name: 'Ana', mapVisibility: 'Public', handle: 'ana_lima' })
+      expect(store.user).toMatchObject({ handle: 'ana_lima', mapVisibility: 'Public' })
+    })
+
+    it('refreshUser atualiza as contagens de seguidores/seguindo', async () => {
+      authApi.login.mockResolvedValue(authResponse())
+      const store = useAuthStore()
+      await store.login({ email: 'ana@example.com', password: 'x' })
+      authApi.me.mockResolvedValue({ ...base, followersCount: 9, followingCount: 4 })
+      await store.refreshUser()
+      expect(store.user).toMatchObject({ followersCount: 9, followingCount: 4 })
+    })
+
+    it('uma releitura de /auth/me em voo não sobrescreve o perfil salvo depois dela', async () => {
+      authApi.login.mockResolvedValue(authResponse())
+      const store = useAuthStore()
+      await store.login({ email: 'ana@example.com', password: 'x' })
+      let resolveMe!: (value: typeof base) => void
+      authApi.me.mockReturnValue(new Promise((res) => (resolveMe = res)))
+      const refreshing = store.refreshUser()
+
+      authApi.updateMe.mockResolvedValue({ ...base, handle: 'novo', mapVisibility: 'Public' })
+      await store.updateProfile({ name: 'Ana', mapVisibility: 'Public', handle: 'novo' })
+      resolveMe(base) // resposta antiga (Private, sem apelido) chega por último
+      await refreshing
+
+      expect(store.user).toMatchObject({ handle: 'novo', mapVisibility: 'Public' })
+    })
+
+    it('refreshUser/updateProfile que terminam após o logout não ressuscitam o usuário', async () => {
+      authApi.login.mockResolvedValue(authResponse())
+      authApi.logout.mockResolvedValue(undefined)
+      const store = useAuthStore()
+      await store.login({ email: 'ana@example.com', password: 'x' })
+      let resolveMe!: (value: typeof base) => void
+      authApi.me.mockReturnValue(new Promise((res) => (resolveMe = res)))
+      const refreshing = store.refreshUser()
+      await store.logout()
+      resolveMe(base)
+      await refreshing
+      expect(store.user).toBeNull()
     })
   })
 })

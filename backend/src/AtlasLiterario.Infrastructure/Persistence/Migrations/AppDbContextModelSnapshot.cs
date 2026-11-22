@@ -3507,6 +3507,11 @@ namespace AtlasLiterario.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(254)")
                         .HasColumnName("email");
 
+                    b.Property<string>("Handle")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("handle");
+
                     b.Property<short>("MapVisibility")
                         .HasColumnType("smallint")
                         .HasColumnName("map_visibility");
@@ -3516,6 +3521,14 @@ namespace AtlasLiterario.Infrastructure.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("name");
+
+                    b.Property<string>("NormalizedName")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("")
+                        .HasColumnName("normalized_name");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -3538,6 +3551,10 @@ namespace AtlasLiterario.Infrastructure.Persistence.Migrations
                     b.HasIndex("Email")
                         .IsUnique()
                         .HasDatabaseName("ix_user_email");
+
+                    b.HasIndex("Handle")
+                        .IsUnique()
+                        .HasDatabaseName("ix_user_handle");
 
                     b.ToTable("user", (string)null);
                 });
@@ -3605,6 +3622,32 @@ namespace AtlasLiterario.Infrastructure.Persistence.Migrations
                             t.HasCheckConstraint("ck_user_book_dates", "start_date IS NULL OR finished_date IS NULL OR start_date <= finished_date");
 
                             t.HasCheckConstraint("ck_user_book_rating", "rating IS NULL OR (rating >= 1 AND rating <= 5)");
+                        });
+                });
+
+            modelBuilder.Entity("AtlasLiterario.Domain.Entities.UserFollow", b =>
+                {
+                    b.Property<Guid>("FollowerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("follower_id");
+
+                    b.Property<Guid>("FollowedId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("followed_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.HasKey("FollowerId", "FollowedId")
+                        .HasName("pk_user_follow");
+
+                    b.HasIndex("FollowedId")
+                        .HasDatabaseName("ix_user_follow_followed_id");
+
+                    b.ToTable("user_follow", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_user_follow_not_self", "follower_id <> followed_id");
                         });
                 });
 
@@ -3760,6 +3803,23 @@ namespace AtlasLiterario.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_user_book_user_user_id");
 
                     b.Navigation("Book");
+                });
+
+            modelBuilder.Entity("AtlasLiterario.Domain.Entities.UserFollow", b =>
+                {
+                    b.HasOne("AtlasLiterario.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("FollowedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_follow_user_followed_id");
+
+                    b.HasOne("AtlasLiterario.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("FollowerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_follow_user_follower_id");
                 });
 
             modelBuilder.Entity("AtlasLiterario.Domain.Entities.Author", b =>

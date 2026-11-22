@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using AtlasLiterario.Domain.Enums;
 
 namespace AtlasLiterario.Application.Auth;
@@ -14,7 +15,28 @@ public sealed record ResetPasswordRequest(string Token, string NewPassword);
 
 public sealed record ChangePasswordRequest(string CurrentPassword, string NewPassword);
 
-public sealed record UpdateProfileRequest(string Name, MapVisibility MapVisibility);
+/// <summary>
+/// <c>Handle</c> omitted = keep the current one; <c>null</c> or blank = remove it (refused while <c>MapVisibility</c> is Public).
+/// </summary>
+public sealed record UpdateProfileRequest(string Name, MapVisibility MapVisibility)
+{
+    private string? _handle;
+
+    /// <summary>True when the JSON (or initializer) set <see cref="Handle"/>, even to null.</summary>
+    [JsonIgnore]
+    public bool HandleProvided { get; private set; }
+
+    /// <summary>Public nickname, normalized to lower-case; <c>^[a-z0-9_]{3,30}$</c>, unique.</summary>
+    public string? Handle
+    {
+        get => _handle;
+        init
+        {
+            _handle = value;
+            HandleProvided = true;
+        }
+    }
+}
 
 public sealed record AuthResponse(
     string AccessToken,
@@ -28,4 +50,7 @@ public sealed record UserProfileDto(
     string Email,
     UserRole Role,
     MapVisibility MapVisibility,
-    DateTimeOffset CreatedAt);
+    DateTimeOffset CreatedAt,
+    string? Handle,
+    int FollowersCount,
+    int FollowingCount);
