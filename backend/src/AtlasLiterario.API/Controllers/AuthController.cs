@@ -70,6 +70,7 @@ public sealed class AuthController(IAuthService authService) : ApiControllerBase
     [HttpPut("me")]
     [ProducesResponseType<UserProfileDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<HttpValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict, "application/problem+json")]
     public async Task<ActionResult<UserProfileDto>> UpdateMe(UpdateProfileRequest request, CancellationToken ct) =>
         Ok(await authService.UpdateProfileAsync(request, ct));
 

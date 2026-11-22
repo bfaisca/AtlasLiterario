@@ -2,13 +2,15 @@ using AtlasLiterario.Domain.Enums;
 
 namespace AtlasLiterario.Application.Maps;
 
+/// <remarks><c>TotalReadBooks</c> counts the books of the applied <c>Status</c> filter (the name is kept for compatibility; with the default it is the Read total).</remarks>
 public sealed record MapDataDto(
     MapType MapType,
     int TotalReadBooks,
     int ExploredCountries,
     int MaxBookCount,
     int UnknownBookCount,
-    IReadOnlyList<CountryMapDatum> Countries);
+    IReadOnlyList<CountryMapDatum> Countries,
+    string Status);
 
 /// <summary>Map-layer input, independent of the visual library.</summary>
 /// <param name="Iso">= geoJsonId (ISO_A3).</param>
@@ -22,7 +24,16 @@ public sealed record CountryDetailDto(
     Continent Continent,
     int BookCount,
     int AuthorCount,
-    IReadOnlyList<CountryBookDto> Books);
+    IReadOnlyList<CountryBookDto> Books,
+    string Status,
+    IReadOnlyList<CountryAuthorDto> Authors);
+
+/// <summary>
+/// Author card of the Authors-map country panel. <paramref name="Books"/> are the author's books inside the same
+/// status-filtered set as the panel's <c>books</c> (same order, same user), never empty.
+/// </summary>
+public sealed record CountryAuthorDto(
+    Guid AuthorId, string Name, string CountryIso, string CountryName, IReadOnlyList<CountryBookDto> Books);
 
 public sealed record CountryBookDto(
     Guid LibraryItemId,

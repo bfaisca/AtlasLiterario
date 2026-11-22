@@ -1,6 +1,8 @@
 import type { LocationQuery, LocationQueryRaw } from 'vue-router'
+import { GEO_MISSING_VALUES } from '@/utils/libraryGeo'
 import {
   READING_STATUSES,
+  type LibraryGeoMissing,
   type LibraryQueryParams,
   type LibrarySort,
   type ReadingStatus,
@@ -13,6 +15,8 @@ export interface LibraryFilters {
   status: ReadingStatus[]
   genre: string
   minRating: number | null
+  /** `null` = todos os livros */
+  geoMissing: LibraryGeoMissing | null
   sort: LibrarySort
   order: SortOrder
 }
@@ -31,6 +35,7 @@ export const DEFAULT_LIBRARY_FILTERS: Readonly<LibraryFilters> = Object.freeze({
   status: [],
   genre: '',
   minRating: null,
+  geoMissing: null,
   sort: 'createdAt',
   order: 'desc',
 })
@@ -54,6 +59,7 @@ export function filtersToQueryParams(
   const genre = filters.genre.trim()
   if (genre) params.genre = genre
   if (filters.minRating) params.minRating = filters.minRating
+  if (filters.geoMissing) params.geoMissing = filters.geoMissing
   return params
 }
 
@@ -78,6 +84,8 @@ export function filtersFromRouteQuery(query: LocationQuery): LibraryFilters {
   const minRating = Number(first(query.minRating))
   filters.minRating =
     Number.isInteger(minRating) && minRating >= 1 && minRating <= 5 ? minRating : null
+  const geoMissing = first(query.geoMissing)
+  filters.geoMissing = GEO_MISSING_VALUES.find((value) => value === geoMissing) ?? null
   const sort = first(query.sort)
   if (sort && (LIBRARY_SORTS as readonly string[]).includes(sort))
     filters.sort = sort as LibrarySort
@@ -94,11 +102,18 @@ export function filtersToRouteQuery(filters: LibraryFilters): LocationQueryRaw {
     query.status = READING_STATUSES.filter((s) => filters.status.includes(s))
   if (filters.genre.trim()) query.genre = filters.genre.trim()
   if (filters.minRating) query.minRating = String(filters.minRating)
+  if (filters.geoMissing) query.geoMissing = filters.geoMissing
   if (filters.sort !== DEFAULT_LIBRARY_FILTERS.sort) query.sort = filters.sort
   if (filters.order !== DEFAULT_LIBRARY_FILTERS.order) query.order = filters.order
   return query
 }
 
 export function hasActiveFilters(filters: LibraryFilters): boolean {
-  return !!(filters.q.trim() || filters.status.length || filters.genre.trim() || filters.minRating)
+  return !!(
+    filters.q.trim() ||
+    filters.status.length ||
+    filters.genre.trim() ||
+    filters.minRating ||
+    filters.geoMissing
+  )
 }

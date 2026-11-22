@@ -13,7 +13,7 @@ Arquitetura e contratos: `../../docs/architecture.md` e `../../docs/api-contract
 ```bash
 npm ci                    # ou npm install (npm 11+)
 cp .env.example .env.local
-npm run geo:fetch         # baixa o GeoJSON de países (Natural Earth 1:110m) para public/geo/
+npm run geo:fetch         # gera public/geo/countries-50m.geojson e country-points.geojson (Natural Earth 1:50m)
 npm run dev               # http://localhost:5173 — proxy /api → http://localhost:5080
 ```
 
@@ -35,7 +35,7 @@ Com `VITE_USE_MOCKS=true` o app roda sem backend (dados em memória). Login de d
 | `npm run test` | Vitest (jsdom) |
 | `npm run lint` / `lint:check` | ESLint (com/sem `--fix`) |
 | `npm run format` / `format:check` | Prettier |
-| `npm run geo:fetch` | Gera `public/geo/countries-110m.geojson` (propriedades `iso`, `name`, `namePt`) |
+| `npm run geo:fetch` | Gera `public/geo/countries-50m.geojson` (polígonos) e `public/geo/country-points.geojson` (marcadores de países pequenos); propriedades `iso`, `name`, `namePt` |
 
 ## Variáveis de ambiente
 

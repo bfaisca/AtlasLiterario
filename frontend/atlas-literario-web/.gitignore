@@ -6,4 +6,5 @@ coverage
 .env.local
 .env.*.local
 # GeoJSON gerado por `npm run geo:fetch` (pode ser versionado se o time preferir; ver README)
-# public/geo/countries-110m.geojson
+# public/geo/countries-50m.geojson
+# public/geo/country-points.geojson

@@ -1,8 +1,12 @@
 <script setup lang="ts">
 /**
- * Mapa-múndi coroplético (MapLibre GL JS, sem tiles: um único source GeoJSON).
+ * Mapa-múndi coroplético (MapLibre GL JS, sem tiles: sources GeoJSON locais).
  * Agnóstico de regras de negócio: recebe `data` (país → contagens) e `maxBookCount`,
  * pinta via feature-state com a escala de `useColorScale` e emite eventos de interação.
+ *
+ * Dois sources compartilham o `iso` como id: os polígonos (`countries`) e os marcadores
+ * (`country-points`) de países/territórios pequenos demais para serem vistos como polígono.
+ * Ambos recebem o MESMO estado (fill, count, hover, selected) em `setState`.
  */
 import 'maplibre-gl/dist/maplibre-gl.css'
 import {
@@ -17,7 +21,12 @@ import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?url'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from 'vue'
 import { colorForCount, mixColors, UNEXPLORED_COLOR } from '@/composables/useColorScale'
 import AppIcon from '@/components/ui/AppIcon.vue'
-import { useCountriesGeo, type CountryFeatureProperties } from '@/composables/useCountriesGeo'
+import {
+  loadCountryPoints,
+  useCountriesGeo,
+  type CountryFeatureProperties,
+} from '@/composables/useCountriesGeo'
+import { buildFocusIndex, type FocusTarget } from '@/utils/mapFocus'
 import BaseSpinner from '@/components/ui/BaseSpinner.vue'
 import EmptyState from '@/components/ui/EmptyState.vue'
 import type { CountryHoverEvent, MapCountryDatum } from './types'
@@ -44,6 +53,9 @@ const emit = defineEmits<{
 }>()
 
 const SOURCE_ID = 'countries'
+const POINTS_SOURCE_ID = 'country-points'
+const FILL_LAYER = 'countries-fill'
+const POINTS_HIT_LAYER = 'country-points-hit'
 const OCEAN = '#060b14'
 const BORDER = 'rgba(160,190,230,0.18)'
 const SELECTED_BORDER = '#e6f1ff'
@@ -53,6 +65,11 @@ const WORLD_BOUNDS: [[number, number], [number, number]] = [
   [190, 83],
 ]
 const FIT_PADDING = 8
+const MAX_ZOOM = 6
+/** Foco ao selecionar um país: duração e zoom máximo do enquadramento de polígonos. */
+const FOCUS_DURATION_MS = 900
+const FOCUS_MAX_ZOOM = 5
+const FOCUS_PADDING = 64
 const COLOR_TRANSITION_MS = 380
 
 const container = ref<HTMLDivElement | null>(null)
@@ -73,13 +90,21 @@ const { status, load } = useCountriesGeo()
 
 const byIso = computed(() => new Map(props.data.map((d) => [d.iso, d])))
 const namesByIso = new Map<string, string>()
+/** Países com marcador: o estado de pintura é espelhado também no source de pontos. */
+const pointIsos = new Set<string>()
+let focusIndex = new Map<string, FocusTarget>()
+/** Camadas que respondem a hover/clique, de cima para baixo (marcadores acima dos polígonos). */
+let interactiveLayers: string[] = [FILL_LAYER]
 let hoveredIso: string | null = null
+let previousHoverEmitted = false
 let resizeObserver: ResizeObserver | null = null
 /** Cor atualmente pintada por país (base da transição entre mapas). */
 const painted = new Map<string, string>()
 let tweenFrame: number | null = null
 /** Depois que o usuário move/zoom, resize e orientação não reenquadram mais o mapa. */
 let userMoved = false
+/** País em foco: resize/painel lateral reenquadram nele (não no mundo) até o usuário mover o mapa. */
+let focusedIso: string | null = null
 
 const prefersReducedMotion = () =>
   typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
@@ -111,19 +136,29 @@ function recenter(animated = true) {
   const instance = map.value
   if (!instance) return
   userMoved = false
+  focusedIso = null
   fit(animated && !prefersReducedMotion() ? 500 : 0)
 }
 
 function zoomBy(direction: 1 | -1) {
   userMoved = true
+  focusedIso = null
   const instance = map.value
   if (!instance) return
   if (direction === 1) instance.zoomIn()
   else instance.zoomOut()
 }
 
+/** Aplica o estado a um país nos dois sources (polígono e, quando existir, marcador). */
+function setState(iso: string, state: Record<string, unknown>) {
+  const instance = map.value
+  if (!instance) return
+  instance.setFeatureState({ source: SOURCE_ID, id: iso }, state)
+  if (pointIsos.has(iso)) instance.setFeatureState({ source: POINTS_SOURCE_ID, id: iso }, state)
+}
+
 function paint(iso: string, color: string, count: number) {
-  map.value?.setFeatureState({ source: SOURCE_ID, id: iso }, { fill: color, count })
+  setState(iso, { fill: color, count })
   if (color === UNEXPLORED_COLOR && count === 0) painted.delete(iso)
   else painted.set(iso, color)
 }
@@ -168,34 +203,126 @@ function applyData() {
     }
     tweenFrame = requestAnimationFrame(tick)
   }
-  if (props.selectedIso)
-    instance.setFeatureState({ source: SOURCE_ID, id: props.selectedIso }, { selected: true })
-  if (hoveredIso) instance.setFeatureState({ source: SOURCE_ID, id: hoveredIso }, { hover: true })
+  if (props.selectedIso) setState(props.selectedIso, { selected: true })
+  if (hoveredIso) setState(hoveredIso, { hover: true })
 }
 
 function setHover(iso: string | null) {
   const instance = map.value
   if (!instance || hoveredIso === iso) return
-  if (hoveredIso) instance.setFeatureState({ source: SOURCE_ID, id: hoveredIso }, { hover: false })
+  if (hoveredIso) setState(hoveredIso, { hover: false })
   hoveredIso = iso
-  if (iso) instance.setFeatureState({ source: SOURCE_ID, id: iso }, { hover: true })
+  if (iso) setState(iso, { hover: true })
 }
 
-function hoverEvent(event: MapLayerMouseEvent): CountryHoverEvent | null {
-  const feature = event.features?.[0]
-  const iso = typeof feature?.id === 'string' ? feature.id : null
+function clearHover() {
+  setHover(null)
+  const canvas = map.value?.getCanvas()
+  if (canvas) canvas.style.cursor = ''
+  if (previousHoverEmitted) emit('country-hover', null)
+  previousHoverEmitted = false
+}
+
+/** País sob o cursor: marcador (acima) ou polígono. */
+function isoAt(point: { x: number; y: number }): string | null {
+  const instance = map.value
+  if (!instance) return null
+  // As camadas só existem depois do 'load' + addLayer; o mouse pode se mover antes disso
+  // (primeira carga mais lenta) e queryRenderedFeatures lançaria erro por camada inexistente.
+  const layers = interactiveLayers.filter((id) => instance.getLayer(id))
+  if (!layers.length) return null
+  const feature = instance.queryRenderedFeatures([point.x, point.y], { layers })[0]
+  return typeof feature?.id === 'string' ? feature.id : null
+}
+
+function hoverAt(point: { x: number; y: number }): CountryHoverEvent | null {
+  const iso = isoAt(point)
   if (!iso) return null
   const datum = byIso.value.get(iso) ?? null
-  return {
-    iso,
-    name: datum?.name ?? namesByIso.get(iso) ?? iso,
-    datum,
-    point: { x: event.point.x, y: event.point.y },
+  return { iso, name: datum?.name ?? namesByIso.get(iso) ?? iso, datum, point }
+}
+
+/**
+ * Leva a câmera ao país selecionado: ponto (ilhas/territórios minúsculos) com zoom fixo, ou
+ * enquadramento do território principal com padding e zoom máximo. Respeita reduced-motion.
+ */
+function focusCountry(iso: string, animated = true) {
+  const instance = map.value
+  const target = focusIndex.get(iso)
+  if (!instance || !target) return
+  userMoved = true // resize/orientação não devem desfazer o foco
+  focusedIso = iso
+  instance.resize() // o painel do país pode ter mudado o tamanho do contêiner
+  const duration = animated && !prefersReducedMotion() ? FOCUS_DURATION_MS : 0
+  if (target.kind === 'point') {
+    instance.flyTo({ center: target.center, zoom: Math.min(target.zoom, MAX_ZOOM), duration })
+    return
   }
+  const { clientWidth, clientHeight } = instance.getContainer()
+  const padding = Math.max(
+    8,
+    Math.min(FOCUS_PADDING, Math.floor(Math.min(clientWidth, clientHeight) / 4)),
+  )
+  instance.fitBounds(target.bounds, { padding, maxZoom: FOCUS_MAX_ZOOM, duration })
+}
+
+// Expressões de feature-state reutilizadas pelas camadas de marcadores.
+const stateFlag = (key: string) => ['boolean', ['feature-state', key], false]
+const EXPLORED = ['>', ['coalesce', ['feature-state', 'count'], 0], 0]
+const EMPHASIZED = ['any', stateFlag('hover'), stateFlag('selected')]
+const POINT_STROKE = 'rgba(160,190,230,0.4)'
+
+/** Raio em px: interpola com o zoom; países explorados e em destaque ficam maiores. */
+function pointRadius(unexplored: [number, number], explored: [number, number]) {
+  const at = (index: 0 | 1) => [
+    '+',
+    ['case', EXPLORED, explored[index], unexplored[index]],
+    ['case', EMPHASIZED, 1.5, 0],
+  ]
+  return ['interpolate', ['linear'], ['zoom'], 0, at(0), MAX_ZOOM, at(1)]
+}
+
+/**
+ * Marcadores acima dos polígonos. Explorados: círculo na cor da escala, contorno claro e raio
+ * maior; não explorados: ponto pequeno e discreto. Uma camada invisível maior amplia o alvo de
+ * hover/clique dos pontos pequenos.
+ */
+function addPointLayers(instance: MapLibreMap, points: unknown) {
+  instance.addSource(POINTS_SOURCE_ID, {
+    type: 'geojson',
+    data: points,
+    promoteId: 'iso',
+  } as unknown as Parameters<MapLibreMap['addSource']>[1])
+  instance.addLayer({
+    id: POINTS_HIT_LAYER,
+    type: 'circle',
+    source: POINTS_SOURCE_ID,
+    paint: { 'circle-radius': 9, 'circle-color': '#000000', 'circle-opacity': 0.01 },
+  })
+  instance.addLayer({
+    id: 'country-points',
+    type: 'circle',
+    source: POINTS_SOURCE_ID,
+    paint: {
+      'circle-color': ['to-color', ['coalesce', ['feature-state', 'fill'], UNEXPLORED_COLOR]],
+      'circle-radius': pointRadius([1.8, 3.2], [4.5, 7]) as never,
+      'circle-opacity': ['case', EXPLORED, 1, 0.85] as never,
+      'circle-stroke-color': [
+        'case',
+        EMPHASIZED,
+        SELECTED_BORDER,
+        EXPLORED,
+        '#cfe6ff',
+        POINT_STROKE,
+      ] as never,
+      'circle-stroke-width': ['case', EXPLORED, 1.25, 0.75] as never,
+    },
+  })
+  interactiveLayers = [POINTS_HIT_LAYER, FILL_LAYER]
 }
 
 async function initMap() {
-  const geo = await load()
+  const [geo, points] = await Promise.all([load(), loadCountryPoints()])
   // O contêiner só fica visível (v-show) depois do próximo render: sem isso o mapa nasceria
   // com tamanho 0 e o enquadramento inicial sairia errado (Américas cortadas em retrato).
   await nextTick()
@@ -205,6 +332,12 @@ async function initMap() {
     const p: CountryFeatureProperties = feature.properties
     namesByIso.set(p.iso, p.namePt ?? p.name)
   }
+  for (const feature of points?.features ?? []) {
+    const p = feature.properties
+    pointIsos.add(p.iso)
+    if (!namesByIso.has(p.iso)) namesByIso.set(p.iso, p.namePt ?? p.name)
+  }
+  focusIndex = buildFocusIndex(geo, points)
 
   let instance: MapLibreMap
   try {
@@ -214,7 +347,7 @@ async function initMap() {
       center: [12, 22],
       zoom: 0.9,
       minZoom: -3, // ajustado a cada enquadramento (ver `fit`)
-      maxZoom: 6,
+      maxZoom: MAX_ZOOM,
       renderWorldCopies: false,
       dragRotate: false,
       pitchWithRotate: false,
@@ -264,7 +397,7 @@ async function initMap() {
     const source = { type: 'geojson', data: geo, promoteId: 'iso' }
     instance.addSource(SOURCE_ID, source as unknown as Parameters<MapLibreMap['addSource']>[1])
     instance.addLayer({
-      id: 'countries-fill',
+      id: FILL_LAYER,
       type: 'fill',
       source: SOURCE_ID,
       paint: {
@@ -295,31 +428,33 @@ async function initMap() {
         ],
       },
     })
+    if (points) addPointLayers(instance, points)
     applyData()
     // Enquadra o mundo habitado em qualquer proporção de tela (inclusive retrato no mobile).
     fit(0)
     instance.on('movestart', (event) => {
-      if (event.originalEvent) userMoved = true
+      if (event.originalEvent) {
+        userMoved = true
+        focusedIso = null
+      }
     })
+    if (props.selectedIso) focusCountry(props.selectedIso, false)
     emit('ready')
   })
 
   if (props.interactive) {
-    instance.on('mousemove', 'countries-fill', (event) => {
+    // Um único tratamento para polígonos e marcadores: o marcador (acima) vence o polígono.
+    instance.on('mousemove', (event: MapLayerMouseEvent) => {
       if (isTouch()) return
-      const hover = hoverEvent(event)
+      const hover = hoverAt(event.point)
       setHover(hover?.iso ?? null)
       instance.getCanvas().style.cursor = hover ? 'pointer' : ''
-      emit('country-hover', hover)
+      if (hover || previousHoverEmitted) emit('country-hover', hover)
+      previousHoverEmitted = !!hover
     })
-    instance.on('mouseleave', 'countries-fill', () => {
-      setHover(null)
-      instance.getCanvas().style.cursor = ''
-      emit('country-hover', null)
-    })
+    instance.getCanvas().addEventListener('mouseleave', clearHover)
     instance.on('click', (event) => {
-      const features = instance.queryRenderedFeatures(event.point, { layers: ['countries-fill'] })
-      const iso = typeof features[0]?.id === 'string' ? features[0].id : null
+      const iso = isoAt(event.point)
       emit('country-select', iso)
       // Em toque não há hover: o toque seleciona (borda + painel); sem tooltip.
       if (isTouch()) setHover(null)
@@ -329,7 +464,9 @@ async function initMap() {
   // Resize/orientação: reenquadra enquanto o usuário não tiver movido o mapa.
   resizeObserver = new ResizeObserver(() => {
     instance.resize()
-    if (!userMoved) fit(0)
+    if (focusedIso) {
+      if (!instance.isMoving()) focusCountry(focusedIso, false)
+    } else if (!userMoved) fit(0)
   })
   resizeObserver.observe(container.value)
 }
@@ -341,8 +478,14 @@ watch(
   (iso, previous) => {
     const instance = map.value
     if (!instance?.getSource(SOURCE_ID)) return
-    if (previous) instance.setFeatureState({ source: SOURCE_ID, id: previous }, { selected: false })
-    if (iso) instance.setFeatureState({ source: SOURCE_ID, id: iso }, { selected: true })
+    if (previous) setState(previous, { selected: false })
+    if (iso) {
+      setState(iso, { selected: true })
+      // Depois do próximo render: o painel lateral altera a largura do mapa.
+      void nextTick(() => {
+        if (props.selectedIso === iso) focusCountry(iso)
+      })
+    }
   },
 )
 
@@ -353,6 +496,7 @@ onBeforeUnmount(() => {
   if (tweenFrame !== null) cancelAnimationFrame(tweenFrame)
   workerErrorSubscription?.unsubscribe()
   resizeObserver?.disconnect()
+  map.value?.getCanvas().removeEventListener('mouseleave', clearHover)
   map.value?.remove()
   map.value = null
 })

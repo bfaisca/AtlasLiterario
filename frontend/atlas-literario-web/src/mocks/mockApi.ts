@@ -13,6 +13,7 @@ import type { AtlasApi } from '@/api/types'
 import type {
   AuthorCountryDto,
   AuthorDetailsDto,
+  AuthorSuggestionDto,
   AuthResponse,
   BookDetailsDto,
   BookSearchResultDto,
@@ -31,6 +32,7 @@ import type {
 import { todayIsoDate } from '@/utils/format'
 import { isValidIsbn10, isValidIsbn13, normalizeIsbn } from '@/utils/isbn'
 import { isUploadedCoverUrl } from '@/utils/bookForm'
+import { matchesGeoMissing } from '@/utils/libraryGeo'
 import { fromRouteMapType } from '@/utils/mapType'
 import {
   computeCountryDetail,
@@ -49,6 +51,7 @@ import {
   toAuthorSummary,
 } from './data'
 import { externalCatalog, type ExternalSeed } from './externalCatalog'
+import { createMockProfiles } from './profiles'
 
 const LATENCY_MS = 250
 
@@ -119,6 +122,10 @@ export function queryLibrary(
   if (query.countryIso) {
     const mapType = fromRouteMapType(query.mapType)
     result = result.filter((i) => countriesOfBook(i.book, mapType).has(query.countryIso!))
+  }
+  if (query.geoMissing) {
+    const geoMissing = query.geoMissing
+    result = result.filter((i) => matchesGeoMissing(i, geoMissing))
   }
   if (query.genre) {
     const genre = normalizeText(query.genre)
@@ -199,6 +206,24 @@ export function createMockApi(): AtlasApi {
     [MOCK_MODERATOR_USER.id, { profile: { ...MOCK_MODERATOR_USER }, password: MOCK_DEMO_PASSWORD }],
   ])
   const shares = new Map<string, MapShareDto & { userId: string }>()
+  const profiles = createMockProfiles({
+    currentUserId: () => currentUser().profile.id,
+    userAccounts: () =>
+      [...users.values()].map(({ profile }) => ({
+        id: profile.id,
+        handle: profile.handle,
+        name: profile.name,
+        visibility: profile.mapVisibility,
+        memberSince: profile.createdAt,
+        items: () => libraryItems(),
+      })),
+    countries,
+  })
+  /** `UserProfileDto` com as contagens atuais de seguidores/seguindo (v1.12). */
+  const toProfile = (profile: UserProfileDto): UserProfileDto => ({
+    ...profile,
+    ...profiles.counts(profile.id),
+  })
 
   // ------------------------------------------------------------ "banco" normalizado
   const authors = new Map<string, AuthorDetailsDto>()
@@ -285,6 +310,33 @@ export function createMockApi(): AtlasApi {
     return created
   }
 
+  /** Prefixo do nome ou de qualquer palavra (sem acento/caixa); prefixo do nome primeiro. */
+  function searchAuthors(q: string, limit: number): AuthorSuggestionDto[] {
+    const term = normalizeText(q)
+    const ranked: Array<{ rank: number; key: string; author: AuthorDetailsDto }> = []
+    for (const author of authors.values()) {
+      const key = normalizeText(author.name)
+      const rank = key.startsWith(term)
+        ? 0
+        : key.split(/\s+/).some((word) => word.startsWith(term))
+          ? 1
+          : -1
+      if (rank >= 0) ranked.push({ rank, key, author })
+    }
+    return ranked
+      .sort((a, b) => a.rank - b.rank || a.key.localeCompare(b.key))
+      .slice(0, limit)
+      .map(({ author }) => {
+        const citizenships = author.countries.filter((c) => c.relationship === 'Citizenship')
+        return {
+          id: author.id,
+          name: author.name,
+          nationalityIsos: citizenships.map((c) => c.countryIso),
+          nationalityNames: citizenships.map((c) => c.countryName),
+        }
+      })
+  }
+
   function findByExternal(provider: string, externalId: string): BookRecord | undefined {
     return [...books.values()].find((b) =>
       b.externalIds.some((e) => e.provider === provider && e.externalId === externalId),
@@ -355,6 +407,13 @@ export function createMockApi(): AtlasApi {
       errors.authorNames = ['Informe ao menos um autor.']
       code = 'author.invalid_name'
     }
+    if (request.authorIds != null) {
+      if (request.authorIds.length !== (request.authorNames ?? []).length) {
+        errors.authorIds = ['authorIds deve ter o mesmo tamanho e a mesma ordem de authorNames.']
+      } else if (request.authorIds.some((id) => id != null && !authors.has(id))) {
+        errors.authorIds = ['Um ou mais autores informados não existem.']
+      }
+    }
     if (request.isbn13 && !isValidIsbn13(request.isbn13)) {
       errors.isbn13 = ['ISBN-13 inválido.']
       code = 'book.invalid_isbn13'
@@ -379,10 +438,14 @@ export function createMockApi(): AtlasApi {
     record.coverUrl = request.coverUrl?.trim() || null
     record.originalLanguage = request.originalLanguage?.trim() || null
     record.genres = (request.genres ?? []).map((g) => g.trim()).filter(Boolean)
-    record.authorIds = request.authorNames
-      .map((n) => n.trim())
-      .filter(Boolean)
-      .map((name) => findOrCreateAuthor(name).id)
+    // authorIds (v1.10) está alinhado a authorNames: id não nulo reutiliza o autor cadastrado.
+    const resolved = request.authorNames.flatMap((raw, index) => {
+      const name = raw.trim()
+      if (!name) return []
+      const pinned = request.authorIds?.[index]
+      return [pinned && authors.has(pinned) ? pinned : findOrCreateAuthor(name).id]
+    })
+    record.authorIds = [...new Set(resolved)]
     if (request.originCountryIsos != null) {
       record.originCountries = request.originCountryIsos.map((iso) => relation(iso, 'Manual', 1))
     }
@@ -395,7 +458,7 @@ export function createMockApi(): AtlasApi {
       accessToken: randomToken('mock-access', userId),
       accessTokenExpiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
       refreshToken: randomToken('mock-refresh', userId),
-      user: { ...user.profile },
+      user: toProfile(user.profile),
     }
   }
 
@@ -484,6 +547,9 @@ export function createMockApi(): AtlasApi {
           mapVisibility: 'Private',
           role: 'User',
           createdAt: new Date().toISOString(),
+          handle: null,
+          followersCount: 0,
+          followingCount: 0,
         }
         users.set(profile.id, { profile, password: request.password })
         // Atalho de demonstração: e-mails "vazia…@" começam sem livros (testa os estados vazios).
@@ -532,16 +598,18 @@ export function createMockApi(): AtlasApi {
         }
       },
       async me() {
-        return delay({ ...currentUser().profile })
+        return delay(toProfile(currentUser().profile))
       },
       async updateMe(request) {
         const user = currentUser()
+        const handle = profiles.resolveHandle(user.profile.id, user.profile.handle, request)
         user.profile = {
           ...user.profile,
           name: request.name.trim(),
           mapVisibility: request.mapVisibility,
+          handle,
         }
-        return delay({ ...user.profile })
+        return delay(toProfile(user.profile))
       },
       async changePassword(request) {
         const user = currentUser()
@@ -811,6 +879,18 @@ export function createMockApi(): AtlasApi {
     },
 
     authors: {
+      async search(q, limit = 10, signal) {
+        currentUser()
+        const errors: Record<string, string[]> = {}
+        if ((q ?? '').trim().length < 2) errors.q = ['Informe ao menos 2 caracteres.']
+        if (!Number.isInteger(limit) || limit < 1 || limit > 20) {
+          errors.limit = ['O limite deve estar entre 1 e 20.']
+        }
+        if (Object.keys(errors).length) throw validation(errors)
+        const result = await delay(searchAuthors(q, limit), 150)
+        if (signal?.aborted) throw new DOMException('Requisição cancelada.', 'AbortError')
+        return clone(result)
+      },
       async get(id) {
         currentUser()
         const author = authors.get(id)
@@ -858,18 +938,18 @@ export function createMockApi(): AtlasApi {
     },
 
     maps: {
-      async get(mapType) {
+      async get(mapType, status) {
         currentUser()
-        return delay(computeMapData(libraryItems(), mapType, countries))
+        return delay(computeMapData(libraryItems(), mapType, countries, status))
       },
-      async getCountryDetail(mapType, iso) {
+      async getCountryDetail(mapType, iso, status) {
         currentUser()
         if (!countries.has(iso)) throw notFound()
-        return delay(computeCountryDetail(libraryItems(), mapType, iso, countries))
+        return delay(computeCountryDetail(libraryItems(), mapType, iso, countries, status))
       },
       async createShare({ mapType }) {
         const user = currentUser()
-        if (user.profile.mapVisibility !== 'LinkOnly') {
+        if (user.profile.mapVisibility === 'Private') {
           throw new ApiError({
             status: 403,
             title: 'Perfil privado',
@@ -904,7 +984,7 @@ export function createMockApi(): AtlasApi {
       async getPublic(token) {
         const share = shares.get(token)
         const owner = share ? users.get(share.userId) : undefined
-        if (!share || !owner || owner.profile.mapVisibility !== 'LinkOnly') {
+        if (!share || !owner || owner.profile.mapVisibility === 'Private') {
           await delay(null)
           throw notFound()
         }
@@ -924,6 +1004,8 @@ export function createMockApi(): AtlasApi {
         })
       },
     },
+
+    profiles: profiles.api,
 
     statistics: {
       async dashboard() {

@@ -25,6 +25,7 @@ app.UseSwaggerUI(options =>
 app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter(); // after authentication: the profile-search limit is per user
 
 app.MapControllers();
 app.MapHealthChecks("/health").AllowAnonymous();

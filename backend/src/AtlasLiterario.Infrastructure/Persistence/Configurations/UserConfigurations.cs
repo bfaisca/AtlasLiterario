@@ -18,6 +18,13 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.Email).HasMaxLength(User.MaxEmailLength).IsRequired();
         builder.HasIndex(u => u.Email).IsUnique();
 
+        // Public nickname: stored lower-cased by the domain; NULL for accounts that never chose one (NULLs do not collide).
+        builder.Property(u => u.Handle).HasMaxLength(User.MaxHandleLength);
+        builder.HasIndex(u => u.Handle).IsUnique();
+
+        // Only used by the profile search; accounts that predate it stay '' until their first profile update (they are Private).
+        builder.Property(u => u.NormalizedName).HasMaxLength(User.MaxNameLength).HasDefaultValue(string.Empty).IsRequired();
+
         builder.Property(u => u.PasswordHash).IsRequired();
         builder.Property(u => u.Role).HasDefaultValue(UserRole.User).IsRequired();
     }
@@ -63,5 +70,17 @@ internal sealed class MapShareConfiguration : IEntityTypeConfiguration<MapShare>
         builder.HasIndex(s => new { s.UserId, s.MapType });
         builder.HasOne<User>().WithMany().HasForeignKey(s => s.UserId).OnDelete(DeleteBehavior.Cascade);
         builder.Ignore(s => s.IsActive);
+    }
+}
+
+internal sealed class UserFollowConfiguration : IEntityTypeConfiguration<UserFollow>
+{
+    public void Configure(EntityTypeBuilder<UserFollow> builder)
+    {
+        builder.ToTable("user_follow", t => t.HasCheckConstraint("ck_user_follow_not_self", "follower_id <> followed_id"));
+        builder.HasKey(f => new { f.FollowerId, f.FollowedId });
+        builder.HasIndex(f => f.FollowedId); // followers of a user
+        builder.HasOne<User>().WithMany().HasForeignKey(f => f.FollowerId).OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne<User>().WithMany().HasForeignKey(f => f.FollowedId).OnDelete(DeleteBehavior.Cascade);
     }
 }

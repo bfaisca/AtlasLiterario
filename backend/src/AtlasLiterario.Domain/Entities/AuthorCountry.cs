@@ -54,6 +54,35 @@ public sealed class AuthorCountry
 
     public bool IsManual => Source == GeoSource.Manual;
 
+    /// <summary>Copy of this relation for another author (used when merging duplicate authors); provenance is preserved.</summary>
+    public AuthorCountry CopyFor(Guid authorId) =>
+        new(authorId, CountryId, RelationshipType, Source, Confidence, IsVerified, UpdatedByUserId, CreatedAt)
+        {
+            UpdatedAt = UpdatedAt,
+        };
+
+    /// <summary>
+    /// Takes over the provenance of <paramref name="other"/> (same country and relationship) when it is better:
+    /// verified beats unverified; with the same verification, higher confidence wins.
+    /// </summary>
+    /// <returns><c>true</c> when this relation was replaced.</returns>
+    public bool AdoptIfBetter(AuthorCountry other, DateTimeOffset now)
+    {
+        ArgumentNullException.ThrowIfNull(other);
+        var better = other.IsVerified != IsVerified ? other.IsVerified : other.Confidence > Confidence;
+        if (!better)
+        {
+            return false;
+        }
+
+        Source = other.Source;
+        Confidence = other.Confidence;
+        IsVerified = other.IsVerified;
+        UpdatedByUserId = other.UpdatedByUserId;
+        UpdatedAt = now;
+        return true;
+    }
+
     /// <summary>Manual correction: Source=Manual, Confidence=1, verified.</summary>
     public static AuthorCountry CreateManual(
         Guid authorId, short countryId, AuthorCountryRelationship relationshipType, Guid userId, DateTimeOffset now) =>

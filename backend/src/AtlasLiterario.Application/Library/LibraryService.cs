@@ -5,6 +5,7 @@ using AtlasLiterario.Domain.Common;
 using AtlasLiterario.Domain.Entities;
 using AtlasLiterario.Domain.Enums;
 using AtlasLiterario.Domain.Exceptions;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -21,7 +22,8 @@ public sealed record LibraryQuery(
     string? Sort,
     string? Order,
     int? Page,
-    int? PageSize);
+    int? PageSize,
+    string? GeoMissing = null);
 
 public interface ILibraryService
 {
@@ -50,7 +52,7 @@ public sealed partial class LibraryService(
     {
         ArgumentNullException.ThrowIfNull(query);
         var userId = currentUser.GetRequiredUserId();
-        var (sort, descending, mapType, countryIso) = ValidateQuery(query);
+        var (sort, descending, mapType, countryIso, geoMissing) = ValidateQuery(query);
         var (page, pageSize) = Paging.Normalize(query.Page, query.PageSize);
 
         var items = db.UserBooks.AsNoTracking().Where(ub => ub.UserId == userId);
@@ -82,6 +84,18 @@ public sealed partial class LibraryService(
                         c.RelationshipType == AuthorCountryRelationship.Citizenship && c.Country!.IsoCode == countryIso))),
             };
         }
+
+        // "Missing" = no stored relation (unknown), which is exactly what this filter exposes so the user can complete it.
+        // Authors side only counts Citizenship relations; a book without authors counts as missing the author country.
+        items = geoMissing switch
+        {
+            GeoMissing.Origin => items.Where(ub => !ub.Book!.OriginCountries.Any()),
+            GeoMissing.Author => items.Where(Not(HasAuthorCitizenship)),
+            GeoMissing.Both => items.Where(ub => !ub.Book!.OriginCountries.Any()).Where(Not(HasAuthorCitizenship)),
+            GeoMissing.Any => items.Where(ub => !ub.Book!.OriginCountries.Any() || !ub.Book.Authors.Any(ba =>
+                ba.Author!.Countries.Any(c => c.RelationshipType == AuthorCountryRelationship.Citizenship))),
+            _ => items,
+        };
 
         if (!string.IsNullOrWhiteSpace(query.Genre))
         {
@@ -210,7 +224,7 @@ public sealed partial class LibraryService(
         return await query.SingleOrDefaultAsync(ct) ?? throw NotFound();
     }
 
-    private static (string Sort, bool Descending, MapType? MapType, string? CountryIso) ValidateQuery(LibraryQuery query)
+    private static (string Sort, bool Descending, MapType? MapType, string? CountryIso, GeoMissing? GeoMissing) ValidateQuery(LibraryQuery query)
     {
         var errors = new ValidationErrors();
         var sort = SortValues.FirstOrDefault(s => string.Equals(s, query.Sort ?? "createdAt", StringComparison.OrdinalIgnoreCase));
@@ -240,6 +254,23 @@ public sealed partial class LibraryService(
             }
         }
 
+        GeoMissing? geoMissing = null;
+        if (!string.IsNullOrWhiteSpace(query.GeoMissing))
+        {
+            geoMissing = query.GeoMissing.Trim().ToLowerInvariant() switch
+            {
+                "any" => GeoMissing.Any,
+                "origin" => GeoMissing.Origin,
+                "author" => GeoMissing.Author,
+                "both" => GeoMissing.Both,
+                _ => null,
+            };
+            if (geoMissing is null)
+            {
+                errors.Add("geoMissing", "Valor inválido (any, origin, author, both).");
+            }
+        }
+
         var countryIso = string.IsNullOrWhiteSpace(query.CountryIso) ? null : query.CountryIso.Trim().ToUpperInvariant();
         if (countryIso is { Length: not 3 })
         {
@@ -257,8 +288,22 @@ public sealed partial class LibraryService(
         }
 
         errors.ThrowIfAny();
-        return (sort!, order == "desc", mapType, countryIso);
+        return (sort!, order == "desc", mapType, countryIso, geoMissing);
     }
+
+    private enum GeoMissing
+    {
+        Any,
+        Origin,
+        Author,
+        Both,
+    }
+
+    private static readonly Expression<Func<UserBook, bool>> HasAuthorCitizenship = ub =>
+        ub.Book!.Authors.Any(ba => ba.Author!.Countries.Any(c => c.RelationshipType == AuthorCountryRelationship.Citizenship));
+
+    private static Expression<Func<UserBook, bool>> Not(Expression<Func<UserBook, bool>> predicate) =>
+        Expression.Lambda<Func<UserBook, bool>>(Expression.Not(predicate.Body), predicate.Parameters);
 
     private static IQueryable<UserBook> Sort(IQueryable<UserBook> items, string sort, bool descending)
     {

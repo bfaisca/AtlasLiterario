@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import type { LibraryItemDto } from '@/types/api'
 import { formatDate } from '@/utils/format'
+import { lacksAuthorCountry, lacksOriginCountry } from '@/utils/libraryGeo'
 import StarRating from '@/components/ui/StarRating.vue'
 import BookCover from './BookCover.vue'
 import ReadingStatusBadge from './ReadingStatusBadge.vue'
@@ -15,6 +16,10 @@ const originLabel = computed(() => {
   const origins = props.item.book.originCountries
   return origins.length ? origins.map((o) => o.countryName).join(' · ') : null
 })
+
+/** Lacunas geográficas: dado ainda não informado (desconhecido), nunca "inexistente". */
+const missingOrigin = computed(() => lacksOriginCountry(props.item))
+const missingAuthorCountry = computed(() => lacksAuthorCountry(props.item))
 </script>
 
 <template>
@@ -28,10 +33,30 @@ const originLabel = computed(() => {
       <ReadingStatusBadge :status="item.status" />
       <h3 class="book-card__title">{{ item.book.title }}</h3>
       <p class="book-card__authors">{{ authorNames || 'Autoria desconhecida' }}</p>
-      <p class="book-card__meta">
-        <span v-if="originLabel" class="book-card__origin">{{ originLabel }}</span>
-        <span v-else class="book-card__origin book-card__origin--unknown">Origem desconhecida</span>
+      <p v-if="originLabel" class="book-card__meta">
+        <span class="book-card__origin">{{ originLabel }}</span>
       </p>
+      <ul
+        v-if="missingOrigin || missingAuthorCountry"
+        role="list"
+        class="book-card__gaps"
+        aria-label="Dados geográficos ainda não informados"
+      >
+        <li
+          v-if="missingOrigin"
+          class="book-card__gap"
+          title="País de origem da obra ainda não informado"
+        >
+          Obra sem país
+        </li>
+        <li
+          v-if="missingAuthorCountry"
+          class="book-card__gap"
+          title="Nacionalidade do autor ainda não informada"
+        >
+          Autor sem país
+        </li>
+      </ul>
       <div v-if="item.status === 'Read'" class="book-card__footer">
         <StarRating v-if="item.rating" :model-value="item.rating" readonly size="sm" />
         <span v-if="item.finishedDate" class="book-card__date">{{
@@ -83,8 +108,18 @@ const originLabel = computed(() => {
   letter-spacing: 0.04em;
   color: var(--color-text-faint);
 }
-.book-card__origin--unknown {
-  font-style: italic;
+.book-card__gaps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+.book-card__gap {
+  padding: 0 0.5rem;
+  border-radius: var(--radius-pill);
+  border: 1px dashed var(--color-border);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  color: var(--color-text-faint);
 }
 .book-card__footer {
   display: flex;

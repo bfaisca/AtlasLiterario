@@ -43,8 +43,17 @@ Frontend: pesquisa e seleção; adicionar à biblioteca; biblioteca com filtros/
 ### Etapa 4 — Mapas literários ✅ (2026-11-16)
 Backend: endpoints de mapa e de detalhe por país usando o `MapAggregator`. Frontend: painel de país, ajuste do enquadramento em mobile (Américas cortadas em retrato).
 
-### Etapa 5 — Dashboard e Passaportes ⏳
+### Etapa 5 — Dashboard, Passaportes e Seguidores 🔶 (implementada; falta validação no ambiente real)
+- **Estado (2026-11-22):** backend 389 testes (EF InMemory; índice único do apelido, CHECK anti auto-seguir, LIKE/collation e traduções SQL **não** exercitados em PostgreSQL real) e frontend 428 testes, type-check/lint/prettier/build OK (rodados pelo arquiteto). Migration `AddProfilesAndFollows` (aditiva) **ainda não aplicada**: fazer backup antes de subir o backend. `VITE_USE_MOCKS=false` ainda não foi exercitado contra o backend real para as telas novas.
+- Para encerrar: aplicar a migration, subir o backend, testar Dashboard/Passaportes, definir apelido e visibilidade, buscar e seguir pessoas com duas contas.
+- Dashboard e Passaportes Literários (hoje `/statistics/*` responde 501).
+- **Seguir / seguidores** (decisão 2026-11-22): relação assimétrica, sem amizade; "seguir de volta" é apenas seguir quem já te segue. No perfil do usuário: contagem e listas de **seguindo** e **seguidores**. Perfis são encontrados por **apelido único** (novo campo) e os mapas de um perfil visível podem ser vistos **sem seguir** (ver business-rules §5 para o nível de visibilidade `Public`). Seguir não concede acesso à biblioteca nem a resenhas.
+- Escopo previsto: migration (`user_follow`: follower_id, followed_id, created_at; apelido único; visibilidade), endpoints de seguir/deixar de seguir/listar/buscar perfil e mapas de terceiros (reuso de `MapService`/estatísticas com `ownerId` ≠ usuário logado e checagem de visibilidade), frontend (perfil público, listas, botão seguir/seguir de volta, mapa de terceiros reutilizando `WorldMap`). Proteções: bloquear/denunciar fica fora do primeiro corte; limites de requisição na busca por apelido.
 ### Etapa 6 — Compartilhamento e finalização ⏳
+- Imagens dos mapas e link público conforme a visibilidade.
+- **Feed (em aberto):** feed com resenhas e atualizações do histórico de leitura de quem o usuário segue. Decidir antes de implementar: o modelo de privacidade (resenhas hoje são privadas), granularidade por item e se entra no MVP.
+### Etapa 7 — Estatísticas de leitura por ano ⏳
+- Estatísticas por ano de conclusão (livros, países novos no ano, autores, páginas se disponível, melhores avaliações), com seletor de ano. Complementa a "evolução histórica" dos Passaportes (Etapa 5), sem duplicá-la. Só livros `Read`.
 
 ## Etapas 3 e 4 — resultados verificados
 
@@ -60,6 +69,27 @@ Backend: endpoints de mapa e de detalhe por país usando o `MapAggregator`. Fron
 - Busca: livro manual aparece em `GET /books/search` (catálogo local primeiro), inclusive para outros usuários.
 - Verificado: backend 198 testes, frontend 197 testes, build 0/0; E2E real (navegador × API × PostgreSQL): cadastro manual com capa (1400×2000 → 800×1143), usuário B vê a capa no resultado da busca e adiciona, usuário comum sem botão de edição, após promoção B edita (Brasil → Portugal).
 
+## Filtros de dados geográficos e de status dos mapas (backend, 2026-11-22) ✅
+- `GET /library?geoMissing=any|origin|author|both` (SQL, combina com os demais filtros; "sem país" = sem relação gravada, dado desconhecido).
+- `GET /maps/{authors|origins}` e `/maps/{type}/countries/{iso}` com `status=Read|WantToRead|Reading|Abandoned|All` (padrão `Read`) e campo `status` nos DTOs. Estatísticas, Passaportes, compartilhamento e mapas públicos seguem só `Read` (não alterados). Contratos: api-contracts v1.9.
+- Sem migration nova (`dotnet ef migrations has-pending-model-changes`: sem alterações). Testes do backend: 220 (Domain 40, Application 81, Infrastructure 50, API 49), build 0 erros/0 avisos. Verificação manual em PostgreSQL 16 real (SQL do filtro e dos mapas, 400 de valores inválidos, OpenAPI). Frontend ainda precisa consumir os novos parâmetros.
+
+## Autocomplete de autores e cards de autor no mapa (2026-11-22) ✅
+
+- Backend: `GET /authors?q=&limit=` (busca sem acento por prefixo do nome ou de qualquer palavra), `CreateBookRequest.authorIds` (reutiliza autor já cadastrado e evita duplicatas) e `CountryDetailDto.authors` (autores com cidadania no país entre os livros do filtro de status; vazio no mapa de origens). Sem migration. Contratos: api-contracts v1.10.
+- Frontend: autocomplete acessível no cadastro/edição de livro; no mapa de autores o painel lista cards (nome e país, não clicáveis) em vez de livros; o mapa de origens continua listando livros.
+- Validação: backend 251 testes (EF InMemory; a consulta de busca não foi executada num PostgreSQL real), frontend 295 testes, type-check, lint, prettier e build OK.
+- Pendente: ferramenta para mesclar autores duplicados já existentes (ex.: Mark Lawrence, Brom).
+
+## Deduplicação de autores e livros do autor no mapa (2026-11-22) ✅
+
+- Causa das duplicatas (ex.: Elena Ferrante ×7): a criação só reaproveita autor por id externo ou co-ocorrência na mesma obra; importações em lote geravam um registro por livro.
+- Backend: `GET /authors/duplicates` e `POST /authors/merge` (só `Moderator`; uma transação; nenhum livro perde autor), `CountryAuthorDto.books`. Contratos: api-contracts v1.11. Sem migration.
+- Frontend: card de autor expansível com os livros do autor no filtro atual.
+- Ferramenta: `tools/bulk-import` → `npm run authors:dedupe` (simulação por padrão; `--apply` executa; `--exclude` pula homônimos).
+- Validação: backend 274 testes (EF InMemory; rollback não exercitado em PostgreSQL real), frontend 301 testes, type-check, lint, prettier e build OK.
+- Pendente: execução no banco real (com backup) pelo usuário.
+
 ## Pendências registradas
 - Validar Dockerfiles e `docker compose up --build` numa máquina com Docker.
 - Testcontainers (PostgreSQL) nos testes de integração.
@@ -72,7 +102,6 @@ Backend: endpoints de mapa e de detalhe por país usando o `MapAggregator`. Fron
 - Capas em bytea (banco/backup crescem); sem redimensionamento no servidor.
 - Script de promoção: só a versão `.sh` foi executada em teste; `.ps1` e `docker compose exec` não foram.
 - Paginar `CountryDetailDto.books` (países com 50+ livros) — pós-MVP.
-- Filtro da biblioteca por "livros sem país conhecido" (hoje o aviso do mapa só leva a `status=Read`) — pós-MVP.
 - Aggregation dos mapas em memória: mover para SQL se a escala crescer.
 - Testes de integração com PostgreSQL real (Testcontainers) no CI.
 

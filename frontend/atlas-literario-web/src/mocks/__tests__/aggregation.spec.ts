@@ -240,6 +240,126 @@ describe('biblioteca simulada', () => {
     expect(byIso.get('GBR')).toMatchObject({ bookCount: 1, authorCount: 2 }) // Gaiman + Pratchett
     expect(byIso.has('UKR')).toBe(false) // local de nascimento não conta
     expect(byIso.has('MEX')).toBe(false) // Pedro Páramo em leitura; residência de García Márquez não conta
-    expect(authors.unknownBookCount).toBe(1) // As Mil e Uma Noites
+    expect(authors.unknownBookCount).toBe(2) // As Mil e Uma Noites + Cartas de um Farol (demo)
+  })
+})
+
+describe('mapas por status (visualização)', () => {
+  const library = createMockLibrary()
+
+  it('padrão é Read e ecoa o status; Todos soma os quatro status', () => {
+    const read = computeMapData(library, 'Origins', countries)
+    expect(read.status).toBe('Read')
+    const all = computeMapData(library, 'Origins', countries, 'All')
+    expect(all.status).toBe('All')
+    expect(all.totalReadBooks).toBe(library.length)
+    expect(all.exploredCountries).toBeGreaterThan(read.exploredCountries)
+  })
+
+  it('cada status considera só os seus livros, sem misturar com os lidos', () => {
+    const want = computeMapData(library, 'Origins', countries, 'WantToRead')
+    expect(want.totalReadBooks).toBe(library.filter((i) => i.status === 'WantToRead').length)
+    expect(want.countries.map((c) => c.iso)).toEqual(expect.arrayContaining(['ARG', 'EGY']))
+    expect(want.countries.some((c) => c.iso === 'COL')).toBe(false) // lido, não "quero ler"
+    const abandoned = computeMapData(library, 'Authors', countries, 'Abandoned')
+    expect(abandoned.countries.map((c) => c.iso).sort()).toEqual(['BRA', 'IRL'])
+  })
+
+  it('detalhe do país usa o mesmo status', () => {
+    const detail = computeCountryDetail(library, 'Origins', 'EGY', countries, 'WantToRead')
+    expect(detail).toMatchObject({ status: 'WantToRead', bookCount: 1 })
+    expect(computeCountryDetail(library, 'Origins', 'EGY', countries).bookCount).toBe(0)
+  })
+
+  it('a biblioteca de demonstração tem livros lidos sem país de obra e sem país de autor', () => {
+    const read = library.filter((i) => i.status === 'Read')
+    expect(read.some((i) => i.book.originCountries.length === 0)).toBe(true)
+    expect(read.some((i) => i.book.authors.every((a) => a.nationalities.length === 0))).toBe(true)
+  })
+})
+
+describe('computeCountryDetail — autores (contrato v1.10)', () => {
+  it('autor com duas cidadanias aparece nos dois países; origens devolve authors = []', () => {
+    const llosa = author('llosa', 'PER', 'ESP')
+    const items = [libraryItem({ authors: [llosa], origins: ['PER'] })]
+    for (const iso of ['PER', 'ESP']) {
+      const detail = computeCountryDetail(items, 'Authors', iso, countries)
+      expect(detail.authors).toEqual([
+        {
+          authorId: 'llosa',
+          name: 'Autor llosa',
+          countryIso: iso,
+          countryName: countries.get(iso)!.namePt,
+          books: detail.books,
+        },
+      ])
+      expect(detail.authors[0]!.books).toHaveLength(1)
+      expect(detail.authorCount).toBe(detail.authors.length)
+    }
+    const origins = computeCountryDetail(items, 'Origins', 'PER', countries)
+    expect(origins.authors).toEqual([])
+    expect(origins.books).toHaveLength(1)
+  })
+
+  it('deduplica autores com vários livros, ordena sem acento e respeita o filtro de status', () => {
+    const zola: AuthorSummaryDto = { ...author('z', 'FRA'), name: 'Émile Zola' }
+    const camus: AuthorSummaryDto = { ...author('c', 'FRA'), name: 'Albert Camus' }
+    const items = [
+      libraryItem({ authors: [zola] }),
+      libraryItem({ authors: [camus] }),
+      libraryItem({ authors: [camus] }),
+      libraryItem({ authors: [author('w', 'FRA')], status: 'WantToRead' }),
+    ]
+    expect(
+      computeCountryDetail(items, 'Authors', 'FRA', countries).authors.map((a) => a.name),
+    ).toEqual(['Albert Camus', 'Émile Zola'])
+    expect(
+      computeCountryDetail(items, 'Authors', 'FRA', countries, 'All').authors.map(
+        (a) => a.authorId,
+      ),
+    ).toEqual(['c', 'w', 'z'])
+  })
+
+  it('só conta autores com cidadania no país (livro de coautores de países diferentes)', () => {
+    const items = [libraryItem({ authors: [author('br', 'BRA'), author('pt', 'PRT')] })]
+    expect(
+      computeCountryDetail(items, 'Authors', 'BRA', countries).authors.map((a) => a.authorId),
+    ).toEqual(['br'])
+  })
+})
+
+describe('computeCountryDetail — livros por autor (contrato v1.11)', () => {
+  it('cada autor traz só os próprios livros, por finishedDate desc, sem repetir o autor', () => {
+    const camus = author('c', 'FRA')
+    const duras = author('d', 'FRA')
+    const old = libraryItem({ authors: [camus], finishedDate: '2020-01-01' })
+    const recent = libraryItem({ authors: [camus, duras], finishedDate: '2025-06-01' })
+    const other = libraryItem({ authors: [duras], finishedDate: '2023-03-03' })
+    const detail = computeCountryDetail([old, recent, other], 'Authors', 'FRA', countries)
+    expect(detail.authors.map((a) => a.authorId)).toEqual(['c', 'd'])
+    expect(detail.authors[0]!.books.map((b) => b.libraryItemId)).toEqual([recent.id, old.id])
+    expect(detail.authors[1]!.books.map((b) => b.libraryItemId)).toEqual([recent.id, other.id])
+  })
+
+  it('respeita o filtro de status e é igual ao painel quando há um único autor', () => {
+    const w = author('w', 'FRA')
+    const read = libraryItem({ authors: [w] })
+    const want = libraryItem({ authors: [w], status: 'WantToRead' })
+    const items = [read, want]
+    const readDetail = computeCountryDetail(items, 'Authors', 'FRA', countries)
+    expect(readDetail.authors[0]!.books.map((b) => b.libraryItemId)).toEqual([read.id])
+    const wantDetail = computeCountryDetail(items, 'Authors', 'FRA', countries, 'WantToRead')
+    expect(wantDetail.authors[0]!.books.map((b) => b.libraryItemId)).toEqual([want.id])
+    const all = computeCountryDetail(items, 'Authors', 'FRA', countries, 'All')
+    expect(all.authors[0]!.books.map((b) => b.libraryItemId).sort()).toEqual(
+      all.books.map((b) => b.libraryItemId).sort(),
+    )
+  })
+
+  it('não inclui livros em que o autor não tem cidadania no país nem no mapa de origens', () => {
+    const br = author('br', 'BRA')
+    const items = [libraryItem({ authors: [br], origins: ['FRA'] })]
+    expect(computeCountryDetail(items, 'Authors', 'FRA', countries).authors).toEqual([])
+    expect(computeCountryDetail(items, 'Origins', 'FRA', countries).authors).toEqual([])
   })
 })

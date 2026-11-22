@@ -24,9 +24,20 @@ user 1──* user_book *──1 book 1──* book_author *──1 author
 | name | varchar(100) | obrigatório (nome de exibição) |
 | email | varchar(254) | obrigatório; **único** (índice em `lower(email)`) |
 | password_hash | text | obrigatório |
-| map_visibility | smallint (enum `MapVisibility`: 0 Private, 1 LinkOnly) | padrão 0 |
+| map_visibility | smallint (enum `MapVisibility`: 0 Private, 1 LinkOnly, 2 Public) | padrão 0; `Public` só por escolha explícita e exige `handle` |
+| handle | varchar(30), nulo | apelido público (v1.12): minúsculas `^[a-z0-9_]{3,30}$`; **índice único** (NULL permitido; contas existentes ficam sem apelido) |
+| normalized_name | varchar(100) | nome sem acento/caixa para a busca de perfis; recalculado em `UpdateProfile`; contas antigas ficam `''` até a primeira atualização de perfil (só importa para perfis `Public`) |
 | role | smallint (enum `UserRole`: 0 User, 1 Moderator) | padrão 0; promoção só por script/SQL |
 | created_at / updated_at | timestamptz | |
+
+### `user_follow` (v1.12)
+| Coluna | Tipo | Regras |
+|---|---|---|
+| follower_id | uuid FK → user | PK composta; ON DELETE CASCADE |
+| followed_id | uuid FK → user | PK composta; ON DELETE CASCADE; índice em `followed_id` |
+| created_at | timestamptz | |
+
+CHECK `follower_id <> followed_id`. Relação assimétrica (sem aceite, sem amizade). Contagens são calculadas (`COUNT`), não armazenadas. Migration `AddProfilesAndFollows` apenas adiciona colunas/tabela/índices.
 
 ### `refresh_token`
 id uuid PK · user_id FK→user (cascade) · token_hash varchar(128) **único** · expires_at · created_at · revoked_at null · replaced_by_token_hash null.

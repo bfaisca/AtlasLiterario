@@ -19,6 +19,7 @@ const NAV: NavItem[] = [
   { name: 'search', label: 'Adicionar', icon: 'plus', mobile: true },
   { name: 'map', label: 'Mapa', icon: 'globe', mobile: true },
   { name: 'passports', label: 'Passaportes', icon: 'passport', mobile: true },
+  { name: 'people', label: 'Pessoas', icon: 'users', mobile: false },
   { name: 'profile', label: 'Perfil', icon: 'user', mobile: false },
 ]
 
@@ -30,6 +31,9 @@ const route = useRoute()
 function isActive(name: string): boolean {
   const current = String(route.name ?? '')
   if (name === 'search' && current === 'book-new') return true
+  // Perfil de outro leitor mantém "Pessoas" ativa; minhas listas de seguidores mantêm "Perfil".
+  if (name === 'people' && current === 'user-profile') return true
+  if (name === 'profile' && current.startsWith('me-')) return true
   return current === name || current.startsWith(`${name}-`)
 }
 const mobileNav = computed(() => NAV.filter((item) => item.mobile))
@@ -94,9 +98,14 @@ async function logout() {
       <RouterLink :to="{ name: 'dashboard' }" class="brand brand--compact">
         <span class="brand__wordmark">Atlas Literário</span>
       </RouterLink>
-      <RouterLink :to="{ name: 'profile' }" class="user-chip__avatar" aria-label="Perfil">
-        {{ initials }}
-      </RouterLink>
+      <div class="topbar__actions">
+        <RouterLink :to="{ name: 'people' }" class="topbar__icon" aria-label="Pessoas">
+          <AppIcon name="users" :size="20" />
+        </RouterLink>
+        <RouterLink :to="{ name: 'profile' }" class="user-chip__avatar" aria-label="Perfil">
+          {{ initials }}
+        </RouterLink>
+      </div>
     </header>
 
     <main id="conteudo" class="content" tabindex="-1">
@@ -278,6 +287,24 @@ async function logout() {
 .topbar,
 .bottom-nav {
   display: none;
+}
+
+.topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+.topbar__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  color: var(--color-text-muted);
+}
+.topbar__icon:hover {
+  color: var(--color-text);
+  background: var(--color-surface-2);
 }
 
 /* ---------- Mobile ---------- */

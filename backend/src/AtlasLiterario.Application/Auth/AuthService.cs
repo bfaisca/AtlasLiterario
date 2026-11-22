@@ -1,6 +1,7 @@
 using AtlasLiterario.Application.Abstractions;
 using AtlasLiterario.Application.Common;
 using AtlasLiterario.Domain.Entities;
+using AtlasLiterario.Domain.Enums;
 using AtlasLiterario.Domain.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,7 +36,7 @@ public sealed class AuthService(
         var now = clock.UtcNow;
         var user = new User(request.Name, email, passwordHasher.Hash(request.Password), now);
         db.Users.Add(user);
-        var (response, _) = IssueTokens(user, now);
+        var (response, _) = IssueTokens(user, now, ToProfile(user, 0, 0));
 
         try
         {
@@ -78,7 +79,7 @@ public sealed class AuthService(
             user.ChangePasswordHash(passwordHasher.Hash(request.Password), now);
         }
 
-        var (response, _) = IssueTokens(user, now);
+        var (response, _) = IssueTokens(user, now, await ToProfileAsync(user, ct));
         await db.SaveChangesAsync(ct);
         return response;
     }
@@ -123,7 +124,7 @@ public sealed class AuthService(
             throw InvalidRefreshToken();
         }
 
-        var (response, newToken) = IssueTokens(user, now);
+        var (response, newToken) = IssueTokens(user, now, await ToProfileAsync(user, ct));
         token.Revoke(now, newToken.TokenHash);
         await db.SaveChangesAsync(ct);
         return response;
@@ -153,7 +154,7 @@ public sealed class AuthService(
     public async Task<UserProfileDto> GetProfileAsync(CancellationToken ct)
     {
         var user = await GetCurrentUserAsync(ct);
-        return ToProfile(user);
+        return await ToProfileAsync(user, ct);
     }
 
     public async Task<UserProfileDto> UpdateProfileAsync(UpdateProfileRequest request, CancellationToken ct)
@@ -169,10 +170,40 @@ public sealed class AuthService(
 
         errors.ThrowIfAny();
 
+        // Resolve the final handle and validate everything before touching the entity.
         var user = await GetCurrentUserAsync(ct);
-        user.UpdateProfile(request.Name, request.MapVisibility, clock.UtcNow);
-        await db.SaveChangesAsync(ct);
-        return ToProfile(user);
+        var handle = request.HandleProvided ? User.NormalizeHandle(request.Handle) : user.Handle;
+        var handleChanged = handle != user.Handle;
+        if (handleChanged)
+        {
+            User.ValidateHandle(handle);
+        }
+
+        if (request.MapVisibility == MapVisibility.Public && handle is null)
+        {
+            throw User.HandleRequired();
+        }
+
+        if (handleChanged && handle is not null
+            && await db.Users.AnyAsync(u => u.Handle == handle && u.Id != user.Id, ct))
+        {
+            throw HandleTaken();
+        }
+
+        user.UpdateProfile(request.Name, request.MapVisibility, handle, clock.UtcNow);
+
+        try
+        {
+            await db.SaveChangesAsync(ct);
+        }
+        catch (DbUpdateException) when (handleChanged && handle is not null)
+        {
+            // Concurrent request took the same handle between the check and the insert (unique index on handle).
+            db.DiscardChanges();
+            throw HandleTaken();
+        }
+
+        return await ToProfileAsync(user, ct);
     }
 
     public async Task ChangePasswordAsync(ChangePasswordRequest request, CancellationToken ct)
@@ -261,7 +292,7 @@ public sealed class AuthService(
         await db.SaveChangesAsync(ct);
     }
 
-    private (AuthResponse Response, RefreshToken RefreshToken) IssueTokens(User user, DateTimeOffset now)
+    private (AuthResponse Response, RefreshToken RefreshToken) IssueTokens(User user, DateTimeOffset now, UserProfileDto profile)
     {
         var accessToken = tokenService.CreateAccessToken(user, now);
         var plainRefreshToken = tokenService.GenerateSecureToken();
@@ -269,7 +300,7 @@ public sealed class AuthService(
             user.Id, tokenService.HashToken(plainRefreshToken), now, now.Add(RefreshTokenLifetime));
         db.RefreshTokens.Add(refreshToken);
 
-        var response = new AuthResponse(accessToken.Token, accessToken.ExpiresAt, plainRefreshToken, ToProfile(user));
+        var response = new AuthResponse(accessToken.Token, accessToken.ExpiresAt, plainRefreshToken, profile);
         return (response, refreshToken);
     }
 
@@ -291,8 +322,18 @@ public sealed class AuthService(
                ?? throw new NotFoundException("auth.user_not_found", "Usuário não encontrado.");
     }
 
-    internal static UserProfileDto ToProfile(User user) =>
-        new(user.Id, user.Name, user.Email, user.Role, user.MapVisibility, user.CreatedAt);
+    private async Task<UserProfileDto> ToProfileAsync(User user, CancellationToken ct)
+    {
+        var followers = await db.UserFollows.CountAsync(f => f.FollowedId == user.Id, ct);
+        var following = await db.UserFollows.CountAsync(f => f.FollowerId == user.Id, ct);
+        return ToProfile(user, followers, following);
+    }
+
+    private static UserProfileDto ToProfile(User user, int followers, int following) =>
+        new(user.Id, user.Name, user.Email, user.Role, user.MapVisibility, user.CreatedAt, user.Handle, followers, following);
+
+    private static ConflictException HandleTaken() =>
+        new("profile.handle_taken", "Este apelido já está em uso.");
 
     private static ConflictException EmailTaken() =>
         new("auth.email_taken", "Já existe uma conta com este e-mail.");

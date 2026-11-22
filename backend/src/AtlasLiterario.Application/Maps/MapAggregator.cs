@@ -5,7 +5,7 @@ namespace AtlasLiterario.Application.Maps;
 /// <summary>
 /// Pure aggregation of the literary maps (docs/business-rules.md §3). No I/O.
 /// <list type="bullet">
-/// <item>R = distinct books of the user with status Read.</item>
+/// <item>R = distinct books of the user in the chosen status filter (default Read; <see cref="MapStatusFilter.All"/> = every status).</item>
 /// <item>A book counts once per country, regardless of how many of its authors share that country.</item>
 /// <item>An author with several citizenships makes the book count in each of those countries.</item>
 /// <item>Books without any known country go to <c>unknownBookCount</c> and never reduce other counts.</item>
@@ -13,19 +13,19 @@ namespace AtlasLiterario.Application.Maps;
 /// </summary>
 public static class MapAggregator
 {
-    public static MapDataDto Build(MapType mapType, MapAggregationInput input) => mapType switch
+    public static MapDataDto Build(MapType mapType, MapAggregationInput input, MapStatusFilter status = MapStatusFilter.Read) => mapType switch
     {
-        MapType.Authors => BuildAuthorsMap(input),
-        MapType.Origins => BuildOriginsMap(input),
+        MapType.Authors => BuildAuthorsMap(input, status),
+        MapType.Origins => BuildOriginsMap(input, status),
         _ => throw new ArgumentOutOfRangeException(nameof(mapType), mapType, "Unknown map type."),
     };
 
     /// <summary>Authors map: countries of citizenship of the authors of each read book.</summary>
-    public static MapDataDto BuildAuthorsMap(MapAggregationInput input)
+    public static MapDataDto BuildAuthorsMap(MapAggregationInput input, MapStatusFilter status = MapStatusFilter.Read)
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        var readBooks = GetReadBookIds(input);
+        var readBooks = GetBookIds(input, status);
         var authorsByBook = GetAuthorsByBook(input, readBooks);
         var citizenshipsByAuthor = input.AuthorCitizenships
             .GroupBy(r => r.AuthorId)
@@ -57,15 +57,15 @@ public static class MapAggregator
             }
         }
 
-        return accumulator.ToMapData(MapType.Authors, readBooks.Count, unknown);
+        return accumulator.ToMapData(MapType.Authors, status, readBooks.Count, unknown);
     }
 
     /// <summary>Origins map: literary countries of origin of each read book.</summary>
-    public static MapDataDto BuildOriginsMap(MapAggregationInput input)
+    public static MapDataDto BuildOriginsMap(MapAggregationInput input, MapStatusFilter status = MapStatusFilter.Read)
     {
         ArgumentNullException.ThrowIfNull(input);
 
-        var readBooks = GetReadBookIds(input);
+        var readBooks = GetBookIds(input, status);
         var authorsByBook = GetAuthorsByBook(input, readBooks);
         var originsByBook = input.BookOrigins
             .Where(r => readBooks.Contains(r.BookId))
@@ -90,16 +90,17 @@ public static class MapAggregator
             }
         }
 
-        return accumulator.ToMapData(MapType.Origins, readBooks.Count, unknown);
+        return accumulator.ToMapData(MapType.Origins, status, readBooks.Count, unknown);
     }
 
     /// <summary>
     /// Ids of the read books that count for <paramref name="iso"/> on the given map (same rules as <see cref="Build"/>).
     /// </summary>
-    public static IReadOnlyCollection<Guid> GetBookIdsForCountry(MapType mapType, MapAggregationInput input, string iso)
+    public static IReadOnlyCollection<Guid> GetBookIdsForCountry(
+        MapType mapType, MapAggregationInput input, string iso, MapStatusFilter status = MapStatusFilter.Read)
     {
         ArgumentNullException.ThrowIfNull(input);
-        var readBooks = GetReadBookIds(input);
+        var readBooks = GetBookIds(input, status);
         switch (mapType)
         {
             case MapType.Authors:
@@ -120,6 +121,45 @@ public static class MapAggregator
         }
     }
 
+    /// <summary>
+    /// Authors of the Authors map with a citizenship in <paramref name="country"/> who wrote at least one book of the status set
+    /// (so the count equals <c>authorCount</c> of the country). Alphabetical without accents, ties by id; each author appears once.
+    /// Each card carries the author's books taken from <paramref name="countryBooks"/> (the panel's already ordered books),
+    /// so the list reuses the same set, order and DTOs. Empty for the Origins map.
+    /// </summary>
+    public static IReadOnlyList<CountryAuthorDto> GetAuthorsForCountry(
+        MapType mapType, MapAggregationInput input, MapCountry country, IReadOnlyList<CountryBookDto> countryBooks,
+        MapStatusFilter status = MapStatusFilter.Read)
+    {
+        ArgumentNullException.ThrowIfNull(input);
+        ArgumentNullException.ThrowIfNull(country);
+        ArgumentNullException.ThrowIfNull(countryBooks);
+        if (mapType != MapType.Authors)
+        {
+            return [];
+        }
+
+        var readBooks = GetBookIds(input, status);
+        var authorsByBook = GetAuthorsByBook(input, readBooks);
+        var authorsOfReadBooks = authorsByBook.Values.SelectMany(a => a).ToHashSet();
+        var inCountry = input.AuthorCitizenships
+            .Where(r => string.Equals(r.Country.Iso, country.Iso, StringComparison.Ordinal))
+            .Select(r => r.AuthorId)
+            .Where(authorsOfReadBooks.Contains)
+            .ToHashSet();
+
+        return (input.AuthorNames ?? [])
+            .Where(a => inCountry.Contains(a.AuthorId))
+            .DistinctBy(a => a.AuthorId)
+            .OrderBy(a => a.NormalizedName, StringComparer.Ordinal)
+            .ThenBy(a => a.AuthorId)
+            .Select(a => new CountryAuthorDto(
+                a.AuthorId, a.Name, country.Iso, country.Name,
+                countryBooks.Where(b => authorsByBook.GetValueOrDefault(b.BookId, []).Contains(a.AuthorId)).ToList()))
+            .Where(a => a.Books.Count > 0)
+            .ToList();
+    }
+
     /// <summary>|countries(authors) ∪ countries(origins)| — each country counted once.</summary>
     public static int CountDistinctCountries(MapDataDto authorsMap, MapDataDto originsMap) =>
         authorsMap.Countries.Select(c => c.Iso)
@@ -130,9 +170,9 @@ public static class MapAggregator
     public static int CountContinents(params MapDataDto[] maps) =>
         maps.SelectMany(m => m.Countries).Select(c => c.Continent).Distinct().Count();
 
-    private static HashSet<Guid> GetReadBookIds(MapAggregationInput input) =>
+    private static HashSet<Guid> GetBookIds(MapAggregationInput input, MapStatusFilter status) =>
         input.LibraryBooks
-            .Where(b => b.Status == ReadingStatus.Read)
+            .Where(b => status.Matches(b.Status))
             .Select(b => b.BookId)
             .ToHashSet();
 
@@ -164,7 +204,7 @@ public static class MapAggregator
             entry.Authors.UnionWith(authorIds);
         }
 
-        public MapDataDto ToMapData(MapType mapType, int totalReadBooks, int unknownBookCount)
+        public MapDataDto ToMapData(MapType mapType, MapStatusFilter status, int totalReadBooks, int unknownBookCount)
         {
             var countries = _byIso.Values
                 .Select(e => new CountryMapDatum(
@@ -179,7 +219,8 @@ public static class MapAggregator
                 countries.Count,
                 countries.Count == 0 ? 0 : countries.Max(c => c.BookCount),
                 unknownBookCount,
-                countries);
+                countries,
+                status.ToString());
         }
     }
 }

@@ -28,6 +28,9 @@ public sealed class ExternalAuthorIdentifier
 
     public Guid AuthorId { get; private set; }
 
+    /// <summary>Re-links the identifier to another author (merge of duplicate authors).</summary>
+    public void MoveTo(Guid authorId) => AuthorId = authorId;
+
     public AuthorIdentifierProvider Provider { get; private set; }
 
     public string ExternalId { get; private set; } = null!;

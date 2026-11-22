@@ -11,9 +11,7 @@ O principal diferencial são dois mapas independentes:
 1. **Mapa de nacionalidades dos autores:** países associados às nacionalidades ou cidadanias dos autores dos livros concluídos.
 2. **Mapa de origem das obras:** países associados à origem literária das obras concluídas.
 
-A aplicação também t
-
-erá estatísticas, Passaportes Literários, dashboard e compartilhamento dos mapas.
+A aplicação também terá estatísticas, Passaportes Literários, dashboard e compartilhamento dos mapas.
 
 O nome do projeto é Atlas Literário.
 
@@ -167,9 +165,11 @@ Status possíveis:
 
 ### Mapas
 
-Somente livros com status Read participam dos mapas.
+Por padrão, somente livros com status Read participam dos mapas.
 
 Livros desejados, em andamento ou abandonados não contam como leituras concluídas.
+
+O usuário pode visualizar o mapa filtrado por outro status (WantToRead, Reading, Abandoned) ou por todos (All). É apenas um filtro de visualização: o padrão continua sendo Read, e Passaportes Literários, estatísticas e compartilhamento seguem considerando somente livros Read.
 
 Os mapas devem ser independentes:
 
@@ -333,6 +333,8 @@ Respeitar as configurações de privacidade.
 
 Não tornar pública a biblioteca do usuário automaticamente.
 
+Os mapas são feitos para serem compartilhados: quem encontrar o perfil de um usuário (busca por apelido) poderá ver os mapas dele **sem precisar segui-lo**, desde que o perfil esteja visível (configuração de privacidade do usuário). Em um perfil **público**, o mapa é exibido por completo: países, autores, títulos dos livros concluídos e as resenhas. Como isso expõe conteúdo pessoal, a visibilidade pública só vale por **escolha explícita** do usuário; o padrão para contas existentes e novas é privado (ver docs/business-rules.md §5). O link de compartilhamento (`LinkOnly`) e as imagens geradas continuam expondo apenas dados agregados.
+
 ## 11. Contratos entre frontend e backend
 
 A API REST deverá ser a única forma de comunicação entre as aplicações.
@@ -428,10 +430,15 @@ Prioridades:
 9. Passaportes Literários.
 10. Compartilhamento.
 
-Não implementar inicialmente:
+Etapas planejadas (ver docs/development-plan.md):
 
-- Rede social.
-- Seguidores.
+- Etapa 5: Dashboard, Passaportes Literários e **seguir/seguidores** (relação assimétrica: seguir e "seguir de volta"; **sem** conceito de amizade; perfil do usuário lista seguindo e seguidores).
+- Etapa 6: Compartilhamento e finalização; **feed** com resenhas e atualizações do histórico de leitura fica **em aberto** (decidir se entra, com seu modelo de privacidade, antes de implementar).
+- Etapa 7: estatísticas de leitura por ano.
+
+Não implementar inicialmente (salvo o que as etapas acima liberam):
+
+- Amizade (relação mútua com aceite).
 - Mensagens privadas.
 - Rankings globais.
 - Comentários públicos.

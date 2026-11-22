@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using AtlasLiterario.Application.Auth;
 using AtlasLiterario.Application.Authors;
@@ -342,6 +343,12 @@ public sealed class LibraryFlowTests(AtlasApiFactory factory) : IClassFixture<At
         var other = await UserClientAsync();
         (await ReadAsync<MapDataDto>(await other.GetAsync("/api/maps/authors"), HttpStatusCode.OK)).Countries.ShouldBeEmpty();
         (await factory.CreateClient().GetAsync("/api/maps/authors")).StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+
+        // Sharing needs a non-Private profile (403 share.private_profile); the link itself is still Etapa 6 (501).
+        var blocked = await client.PostAsJsonAsync("/api/maps/share", new { mapType = "Authors" }, Json);
+        blocked.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+        JsonNode.Parse(await blocked.Content.ReadAsStringAsync())!["code"]!.GetValue<string>().ShouldBe("share.private_profile");
+        (await client.PutAsJsonAsync("/api/auth/me", new { name = "Leitor", mapVisibility = "LinkOnly" }, Json)).StatusCode.ShouldBe(HttpStatusCode.OK);
         (await client.PostAsJsonAsync("/api/maps/share", new { mapType = "Authors" }, Json)).StatusCode.ShouldBe(HttpStatusCode.NotImplemented);
     }
 }

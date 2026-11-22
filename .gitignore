@@ -22,3 +22,6 @@ coverage/
 !.vscode/extensions.json
 .DS_Store
 Thumbs.db
+
+# Backups do banco (contêm dados pessoais)
+backups/

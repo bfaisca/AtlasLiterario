@@ -26,9 +26,30 @@ describe('BookCard', () => {
     })
   })
 
-  it('sinaliza origem desconhecida em vez de omitir', () => {
+  it('sinaliza obra sem país (desconhecido) em vez de omitir', () => {
     const wrapper = render('O Processo')
-    expect(wrapper.text()).toContain('Origem desconhecida')
+    const gaps = wrapper.find('.book-card__gaps').text()
+    expect(gaps).toContain('Obra sem país')
+    expect(gaps).not.toContain('Autor sem país') // Kafka tem nacionalidade conhecida
+  })
+
+  it('sinaliza autor sem país quando nenhum autor tem nacionalidade', () => {
+    const wrapper = render('Cartas de um Farol (demo)')
+    const gaps = wrapper.find('.book-card__gaps').text()
+    expect(gaps).toContain('Autor sem país')
+    expect(gaps).not.toContain('Obra sem país')
+    expect(wrapper.text()).toContain('Noruega')
+  })
+
+  it('sem autores cadastrados e sem origem mostra os dois avisos', () => {
+    const wrapper = render('As Mil e Uma Noites')
+    const gaps = wrapper.findAll('.book-card__gap').map((g) => g.text())
+    expect(gaps).toEqual(['Obra sem país', 'Autor sem país'])
+  })
+
+  it('cartão completo não mostra avisos', () => {
+    const wrapper = render('Cem Anos de Solidão')
+    expect(wrapper.find('.book-card__gaps').exists()).toBe(false)
   })
 
   it('usa capa tipográfica quando não há imagem', () => {

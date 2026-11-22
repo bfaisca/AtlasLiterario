@@ -9,36 +9,48 @@ namespace AtlasLiterario.API.Controllers;
 [Tags("Maps")]
 public sealed class MapsController(IMapService mapService) : ApiControllerBase
 {
-    /// <summary>Authors map: citizenships of the authors of the user's Read books.</summary>
+    /// <summary>Authors map: citizenships of the authors of the user's books (default status Read).</summary>
+    /// <param name="status">Read (default) | WantToRead | Reading | Abandoned | All. Visualization filter only.</param>
+    /// <param name="ct">Cancellation token.</param>
     [HttpGet("authors")]
     [ProducesResponseType<MapDataDto>(StatusCodes.Status200OK)]
-    public async Task<ActionResult<MapDataDto>> GetAuthorsMap(CancellationToken ct) =>
-        Ok(await mapService.GetMapAsync(MapType.Authors, ct));
+    [ProducesResponseType<HttpValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
+    public async Task<ActionResult<MapDataDto>> GetAuthorsMap([FromQuery] string? status, CancellationToken ct) =>
+        Ok(await mapService.GetMapAsync(MapType.Authors, status, ct));
 
-    /// <summary>Origins map: literary origin countries of the user's Read books.</summary>
+    /// <summary>Origins map: literary origin countries of the user's books (default status Read).</summary>
+    /// <param name="status">Read (default) | WantToRead | Reading | Abandoned | All. Visualization filter only.</param>
+    /// <param name="ct">Cancellation token.</param>
     [HttpGet("origins")]
     [ProducesResponseType<MapDataDto>(StatusCodes.Status200OK)]
-    public async Task<ActionResult<MapDataDto>> GetOriginsMap(CancellationToken ct) =>
-        Ok(await mapService.GetMapAsync(MapType.Origins, ct));
+    [ProducesResponseType<HttpValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
+    public async Task<ActionResult<MapDataDto>> GetOriginsMap([FromQuery] string? status, CancellationToken ct) =>
+        Ok(await mapService.GetMapAsync(MapType.Origins, status, ct));
 
     /// <summary>
     /// Side panel data for one country. A valid country without books returns 200 with bookCount 0 and an empty list.
     /// </summary>
     /// <param name="type">authors | origins</param>
     /// <param name="iso">ISO 3166-1 alpha-3 (case-insensitive).</param>
+    /// <param name="status">Read (default) | WantToRead | Reading | Abandoned | All.</param>
     /// <param name="ct">Cancellation token.</param>
     [HttpGet("{type:regex(^(authors|origins)$)}/countries/{iso}")]
     [ProducesResponseType<CountryDetailDto>(StatusCodes.Status200OK)]
     [ProducesResponseType<HttpValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
-    public async Task<ActionResult<CountryDetailDto>> GetCountryDetail(string type, string iso, CancellationToken ct) =>
+    public async Task<ActionResult<CountryDetailDto>> GetCountryDetail(
+        string type, string iso, [FromQuery] string? status, CancellationToken ct) =>
         Ok(await mapService.GetCountryDetailAsync(
-            string.Equals(type, "authors", StringComparison.OrdinalIgnoreCase) ? MapType.Authors : MapType.Origins, iso, ct));
+            string.Equals(type, "authors", StringComparison.OrdinalIgnoreCase) ? MapType.Authors : MapType.Origins, iso, status, ct));
 
     [HttpPost("share")]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status501NotImplemented, "application/problem+json")]
     [ProducesResponseType<MapShareDto>(StatusCodes.Status201Created)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status403Forbidden, "application/problem+json")]
-    public ActionResult<MapShareDto> CreateShare(CreateMapShareRequest request) => NotImplementedYet("Etapa 6");
+    public async Task<ActionResult<MapShareDto>> CreateShare(CreateMapShareRequest request, CancellationToken ct)
+    {
+        await mapService.EnsureSharingAllowedAsync(ct); // 403 share.private_profile while the profile is Private
+        return NotImplementedYet("Etapa 6");
+    }
 
     [HttpGet("share")]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status501NotImplemented, "application/problem+json")]

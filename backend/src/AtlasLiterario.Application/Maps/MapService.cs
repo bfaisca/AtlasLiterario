@@ -7,27 +7,67 @@ namespace AtlasLiterario.Application.Maps;
 
 public interface IMapService
 {
-    Task<MapDataDto> GetMapAsync(MapType mapType, CancellationToken ct);
+    Task<MapDataDto> GetMapAsync(MapType mapType, string? status, CancellationToken ct);
 
-    Task<CountryDetailDto> GetCountryDetailAsync(MapType mapType, string iso, CancellationToken ct);
+    Task<CountryDetailDto> GetCountryDetailAsync(MapType mapType, string iso, string? status, CancellationToken ct);
+
+    /// <summary>Throws <c>share.private_profile</c> (403) when the current user's maps are Private.</summary>
+    Task EnsureSharingAllowedAsync(CancellationToken ct);
 }
 
 /// <summary>
-/// Loads the authenticated user's Read books and their geographic relations with flat projections
+/// Loads the authenticated user's books of the chosen status (default Read) and their geographic relations with flat projections
 /// (no entity tracking, no descriptions/reviews, no N+1) and delegates the counting to <see cref="MapAggregator"/>.
+/// The owner-parameterized building blocks live in <see cref="UserMapReader"/> (shared with the public profile maps).
 /// </summary>
 public sealed class MapService(IAppDbContext db, ICurrentUser currentUser) : IMapService
 {
-    public async Task<MapDataDto> GetMapAsync(MapType mapType, CancellationToken ct)
+    public Task<MapDataDto> GetMapAsync(MapType mapType, string? status, CancellationToken ct)
     {
         var userId = currentUser.GetRequiredUserId();
-        var input = await LoadAsync(mapType, userId, ct);
-        return MapAggregator.Build(mapType, input);
+        return UserMapReader.GetMapAsync(db, userId, mapType, MapStatusFilterParser.Parse(status), ct);
     }
 
-    public async Task<CountryDetailDto> GetCountryDetailAsync(MapType mapType, string iso, CancellationToken ct)
+    public Task<CountryDetailDto> GetCountryDetailAsync(MapType mapType, string iso, string? status, CancellationToken ct)
     {
         var userId = currentUser.GetRequiredUserId();
+        return UserMapReader.GetCountryDetailAsync(db, userId, mapType, iso, MapStatusFilterParser.Parse(status), ct);
+    }
+
+    public async Task EnsureSharingAllowedAsync(CancellationToken ct)
+    {
+        var userId = currentUser.GetRequiredUserId();
+        var visibility = await db.Users.AsNoTracking()
+            .Where(u => u.Id == userId)
+            .Select(u => (MapVisibility?)u.MapVisibility)
+            .SingleOrDefaultAsync(ct)
+            ?? throw new NotFoundException("auth.user_not_found", "Usuário não encontrado.");
+        if (visibility == MapVisibility.Private)
+        {
+            throw new ForbiddenException(
+                "share.private_profile", "Altere a visibilidade do perfil para compartilhar seus mapas.");
+        }
+    }
+}
+
+/// <summary>
+/// Map and country-panel queries for one owner (<paramref name="userId"/> is always passed explicitly, never taken from the
+/// request), so the private maps and the public profile maps count with exactly the same rules.
+/// </summary>
+internal static class UserMapReader
+{
+    public static async Task<MapDataDto> GetMapAsync(
+        IAppDbContext db, Guid userId, MapType mapType, MapStatusFilter filter, CancellationToken ct)
+    {
+        var input = await MapInputLoader.LoadAsync(
+            db, userId, filter, includeAuthors: mapType == MapType.Authors, includeOrigins: mapType == MapType.Origins,
+            includeAuthorNames: mapType == MapType.Authors, ct);
+        return MapAggregator.Build(mapType, input, filter);
+    }
+
+    public static async Task<CountryDetailDto> GetCountryDetailAsync(
+        IAppDbContext db, Guid userId, MapType mapType, string iso, MapStatusFilter filter, CancellationToken ct)
+    {
         var code = (iso ?? string.Empty).Trim().ToUpperInvariant();
         var country = await db.Countries.AsNoTracking()
             .Where(c => c.IsoCode == code || c.GeoJsonId == code)
@@ -38,72 +78,21 @@ public sealed class MapService(IAppDbContext db, ICurrentUser currentUser) : IMa
                 "Código de país desconhecido.",
                 new Dictionary<string, string[]> { ["iso"] = [$"ISO 3166-1 alpha-3 desconhecido: {iso}"] });
 
-        var input = await LoadAsync(mapType, userId, ct);
-        var bookIds = MapAggregator.GetBookIdsForCountry(mapType, input, country.Iso);
-        var datum = MapAggregator.Build(mapType, input).Countries.FirstOrDefault(c => c.Iso == country.Iso);
+        var input = await MapInputLoader.LoadAsync(
+            db, userId, filter, includeAuthors: mapType == MapType.Authors, includeOrigins: mapType == MapType.Origins,
+            includeAuthorNames: mapType == MapType.Authors, ct);
+        var bookIds = MapAggregator.GetBookIdsForCountry(mapType, input, country.Iso, filter);
+        var datum = MapAggregator.Build(mapType, input, filter).Countries.FirstOrDefault(c => c.Iso == country.Iso);
 
-        var rows = bookIds.Count == 0
+        var books = bookIds.Count == 0
             ? []
-            : await db.UserBooks.AsNoTracking()
-                .Where(ub => ub.UserId == userId && ub.Status == ReadingStatus.Read && bookIds.Contains(ub.BookId))
-                .Select(ub => new
-                {
-                    ub.Id,
-                    ub.BookId,
-                    ub.Book!.Title,
-                    ub.Book.CoverUrl,
-                    Authors = ub.Book.Authors.OrderBy(ba => ba.Position).Select(ba => ba.Author!.Name).ToList(),
-                    ub.FinishedDate,
-                    ub.Rating,
-                })
-                .ToListAsync(ct);
+            : CountryBookQuery.Order(await CountryBookQuery.ToDtosAsync(
+                db.UserBooks.AsNoTracking().Where(ub => ub.UserId == userId && bookIds.Contains(ub.BookId)), ct));
 
-        var books = rows
-            .OrderBy(r => r.FinishedDate is null)
-            .ThenByDescending(r => r.FinishedDate)
-            .ThenBy(r => r.Title, StringComparer.CurrentCultureIgnoreCase)
-            .Select(r => new CountryBookDto(r.Id, r.BookId, r.Title, r.CoverUrl, r.Authors, r.FinishedDate, r.Rating))
-            .ToList();
+        var authors = MapAggregator.GetAuthorsForCountry(mapType, input, country, books, filter);
 
         return new CountryDetailDto(
             mapType, country.Iso, country.Name, country.Continent,
-            datum?.BookCount ?? 0, datum?.AuthorCount ?? 0, books);
-    }
-
-    private async Task<MapAggregationInput> LoadAsync(MapType mapType, Guid userId, CancellationToken ct)
-    {
-        var read = db.UserBooks.AsNoTracking().Where(ub => ub.UserId == userId && ub.Status == ReadingStatus.Read);
-
-        var libraryBooks = await read
-            .Select(ub => new LibraryBookRow(ub.BookId, ub.Status))
-            .ToListAsync(ct);
-
-        var bookAuthors = await db.BookAuthors.AsNoTracking()
-            .Where(ba => read.Any(ub => ub.BookId == ba.BookId))
-            .Select(ba => new BookAuthorRow(ba.BookId, ba.AuthorId))
-            .ToListAsync(ct);
-
-        IReadOnlyCollection<AuthorCitizenshipRow> citizenships = [];
-        IReadOnlyCollection<BookOriginRow> origins = [];
-
-        if (mapType == MapType.Authors)
-        {
-            citizenships = await db.AuthorCountries.AsNoTracking()
-                .Where(ac => ac.RelationshipType == AuthorCountryRelationship.Citizenship
-                    && read.Any(ub => ub.Book!.Authors.Any(ba => ba.AuthorId == ac.AuthorId)))
-                .Select(ac => new AuthorCitizenshipRow(
-                    ac.AuthorId, new MapCountry(ac.Country!.GeoJsonId, ac.Country.NamePt, ac.Country.Continent)))
-                .ToListAsync(ct);
-        }
-        else
-        {
-            origins = await db.BookOriginCountries.AsNoTracking()
-                .Where(bo => read.Any(ub => ub.BookId == bo.BookId))
-                .Select(bo => new BookOriginRow(
-                    bo.BookId, new MapCountry(bo.Country!.GeoJsonId, bo.Country.NamePt, bo.Country.Continent)))
-                .ToListAsync(ct);
-        }
-
-        return new MapAggregationInput(libraryBooks, bookAuthors, citizenships, origins);
+            datum?.BookCount ?? 0, datum?.AuthorCount ?? 0, books, filter.ToString(), authors);
     }
 }

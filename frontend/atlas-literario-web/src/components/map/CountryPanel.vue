@@ -7,19 +7,21 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import type { ApiError } from '@/api/errors'
 import { getErrorMessage } from '@/api/errors'
-import BookCover from '@/components/books/BookCover.vue'
+import CountryAuthorCard from '@/components/map/CountryAuthorCard.vue'
+import CountryBookItem from '@/components/map/CountryBookItem.vue'
 import AppIcon from '@/components/ui/AppIcon.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseSpinner from '@/components/ui/BaseSpinner.vue'
-import StarRating from '@/components/ui/StarRating.vue'
-import type { CountryDetailDto, CountryMapDatum } from '@/types/api'
-import { formatDate } from '@/utils/format'
+import type { AnyCountryDetail } from '@/composables/mapSource'
+import type { CountryMapDatum, MapType } from '@/types/api'
 import { CONTINENT_LABELS, pluralize } from '@/utils/labels'
 
 const props = defineProps<{
+  /** Define o conteúdo: Authors → cards de autor; Origins → livros. */
+  mapType: MapType
   /** Resumo vindo do mapa: exibido enquanto o detalhe carrega ou se ele falhar. */
   summary: CountryMapDatum | null
-  detail: CountryDetailDto | null
+  detail: AnyCountryDetail | null
   loading: boolean
   error: ApiError | null
 }>()
@@ -32,8 +34,12 @@ let previouslyFocused: HTMLElement | null = null
 
 const name = computed(() => props.detail?.name ?? props.summary?.name ?? 'País')
 const continent = computed(() => props.detail?.continent ?? props.summary?.continent ?? null)
-const bookCount = computed(() => props.detail?.bookCount ?? props.summary?.bookCount ?? null)
-const authorCount = computed(() => props.detail?.authorCount ?? props.summary?.authorCount ?? null)
+const isAuthors = computed(() => props.mapType === 'Authors')
+/** Contagem do cabeçalho: autores (de `detail.authors`) no mapa de autores; livros no de origens. */
+const itemCount = computed(() => {
+  if (isAuthors.value) return props.detail?.authors.length ?? props.summary?.authorCount ?? null
+  return props.detail?.bookCount ?? props.summary?.bookCount ?? null
+})
 
 function onKeydown(event: KeyboardEvent) {
   if (event.key === 'Escape') {
@@ -80,11 +86,12 @@ onBeforeUnmount(() => {
       <div>
         <p v-if="continent" class="eyebrow">{{ CONTINENT_LABELS[continent] }}</p>
         <h2 id="country-panel-title" ref="heading" tabindex="-1">{{ name }}</h2>
-        <p v-if="bookCount !== null" class="muted panel__counts">
-          {{ pluralize(bookCount, 'livro', 'livros') }}
-          <template v-if="authorCount !== null">
-            · {{ pluralize(authorCount, 'autor', 'autores') }}
-          </template>
+        <p v-if="itemCount !== null" class="muted panel__counts" data-testid="panel-count">
+          {{
+            isAuthors
+              ? pluralize(itemCount, 'autor', 'autores')
+              : pluralize(itemCount, 'livro', 'livros')
+          }}
         </p>
       </div>
       <button type="button" class="panel__close" aria-label="Fechar painel" @click="emit('close')">
@@ -94,7 +101,9 @@ onBeforeUnmount(() => {
 
     <div class="panel__body">
       <div v-if="loading" class="panel__state" role="status">
-        <BaseSpinner label="Carregando livros do país" />
+        <BaseSpinner
+          :label="isAuthors ? 'Carregando autores do país' : 'Carregando livros do país'"
+        />
       </div>
       <div v-else-if="error" class="panel__state" role="alert">
         <p>{{ getErrorMessage(error) }}</p>
@@ -102,30 +111,28 @@ onBeforeUnmount(() => {
           Tentar novamente
         </BaseButton>
       </div>
+      <template v-else-if="detail && isAuthors">
+        <p v-if="!detail.authors.length" class="muted">
+          Nenhum autor neste país com o filtro atual.
+        </p>
+        <!-- key: trocar de país/filtro remonta os cards e recolhe todos -->
+        <ul
+          v-else
+          :key="`${detail.iso}-${detail.status}`"
+          role="list"
+          class="authors"
+          aria-label="Autores"
+        >
+          <li v-for="author in detail.authors" :key="author.authorId">
+            <CountryAuthorCard :author="author" />
+          </li>
+        </ul>
+      </template>
       <template v-else-if="detail">
-        <p v-if="!detail.books.length" class="muted">Nenhum livro encontrado para este país.</p>
-        <ul v-else role="list" class="books">
-          <li v-for="book in detail.books" :key="book.libraryItemId">
-            <RouterLink
-              :to="{ name: 'library-item', params: { id: book.libraryItemId } }"
-              class="book"
-            >
-              <BookCover :title="book.title" :cover-url="book.coverUrl" size="sm" />
-              <span class="book__text">
-                <span class="book__title">{{ book.title }}</span>
-                <span class="muted">{{ book.authors.join(', ') || 'Autoria desconhecida' }}</span>
-                <span class="book__meta">
-                  <span v-if="book.finishedDate">Lido em {{ formatDate(book.finishedDate) }}</span>
-                  <StarRating
-                    v-if="book.rating"
-                    :model-value="book.rating"
-                    readonly
-                    size="sm"
-                    label="Nota"
-                  />
-                </span>
-              </span>
-            </RouterLink>
+        <p v-if="!detail.books.length" class="muted">Nenhum livro neste país com o filtro atual.</p>
+        <ul v-else role="list" class="books" aria-label="Livros">
+          <li v-for="book in detail.books" :key="book.bookId">
+            <CountryBookItem :book="book" />
           </li>
         </ul>
       </template>
@@ -195,44 +202,12 @@ onBeforeUnmount(() => {
   padding: var(--space-6) var(--space-3);
   text-align: center;
 }
+.authors,
 .books {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
 }
-.book {
-  display: flex;
-  gap: var(--space-3);
-  align-items: center;
-  padding: var(--space-2);
-  border-radius: var(--radius-md);
-  color: inherit;
-  text-decoration: none;
-}
-.book:hover {
-  background: var(--color-surface-2);
-  color: inherit;
-}
-.book__text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-  font-size: var(--text-sm);
-}
-.book__title {
-  font-family: var(--font-display);
-  font-size: var(--text-base);
-}
-.book__meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--text-xs);
-  color: var(--color-text-faint);
-}
-
 /* Desktop: drawer em coluna ao lado do mapa (a altura vem de --stage-height da página). */
 @media (min-width: 900px) {
   .panel {
