@@ -1,6 +1,8 @@
 using AtlasLiterario.Application.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+using AtlasLiterario.API.Configuration;
 
 namespace AtlasLiterario.API.Controllers;
 
@@ -11,6 +13,7 @@ public sealed class AuthController(IAuthService authService) : ApiControllerBase
     /// <summary>Creates an account and starts a session.</summary>
     [AllowAnonymous]
     [HttpPost("register")]
+    [EnableRateLimiting(ApiServiceCollectionExtensions.AuthPolicy)]
     [ProducesResponseType<AuthResponse>(StatusCodes.Status201Created)]
     [ProducesResponseType<HttpValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status409Conflict, "application/problem+json")]
@@ -22,6 +25,7 @@ public sealed class AuthController(IAuthService authService) : ApiControllerBase
 
     [AllowAnonymous]
     [HttpPost("login")]
+    [EnableRateLimiting(ApiServiceCollectionExtensions.AuthPolicy)]
     [ProducesResponseType<AuthResponse>(StatusCodes.Status200OK)]
     public async Task<ActionResult<AuthResponse>> Login(LoginRequest request, CancellationToken ct) =>
         Ok(await authService.LoginAsync(request, ct));
@@ -45,6 +49,7 @@ public sealed class AuthController(IAuthService authService) : ApiControllerBase
     /// <summary>Always 202 — does not reveal whether the e-mail exists.</summary>
     [AllowAnonymous]
     [HttpPost("forgot-password")]
+    [EnableRateLimiting(ApiServiceCollectionExtensions.AuthPolicy)]
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest request, CancellationToken ct)
     {
@@ -54,6 +59,7 @@ public sealed class AuthController(IAuthService authService) : ApiControllerBase
 
     [AllowAnonymous]
     [HttpPost("reset-password")]
+    [EnableRateLimiting(ApiServiceCollectionExtensions.AuthPolicy)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<HttpValidationProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
     public async Task<IActionResult> ResetPassword(ResetPasswordRequest request, CancellationToken ct)

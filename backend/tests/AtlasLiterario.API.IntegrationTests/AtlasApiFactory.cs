@@ -48,6 +48,7 @@ public sealed class AtlasApiFactory : WebApplicationFactory<Program>
             ["ConnectionStrings:Default"] = "Host=unused",
             ["Database:ApplyMigrationsOnStartup"] = "false",
             ["Cors:AllowedOrigins:0"] = "http://localhost:5173",
+            ["RateLimiting:AuthPerMinute"] = "100000", // every test shares one client IP; DeploymentHardeningTests lowers it
         }));
 
         builder.ConfigureTestServices(services =>

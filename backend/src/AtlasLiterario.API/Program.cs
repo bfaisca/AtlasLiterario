@@ -11,16 +11,26 @@ builder.Services.AddApiPresentation();
 
 var app = builder.Build();
 
+if (app.Configuration.GetValue(ApiServiceCollectionExtensions.ForwardedHeadersSetting, false))
+{
+    app.UseForwardedHeaders(); // first: everything after (rate limiter, HTTPS checks) must see the real client
+}
+
 app.UseExceptionHandler();
 app.UseStatusCodePages(); // ProblemDetails (with code) for empty-body 401/403/404 responses
 
 app.MapOpenApi().AllowAnonymous(); // /openapi/v1.json — official contract reference
-app.UseSwaggerUI(options =>
+// The interactive UI is on by default everywhere except Production; Swagger:UiEnabled overrides it.
+// The contract itself (/openapi/v1.json) stays available, since it is the official reference.
+if (app.Configuration.GetValue<bool?>(ApiServiceCollectionExtensions.SwaggerUiSetting) ?? !app.Environment.IsProduction())
 {
-    options.SwaggerEndpoint("/openapi/v1.json", "Atlas Literário API v1");
-    options.RoutePrefix = "swagger";
-    options.DocumentTitle = "Atlas Literário API";
-});
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "Atlas Literário API v1");
+        options.RoutePrefix = "swagger";
+        options.DocumentTitle = "Atlas Literário API";
+    });
+}
 
 app.UseCors();
 app.UseAuthentication();
