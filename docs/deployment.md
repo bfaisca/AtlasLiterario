@@ -71,7 +71,7 @@ Variáveis de ambiente:
 
 1. Importar o repositório; *Root Directory* `frontend/atlas-literario-web`; framework Vite; build `npm run build`; saída `dist`.
 2. Variáveis de build: `VITE_USE_MOCKS=false` (explícito, para nunca embutir os mocks). Não definir `VITE_API_BASE_URL` (o padrão `/api` usa o rewrite).
-3. Editar `frontend/atlas-literario-web/vercel.json` e trocar `SEU-SERVICO.onrender.com` pela URL real do serviço no Render **antes do primeiro deploy**; depois, o commit dispara o redeploy.
+3. Editar `frontend/atlas-literario-web/vercel.json` e trocar `SEU-SERVICO.onrender.com` pela URL real (já feito: `atlasliterario.onrender.com`) do serviço no Render **antes do primeiro deploy**; depois, o commit dispara o redeploy.
 4. Os GeoJSON ficam em `public/geo` (~700 KB) e vão no próprio build; nada externo é carregado pelo mapa.
 
 ## 4. Verificação pós-publicação

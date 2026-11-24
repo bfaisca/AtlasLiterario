@@ -1,7 +1,7 @@
 {
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://SEU-SERVICO.onrender.com/api/:path*" },
-    { "source": "/health", "destination": "https://SEU-SERVICO.onrender.com/health" },
+    { "source": "/api/:path*", "destination": "https://atlasliterario.onrender.com/api/:path*" },
+    { "source": "/health", "destination": "https://atlasliterario.onrender.com/health" },
     { "source": "/((?!api/|health).*)", "destination": "/index.html" }
   ]
 }
