@@ -64,6 +64,7 @@ Variáveis de ambiente:
 ### Limites e comportamento
 
 - **Render gratuito dorme** após ~15 min sem tráfego; a primeira requisição leva cerca de um minuto. Um monitor externo chamando `/health` a cada poucos minutos evita isso (respeitando os termos do plano).
+- **Cliente espera a API acordar:** em produção o frontend consulta `/health` (com novas tentativas, até ~2 min) antes da primeira chamada e depois de ~10 min parado, e mostra "Acordando o servidor…". A sessão só é encerrada se o servidor rejeitar o refresh token (400/401/403); timeout ou 5xx mantêm o login. Ver `frontend/.../src/api/warmup.ts`.
 - As migrations rodam na subida. **Faça backup antes** de publicar uma versão com migration nova.
 - **Limite de tentativas** (login, cadastro, esqueci/redefinir senha): 30 por minuto **por IP** (`RateLimiting__AuthPerMinute`), resposta `429` com `Retry-After`. Atrás do Vercel + Render o IP vem de `X-Forwarded-For`; **verifique após publicar** que ele é o do visitante e não o do Vercel: se todas as requisições chegarem com o mesmo IP, o limite vira global (aumente o valor ou me avise para particionar por e-mail).
 

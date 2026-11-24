@@ -125,6 +125,32 @@ describe('auth store', () => {
     expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBeNull()
   })
 
+  it('restoreSession com falha de rede (API acordando) mantém o refresh token persistido', async () => {
+    localStorage.setItem(REFRESH_TOKEN_KEY, 'still-valid')
+    authApi.refresh.mockRejectedValue(
+      new ApiError({ status: 0, title: 'Tempo de resposta esgotado', code: 'network.timeout' }),
+    )
+    const store = useAuthStore()
+
+    await store.restoreSession()
+
+    expect(store.isAuthenticated).toBe(false)
+    expect(store.initialized).toBe(true)
+    expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBe('still-valid')
+  })
+
+  it('restoreSession com erro 503/404 do proxy também mantém o refresh token', async () => {
+    for (const status of [404, 502, 503]) {
+      localStorage.setItem(REFRESH_TOKEN_KEY, 'still-valid')
+      authApi.refresh.mockRejectedValue(new ApiError({ status, title: 'x' }))
+      setActivePinia(createPinia())
+
+      await useAuthStore().restoreSession()
+
+      expect(localStorage.getItem(REFRESH_TOKEN_KEY)).toBe('still-valid')
+    }
+  })
+
   it('sem refresh token não chama a API', async () => {
     const store = useAuthStore()
     await store.ensureInitialized()

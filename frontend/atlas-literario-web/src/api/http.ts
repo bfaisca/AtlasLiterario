@@ -2,6 +2,7 @@ import axios, { type AxiosInstance, type InternalAxiosRequestConfig } from 'axio
 import type { AuthResponse } from '@/types/api'
 import { toApiError } from './errors'
 import { tokenManager } from './tokenManager'
+import { ensureApiAwake, markApiAwake } from './warmup'
 
 declare module 'axios' {
   interface AxiosRequestConfig {
@@ -35,6 +36,7 @@ function isNoRefreshPath(url: string | undefined): boolean {
 async function requestNewTokens(baseURL: string): Promise<string> {
   const refreshToken = tokenManager.getRefreshToken()
   if (!refreshToken) throw new Error('Sem refresh token')
+  await ensureApiAwake()
   const { data } = await axios.post<AuthResponse>(`${baseURL}/auth/refresh`, { refreshToken })
   tokenManager.applyAuthResponse(data)
   return data.accessToken
@@ -49,7 +51,8 @@ export function createHttpClient(baseURL: string = API_BASE_URL): AxiosInstance 
     paramsSerializer: { indexes: null },
   })
 
-  http.interceptors.request.use((config) => {
+  http.interceptors.request.use(async (config) => {
+    await ensureApiAwake() // servidor gratuito dormindo: espera acordar antes de enviar
     const token = tokenManager.getAccessToken()
     if (token && !config.headers.has('Authorization')) {
       config.headers.set('Authorization', `Bearer ${token}`)
@@ -61,9 +64,14 @@ export function createHttpClient(baseURL: string = API_BASE_URL): AxiosInstance 
   let refreshInFlight: Promise<string> | null = null
 
   http.interceptors.response.use(
-    (response) => response,
+    (response) => {
+      markApiAwake()
+      return response
+    },
     async (error: unknown) => {
       if (!axios.isAxiosError(error)) throw toApiError(error)
+      const status = error.response?.status
+      if (status && status < 500 && status !== 404) markApiAwake() // respondeu: está acordada
 
       const config = error.config as RetriableRequestConfig | undefined
       const canRefresh =

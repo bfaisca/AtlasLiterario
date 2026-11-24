@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { api } from '@/api'
+import { ApiError } from '@/api/errors'
 import { tokenManager } from '@/api/tokenManager'
 import { useLibraryStore } from './library'
 import { useMapsStore } from './maps'
@@ -92,8 +93,11 @@ export const useAuthStore = defineStore('auth', () => {
       if (!refreshToken) return
       try {
         applySession(await api.auth.refresh({ refreshToken }))
-      } catch {
-        clearSession()
+      } catch (error) {
+        // Só encerra a sessão se o servidor rejeitou o token. Falha de rede, timeout ou 5xx (API acordando) mantêm o
+        // refresh token: apagá-lo faria o usuário perder o login por um problema passageiro.
+        const rejected = error instanceof ApiError && [400, 401, 403].includes(error.status)
+        if (rejected) clearSession()
       }
     })().finally(() => {
       initialized.value = true
