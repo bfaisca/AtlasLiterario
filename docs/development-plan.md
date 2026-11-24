@@ -90,6 +90,11 @@ Backend: endpoints de mapa e de detalhe por país usando o `MapAggregator`. Fron
 - Validação: backend 274 testes (EF InMemory; rollback não exercitado em PostgreSQL real), frontend 301 testes, type-check, lint, prettier e build OK.
 - Pendente: execução no banco real (com backup) pelo usuário.
 
+## Preparação para publicação (Vercel + Render + Neon) 🔶 (2026-11-24)
+- Código: cabeçalhos de proxy (`ForwardedHeaders:Enabled`), limite de tentativas por IP nos endpoints de credencial, Swagger UI desligada em `Production`. Backend: 395 testes passando (6 novos em `DeploymentHardeningTests`; os de PostgreSQL real continuam fora de alcance).
+- Documentação: `docs/deployment.md`; `frontend/atlas-literario-web/vercel.json` com URL do Render a preencher.
+- Fora do escopo por decisão do usuário: **e-mail** (redefinição de senha segue só no log). Pendente: publicar de fato, restaurar os dados no Neon e validar os itens da seção 4 do guia.
+
 ## Pendências registradas
 - Validar Dockerfiles e `docker compose up --build` numa máquina com Docker.
 - Testcontainers (PostgreSQL) nos testes de integração.
